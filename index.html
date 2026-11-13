@@ -247,7 +247,22 @@ button.book:hover{transform:translateY(-6px)}
 .big-stars svg{width:40px;height:40px}
 .big-stars svg.pop{animation:pop .6s ease both}
 
+/* librarian creator */
+.creator{display:flex;gap:20px;flex-wrap:wrap;align-items:flex-start}
+.creator .portrait{flex:0 0 200px;max-width:100%;background:var(--wall);border-radius:18px;border:3px solid var(--wood)}
+.creator .portrait svg{display:block;width:100%;height:auto}
+.creator .opts{flex:1 1 300px;min-width:0;display:flex;flex-direction:column;gap:16px}
+.optrow{display:flex;flex-direction:column;gap:8px}
+.swatches{display:flex;gap:10px;flex-wrap:wrap}
+.sw{width:40px;height:40px;border-radius:50%;border:3px solid var(--panel);box-shadow:0 0 0 2px var(--line);padding:0}
+.sw[aria-pressed="true"]{box-shadow:0 0 0 3px var(--ink)}
+.styles{display:grid;grid-template-columns:repeat(auto-fill,minmax(92px,1fr));gap:8px}
+.stylebtn{border:2px solid var(--line);background:var(--panel2);border-radius:14px;padding:6px 6px 8px;display:flex;flex-direction:column;align-items:center;gap:2px;font-size:13px;font-weight:700}
+.stylebtn svg{width:64px;height:64px;background:var(--wall);border-radius:50%}
+.stylebtn[aria-pressed="true"]{border-color:var(--ink);background:var(--panel)}
+
 @media (max-width:640px){
+  .creator .portrait{flex-basis:160px;margin:0 auto}
   .dialog{grid-template-columns:1fr}
   .held{flex:1 1 100%}
   .book{min-width:26px}
@@ -672,7 +687,26 @@ function garland(x0,x1,y,sag,n,item,stroke='#6B4A2E'){
   return s;
 }
 const CARDIGANS={mustard:'#EFAE36',sage:'#7FB08A',berry:'#C2456B',lavender:'#A58BD6'};
-function librarianSVG(eq=S.equip,preview=false){
+const SKINS=['#F6D2B4','#EBC09A','#D39B6E','#B07650','#8A5536','#5E3A24'];
+const HAIRS=[['#A8492B','Auburn'],['#2B1D14','Black'],['#5A3A22','Brown'],['#D9A852','Blonde'],['#A7ABB3','Silver'],['#8C3B57','Plum']];
+const SCARVES=[['#2C7775','Teal'],['#C93B63','Berry'],['#7E5BA6','Purple'],['#4A6FA5','Blue'],['#D9A852','Gold'],['#E9D3B0','Cream']];
+const STYLES=[['bun','Bun and pencil'],['puff','Puff'],['braids','Braids'],['curly','Curls'],['bob','Bob'],['hijab','Hijab']];
+const LOOK=()=>Object.assign({skin:0,style:'bun',hair:'#A8492B'},S.look||{});
+function shade(hex,f){ const n=parseInt(hex.slice(1),16); const c=[n>>16,(n>>8)&255,n&255].map(v=>Math.round(v*f)); return '#'+c.map(v=>v.toString(16).padStart(2,'0')).join(''); }
+function hairParts(st,H){
+  const pencil=`<rect x="296" y="46" width="5" height="30" rx="1" fill="#F2C94C" transform="rotate(28 298 61)"/><rect x="296" y="44" width="5" height="5" rx="1" fill="#F29BB0" transform="rotate(28 298 61)"/>`;
+  if(st==='puff'){ let p=''; for(let a=0;a<360;a+=30){ const r=a*Math.PI/180; p+=`<circle cx="${(300+22*Math.cos(r)).toFixed(1)}" cy="${(68+20*Math.sin(r)).toFixed(1)}" r="7" fill="${H}"/>`; }
+    return {back:`<ellipse cx="300" cy="106" rx="31" ry="31" fill="${H}"/><circle cx="300" cy="68" r="22" fill="${H}"/>${p}<rect x="276" y="84" width="48" height="5" rx="2.5" fill="#C93B63"/>${pencil}`, front:`<path d="M276 104 Q281 88 300 89 Q319 88 324 104 Q314 94 300 95 Q286 94 276 104Z" fill="${H}"/>`}; }
+  if(st==='braids'){ let b=''; for(const x of [271,329]) for(let k=0;k<6;k++) b+=`<ellipse cx="${x}" cy="${110+k*10}" rx="6" ry="6.5" fill="${H}"/>`;
+    return {back:`<ellipse cx="300" cy="104" rx="33" ry="33" fill="${H}"/>${b}<circle cx="271" cy="170" r="3.5" fill="#EFAE36"/><circle cx="329" cy="170" r="3.5" fill="#EFAE36"/>`, front:`<path d="M274 108 Q276 82 300 84 Q324 82 326 108 Q318 90 301 90 L300 86 L299 90 Q282 90 274 108Z" fill="${H}"/>`}; }
+  if(st==='curly'){ let c=''; for(let a=150;a<=390;a+=20){ const r=a*Math.PI/180; c+=`<circle cx="${(300+29*Math.cos(r)).toFixed(1)}" cy="${(104+29*Math.sin(r)).toFixed(1)}" r="10" fill="${H}"/>`; }
+    return {back:`<ellipse cx="300" cy="104" rx="31" ry="31" fill="${H}"/>${c}`, front:[[281,94],[290,88],[300,86],[310,88],[319,94]].map(([x,y])=>`<circle cx="${x}" cy="${y}" r="6.5" fill="${H}"/>`).join('')}; }
+  if(st==='bob') return {back:`<path d="M266 134 Q262 76 300 74 Q338 76 334 134 Z" fill="${H}"/>`, front:`<path d="M277 102 Q279 82 300 82 Q321 82 323 102 Q312 96 300 97 Q288 96 277 102Z" fill="${H}"/>`};
+  if(st==='hijab') return {back:`<path d="M260 156 Q254 76 300 72 Q346 76 340 156 Z" fill="${H}"/>`, front:`<path d="M276 118 Q276 88 300 87 Q324 88 324 118" fill="none" stroke="${H}" stroke-width="7"/><path d="M280 130 Q300 146 320 130 L330 152 Q300 162 270 152Z" fill="${H}"/><path d="M276 118 Q276 88 300 87 Q324 88 324 118" fill="none" stroke="#000" stroke-opacity=".12" stroke-width="2"/>`, hideEar:true};
+  return {back:`<ellipse cx="300" cy="104" rx="34" ry="34" fill="${H}"/><circle cx="300" cy="66" r="15" fill="${H}"/>${pencil}`, front:`<path d="M273 104 Q284 82 300 86 Q318 80 328 104 Q318 94 300 96 Q286 92 273 104Z" fill="${H}"/>`};
+}
+function librarianSVG(eq=S.equip,preview=false,look=LOOK()){
+  const skin=SKINS[look.skin]||SKINS[0], hp=hairParts(look.style,look.hair), blush=look.skin>=3?'#C9605A':'#F29BB0';
   const card=CARDIGANS[eq.cardigan]||CARDIGANS.mustard;
   const pocket=eq.cardigan==='berry'?'#EFAE36':'#C93B63';
   let head='', neck='', glasses='';
@@ -690,18 +724,15 @@ function librarianSVG(eq=S.equip,preview=false){
     <path d="M286 142 L300 168 L314 142 Z" fill="#2C7775"/>
     <circle cx="276" cy="176" r="3" fill="#fff" opacity=".7"/><circle cx="324" cy="176" r="3" fill="#fff" opacity=".7"/>
     <rect x="262" y="160" width="12" height="14" rx="3" fill="${pocket}" opacity=".85"/>
-    <ellipse cx="300" cy="104" rx="34" ry="34" fill="#A8492B"/>
-    <circle cx="300" cy="66" r="15" fill="#A8492B"/>
-    <rect x="296" y="46" width="5" height="30" rx="1" fill="#F2C94C" transform="rotate(28 298 61)"/>
-    <rect x="296" y="44" width="5" height="5" rx="1" fill="#F29BB0" transform="rotate(28 298 61)"/>
-    <rect x="292" y="126" width="16" height="16" fill="#F1C7A5"/>
-    <circle cx="300" cy="112" r="25" fill="#F6D2B4"/>
-    <path d="M273 104 Q284 82 300 86 Q318 80 328 104 Q318 94 300 96 Q286 92 273 104Z" fill="#A8492B"/>
-    <ellipse cx="285" cy="122" rx="5" ry="3" fill="#F29BB0" opacity=".8"/><ellipse cx="315" cy="122" rx="5" ry="3" fill="#F29BB0" opacity=".8"/>
+    ${hp.back}
+    <rect x="292" y="126" width="16" height="16" fill="${shade(skin,.92)}"/>
+    <circle cx="300" cy="112" r="25" fill="${skin}"/>
+    ${hp.front}
+    <ellipse cx="285" cy="122" rx="5" ry="3" fill="${blush}" opacity=".7"/><ellipse cx="315" cy="122" rx="5" ry="3" fill="${blush}" opacity=".7"/>
     <g class="eye"><circle cx="290" cy="112" r="2.6" fill="#2B2A3D"/><circle cx="310" cy="112" r="2.6" fill="#2B2A3D"/></g>
     ${glasses}
     <path d="M293 126 Q300 132 307 126" fill="none" stroke="#2B2A3D" stroke-width="2.2" stroke-linecap="round"/>
-    <rect x="272" y="122" width="5" height="7" rx="1" fill="#2C7775"/><circle cx="328" cy="125" r="3.5" fill="#C93B63"/>
+    ${hp.hideEar?'':'<rect x="272" y="122" width="5" height="7" rx="1" fill="#2C7775"/><circle cx="328" cy="125" r="3.5" fill="#C93B63"/>'}
     ${neck}${head}
   </g>`;
 }
@@ -1178,7 +1209,7 @@ let run=null, cur=null, ticker=null;
 function showSchedule(){
   stopRun();
   const total=Object.values(S.stars).reduce((a,b)=>a+b,0);
-  let h=`<div class="row" style="justify-content:space-between;align-items:flex-end"><div style="display:flex;flex-direction:column;gap:6px"><span class="eyebrow">Shift schedule</span><h2>Help wanted at the Thinkerton library</h2><p>Ms. Pagecastle needs a shelf helper. Shelve returns, fix misshelved books, and help students find what they need. Earn bookmarks to make the library cozier.</p></div><span class="pill">${STAR(true)} ${total} / 18 stars</span></div><div class="days">`;
+  let h=`<div class="row" style="justify-content:space-between;align-items:flex-end"><div style="display:flex;flex-direction:column;gap:6px"><span class="eyebrow">Shift schedule</span><h2>Help wanted at the Thinkerton library</h2><p>Ms. Pagecastle needs a shelf helper. Shelve returns, fix misshelved books, and help students find what they need. Earn bookmarks to make the library cozier.</p></div><div class="row"><button class="btn ghost" id="toLook">Customize librarian</button><span class="pill">${STAR(true)} ${total} / 18 stars</span></div></div><div class="days">`;
   DAYS.forEach((d,i)=>{
     const locked=i+1>S.unlocked, st=S.stars[i]||0;
     h+=`<button class="day" data-day="${i}" ${locked?'disabled':''}><span class="dn">Day ${i+1}${locked?' · locked':''}</span><span class="dt">${d.t}</span><span class="ds">${d.skill}</span><span class="stars-row">${[0,1,2].map(k=>STAR(k<st)).join('')}</span></button>`;
@@ -1194,6 +1225,7 @@ function showSchedule(){
   panel.innerHTML=h;
   panel.querySelectorAll('[data-day]').forEach(b=>b.onclick=()=>startRun(b.dataset.day==='open'?'open':'day',b.dataset.day==='open'?null:+b.dataset.day));
   panel.querySelectorAll('[data-chal]').forEach(b=>b.onclick=()=>startRun('challenge',b.dataset.chal));
+  $('#toLook').onclick=()=>showCreator(false);
 }
 
 function exampleShelf(d){
@@ -1568,6 +1600,27 @@ function equip(id){
   showShop();
 }
 
+function showCreator(first){
+  stopRun();
+  const L=LOOK(), isH=L.style==='hijab', pal=isH?SCARVES:HAIRS;
+  const head=(st)=>{ const lk={...L,style:st,hair:st==='hijab'?(isH?L.hair:SCARVES[0][0]):(isH?HAIRS[0][0]:L.hair)}; return `<svg viewBox="256 54 88 88" aria-hidden="true">${librarianSVG({cardigan:S.equip.cardigan},true,lk)}</svg>`; };
+  panel.innerHTML=`<div style="display:flex;flex-direction:column;gap:6px"><span class="eyebrow">${first?'Welcome to Thinkerton':'Ms. Pagecastle\'s look'}</span><h2>Meet your librarian</h2><p>${first?'Before your first shift, choose how Ms. Pagecastle looks. You can change this any time from the schedule.':'Change her look whenever you like. Outfits from the Cozy Catalog stay on.'}</p></div>
+  <div class="creator">
+    <div class="portrait"><svg viewBox="240 38 120 150" aria-label="Preview of your librarian">${librarianSVG(S.equip,true,L)}</svg></div>
+    <div class="opts">
+      <div class="optrow"><span class="eyebrow">Skin tone</span><div class="swatches">${SKINS.map((c,i)=>`<button class="sw" data-skin="${i}" style="background:${c}" aria-label="Skin tone ${i+1} of ${SKINS.length}" aria-pressed="${L.skin===i}"></button>`).join('')}</div></div>
+      <div class="optrow"><span class="eyebrow">Hairstyle</span><div class="styles">${STYLES.map(([id,n])=>`<button class="stylebtn" data-style="${id}" aria-pressed="${L.style===id}">${head(id)}${n}</button>`).join('')}</div></div>
+      <div class="optrow"><span class="eyebrow">${isH?'Scarf color':'Hair color'}</span><div class="swatches">${pal.map(([c,n])=>`<button class="sw" data-hair="${c}" style="background:${c}" aria-label="${n}" title="${n}" aria-pressed="${L.hair===c}"></button>`).join('')}</div></div>
+      <div class="row"><button class="btn" id="lookDone">${first?'Start my first shift':'Looks great!'}</button></div>
+    </div>
+  </div>`;
+  const set=(k,v)=>{ const n={...LOOK(),[k]:v}; if(k==='style'){ const was=LOOK().style==='hijab', now=v==='hijab'; if(was!==now) n.hair=(now?SCARVES:HAIRS)[0][0]; } S.look=n; save(); drawScene(); sfx('step'); showCreator(first); };
+  panel.querySelectorAll('[data-skin]').forEach(b=>b.onclick=()=>set('skin',+b.dataset.skin));
+  panel.querySelectorAll('[data-style]').forEach(b=>b.onclick=()=>set('style',b.dataset.style));
+  panel.querySelectorAll('[data-hair]').forEach(b=>b.onclick=()=>set('hair',b.dataset.hair));
+  $('#lookDone').onclick=()=>{ if(!S.look){ S.look=LOOK(); save(); } sfx('pop'); libReact('cheer'); say(first?'Hi! I\'m Ms. Pagecastle. Let\'s go shelve some books!':'I feel fabulous. Thank you!',...POS.lib); showSchedule(); };
+}
+
 function showCheat(){
   stopRun();
   panel.innerHTML=`<div style="display:flex;flex-direction:column;gap:6px"><span class="eyebrow">Ms. Pagecastle's cheat sheet</span><h2>How to shelve like a pro</h2></div>
@@ -1598,8 +1651,9 @@ $('#dim').onchange=()=>{ save(); if(S.dim<50&&S.owned.plant&&Math.random()<.5) s
 
 /* ---------------- boot ---------------- */
 S.music=false; // audio needs a tap to start
-drawScene(); updateBM(); showSchedule();
-setTimeout(()=>say(S.shelved?'Welcome back, shelf friend!':'Hi! I\'m Ms. Pagecastle. Pick a shift below!',...POS.lib),600);
+drawScene(); updateBM();
+if(!S.look) showCreator(true); else showSchedule();
+setTimeout(()=>say(!S.look?'Hi there! Help me pick my look for today.':S.shelved?'Welcome back, shelf friend!':'Hi! I\'m Ms. Pagecastle. Pick a shift below!',...POS.lib),600);
 </script>
 
 </html>
