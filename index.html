@@ -598,6 +598,8 @@ S.best=S.best||{}; S.cstars=S.cstars||{}; if(S.dim==null) S.dim=100;
 function save(){ try{ localStorage.setItem(KEY,JSON.stringify(S)); }catch(e){} }
 const FREE = {mustard:true, navyvest:true};
 function has(id){ if(FREE[id]) return true; if(id==='lofi') return !!S.owned.record; return !!S.owned[id]; }
+S.hidden=S.hidden||{};
+function out(id){ return !!S.owned[id]&&!S.hidden[id]; }
 
 /* ---------------- audio ---------------- */
 let AC=null;
@@ -642,7 +644,7 @@ const TRACKS={
 };
 let musicTimer=null, mi=0, playingId=null;
 function setMusic(on){
-  S.music=on&&!!S.owned.record; save();
+  S.music=on&&out('record'); save();
   clearInterval(musicTimer); musicTimer=null;
   if(playingId&&TRACKS[playingId].stop) TRACKS[playingId].stop();
   playingId=null;
@@ -655,7 +657,7 @@ function setMusic(on){
   updateMusicBar();
 }
 function updateMusicBar(){
-  const bar=$('#musicbar'); bar.hidden=!S.owned.record;
+  const bar=$('#musicbar'); bar.hidden=!out('record');
   const it=ITEMS.find(x=>x.id===(has(S.equip.record)?S.equip.record:'lofi'));
   $('#bMusic').setAttribute('aria-pressed',S.music?'true':'false');
   $('#bMusic').textContent=S.music?'Pause music':'Play music';
@@ -1009,7 +1011,7 @@ function bunting(){
 }
 function holidayLayer(L){ const id=S.equip.holiday; if(!id||!has(id)) return ''; const it=ITEMS.find(x=>x.id===id); return it?it.draw(L):''; }
 function drawScene(){
-  const svg=$('#scene'); const O=id=>has(id)&&ITEMS.find(x=>x.id===id);
+  const svg=$('#scene'); const O=id=>has(id)&&!S.hidden[id]&&ITEMS.find(x=>x.id===id);
   let s=sceneBase();
   s+=holidayLayer('back');
   if(run&&run.def&&run.def.bunting) s+=bunting();
@@ -1057,7 +1059,7 @@ const REACT={
   cat:{good:['Dewey: *slow blink of approval*','Dewey: prrrt!'],bad:['Dewey: *knocks the wrong answer off the desk*','Dewey: mrrp. (try again)']},
 };
 function companionReact(kind){
-  const owned=['cactus','plant','cat'].filter(id=>S.owned[id]); if(!owned.length||Math.random()>.35) return;
+  const owned=['cactus','plant','cat'].filter(out); if(!owned.length||Math.random()>.35) return;
   const id=pick(owned); setTimeout(()=>say(pick(REACT[id][kind]),...POS[id]),450);
 }
 document.addEventListener('click',e=>{
@@ -1376,7 +1378,7 @@ function renderTask(){
     work=`<div style="flex:1 1 100%;min-width:0"><div class="shelf cart" id="shelf">${shelfHTML(shown,{tappable:!t.done,allowed:t.allowed,placed:t.done?t.sorted.indexOf(t.ans):-1})}</div><div class="cart-wheels" aria-hidden="true"><span></span><span></span></div></div>`;
   }
   if(t.libOverride) lib=t.libOverride;
-  const hintBtn=S.owned.cactus?`<button class="btn ghost" id="hintBtn" ${t.hint||t.done?'disabled':''}>Ask Spike for a hint</button>`:`<button class="btn ghost" id="hintBtn" title="Adopt Spike the Talking Cactus in the Cozy Catalog to unlock hints">Hint (needs Spike)</button>`;
+  const hintBtn=out('cactus')?`<button class="btn ghost" id="hintBtn" ${t.hint||t.done?'disabled':''}>Ask Spike for a hint</button>`:`<button class="btn ghost" id="hintBtn" title="Adopt Spike the Talking Cactus in the Cozy Catalog to unlock hints">Hint (needs Spike)</button>`;
   const timer=run.timed?`<div class="ctimer"><span id="ctxt">${Math.ceil(run.tLeft)}s</span><div class="cbar"><span id="cfill" style="width:${run.tLeft/run.timed*100}%"></span></div></div>`:'';
   const pbar=run.patience&&!t.done?`<div class="pbar" aria-label="Patience"><span id="pfill" style="width:${t.pLeft/run.patience*100}%;${t.pLeft<run.patience*.3?'background:var(--bad)':''}"></span></div>`:'';
   const nextBtn=t.done&&!run.timed?`<button class="btn" id="nextBtn">${run.over?'See results':'Next student'}</button>`:'';
@@ -1417,7 +1419,7 @@ function finishTask(msg){
   run.results[run.i]=first; run.score++;
   if(first){ run.first++; run.combo++; } else run.combo=0;
   let bonus='';
-  if(first&&S.owned.cocoa&&run.combo%3===0&&!run.timed){ gain++; bonus=' (cocoa streak!)'; }
+  if(first&&out('cocoa')&&run.combo%3===0&&!run.timed){ gain++; bonus=' (cocoa streak!)'; }
   if(run.patience&&cur.pLeft>0){ gain++; bonus+=' (speedy!)'; }
   run.earned+=gain; S.bm+=gain; S.shelved++; save(); updateBM();
   sfx('ding'); setTimeout(()=>sfx('coin'),250); libReact('cheer');
@@ -1516,7 +1518,7 @@ function chooseOption(i,el){
   }
 }
 function useHint(){
-  if(!S.owned.cactus){ say('Adopt Spike in the Cozy Catalog to unlock hints!',...POS.cactus); setLib('Hints come from <b>Spike the Talking Cactus</b>. Adopt him in the Cozy Catalog! For now, check the <b>Cheat Sheet</b> button up top.',null); return; }
+  if(!out('cactus')){ const away=S.owned.cactus; say(away?'Spike is put away right now!':'Adopt Spike in the Cozy Catalog to unlock hints!',...POS.cactus); setLib(away?'Spike is put away. Put him back out in the <b>Cozy Catalog</b> to get hints. For now, check the <b>Cheat Sheet</b> button up top.':'Hints come from <b>Spike the Talking Cactus</b>. Adopt him in the Cozy Catalog! For now, check the <b>Cheat Sheet</b> button up top.',null); return; }
   if(cur.hint||cur.done) return;
   cur.hint=true; sfx('pop');
   const t=cur; let line='';
@@ -1561,7 +1563,7 @@ function endRun(){
     if(R.kind==='day'){ S.stars[R.day]=Math.max(S.stars[R.day]||0,stars); S.unlocked=Math.max(S.unlocked,R.day+2); }
   }
   let bonus=0, bonusLines='';
-  if(S.owned.cat){ bonus+=5; bonusLines+=`<div class="stat"><b>+5</b><span>Dewey the cat bonus</span></div>`; }
+  if(out('cat')){ bonus+=5; bonusLines+=`<div class="stat"><b>+5</b><span>Dewey the cat bonus</span></div>`; }
   if(!isC&&R.first===R.tasks.length){ bonus+=5; bonusLines+=`<div class="stat"><b>+5</b><span>perfect shift bonus</span></div>`; }
   if(isC&&stars){ bonus+=stars*3; bonusLines+=`<div class="stat"><b>+${stars*3}</b><span>challenge star bonus</span></div>`; }
   S.bm+=bonus; R.earned+=bonus; save(); updateBM(); sfx('pop');
@@ -1596,19 +1598,22 @@ function showShop(tab){
     if(!own){
       if(u.needs&&!S.owned[u.needs]) act=`<button class="btn" disabled>Needs the Record Player</button>`;
       else act=`<button class="btn" data-buy="${u.id}" ${can?'':'disabled'}>${can?'Get it':'Need '+(u.cost-S.bm)+' more'} · ${u.cost}</button>`;
-    } else if(!u.slot) act='<span class="owned">In your library ✓</span>';
+    } else if(!u.slot) act=S.hidden[u.id]?`<button class="btn" data-show="${u.id}">Put it out</button>`:`<button class="btn ghost" data-hide="${u.id}">Put away</button>`;
     else if(u.slot==='cardigan') act=on?'<span class="owned">Wearing it ✓</span>':`<button class="btn" data-eq="${u.id}">Wear it</button>`;
     else if(u.slot==='record') act=on&&S.music?`<button class="btn ghost" data-stop="1">Stop</button>`:`<button class="btn" data-eq="${u.id}">Play</button>`;
     else act=on?`<button class="btn ghost" data-off="${u.slot}">${SLOT_LABEL[u.slot][1]}</button>`:`<button class="btn" data-eq="${u.id}">${SLOT_LABEL[u.slot][0]}</button>`;
-    h+=`<div class="item${on?' on':''}">${previewSVG(u)}<span class="nm">${u.name}</span><span class="pk">${u.perk}</span>${act}</div>`;
+    const lit=on||(own&&!u.slot&&!S.hidden[u.id]&&u.cat==='lib');
+    h+=`<div class="item${lit?' on':''}">${previewSVG(u)}<span class="nm">${u.name}</span><span class="pk">${u.perk}</span>${act}</div>`;
   });
-  h+=`</div>${shopTab==='holiday'?'<p class="ha">One holiday set can be up at a time. Switch whenever you like.</p>':''}<div class="row"><button class="btn ghost" id="toSched">Back to schedule</button></div>`;
+  h+=`</div>${shopTab==='holiday'?'<p class="ha">One holiday set can be up at a time. Switch whenever you like.</p>':shopTab==='lib'?'<p class="ha">Put away anything you own and bring it back any time. Spike, Dewey, and the cocoa cart only give their bonuses while they\'re out.</p>':''}<div class="row"><button class="btn ghost" id="toSched">Back to schedule</button></div>`;
   panel.innerHTML=h;
   panel.querySelectorAll('[data-tab]').forEach(b=>b.onclick=()=>showShop(b.dataset.tab));
   panel.querySelectorAll('[data-buy]').forEach(b=>b.onclick=()=>buy(b.dataset.buy));
   panel.querySelectorAll('[data-eq]').forEach(b=>b.onclick=()=>equip(b.dataset.eq));
   panel.querySelectorAll('[data-off]').forEach(b=>b.onclick=()=>{ S.equip[b.dataset.off]=null; save(); drawScene(); sfx('step'); showShop(); });
   panel.querySelectorAll('[data-stop]').forEach(b=>b.onclick=()=>{ setMusic(false); showShop(); });
+  panel.querySelectorAll('[data-hide]').forEach(b=>b.onclick=()=>{ const id=b.dataset.hide; S.hidden[id]=true; if(id==='record') setMusic(false); save(); drawScene(); sfx('step'); showShop(); });
+  panel.querySelectorAll('[data-show]').forEach(b=>b.onclick=()=>{ const id=b.dataset.show; delete S.hidden[id]; save(); drawScene(); sfx('pop'); const el=document.getElementById('up-'+id); if(el) el.classList.add('pop'); say(BUY_LINES[id]||'Welcome back!',...(POS[id]||POS.lib)); showShop(); });
   $('#toSched').onclick=showSchedule;
 }
 const BUY_LINES={rug:'Ooh, a rug! My toes are so happy.',posters:'READ posters! Very on brand for us.',cactus:'Spike: Hi! I give hints now. And emotional support.',lights:'Twinkle twinkle, little shelf. Try dimming the room lights!',plant:'Gerald: FINALLY. A stage worthy of my leaves.',cat:'DEWEY! Who\'s a good library cat?',cocoa:'Cocoa for everyone! Not near the books, please.',beanbag:'Dibs. Wait, I\'m the librarian. Okay, no dibs.',record:'Tap the record player for tunes!',owlclock:'Whooo knows what time it is? This owl.',cloudclock:'A sleepy little cloud clock. Adorable.',harvest:'Leaves on the shelves! Very New Hampshire.',spooky:'Spooky season! Dim the lights for the full effect.',winter:'Let it snow! Dim the lights to see the tree glow.',lanterns:'The lanterns look magical with the lights down low.',hearts:'Paper hearts everywhere. I love it here.',spring:'Blossoms! Gerald is pretending not to be jealous.'};
@@ -1689,7 +1694,7 @@ $('#bCheat').onclick=()=>confirmLeave(showCheat);
 $('#bSound').onclick=()=>{ S.sound=!S.sound; save(); updateBM(); if(S.sound) sfx('ding'); };
 $('#bMusic').onclick=()=>setMusic(!S.music);
 $('#dim').oninput=e=>{ S.dim=+e.target.value; applyDim(); };
-$('#dim').onchange=()=>{ save(); if(S.dim<50&&S.owned.plant&&Math.random()<.5) say('Gerald: Ooh, moody lighting. I approve.',...POS.plant); };
+$('#dim').onchange=()=>{ save(); if(S.dim<50&&out('plant')&&Math.random()<.5) say('Gerald: Ooh, moody lighting. I approve.',...POS.plant); };
 
 /* ---------------- boot ---------------- */
 S.music=false; // audio needs a tap to start
