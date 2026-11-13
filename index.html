@@ -41,7 +41,7 @@
 body{background:var(--bg);color:var(--ink);font-family:var(--font-body);font-size:16px;line-height:1.45}
 .app{max-width:980px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:14px 40px;display:flex;flex-direction:column;gap:14px}
 button{font:inherit;color:inherit;cursor:pointer}
-button:focus-visible,.book:focus-visible{outline:3px solid var(--accent2);outline-offset:2px}
+button:focus-visible,.book:focus-visible,input:focus-visible{outline:3px solid var(--accent2);outline-offset:2px}
 
 /* top bar */
 .topbar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:space-between}
@@ -58,14 +58,24 @@ button:focus-visible,.book:focus-visible{outline:3px solid var(--accent2);outlin
 /* scene */
 .scene-wrap{position:relative;border-radius:20px;overflow:hidden;border:4px solid var(--wood);background:var(--wall)}
 #scene{display:block;width:100%;height:auto}
-.bubble{position:absolute;background:var(--panel);color:var(--ink);border:2px solid var(--ink);border-radius:14px;padding:5px 10px;font-size:13px;font-weight:700;max-width:220px;pointer-events:none;opacity:0;transition:opacity .25s;white-space:normal;text-align:center}
+.bubble{position:absolute;background:var(--panel);color:var(--ink);border:2px solid var(--ink);border-radius:14px;padding:5px 10px;font-size:13px;font-weight:700;max-width:230px;pointer-events:none;opacity:0;transition:opacity .25s;white-space:normal;text-align:center}
 .bubble.show{opacity:1}
 @media (max-width:640px){.bubble{font-size:11px;max-width:62%;padding:3px 8px}}
+.scene-bar{display:flex;gap:10px 18px;flex-wrap:wrap;align-items:center;justify-content:space-between;margin-top:-4px}
+.dimmer{display:flex;align-items:center;gap:8px;font-weight:700;font-size:14px;color:var(--muted)}
+.dimmer input{accent-color:var(--accent2);width:150px}
+.musicbar{display:flex;align-items:center;gap:8px;font-size:14px;color:var(--muted);min-width:0}
+.musicbar span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .clickable{cursor:pointer}
 .w{fill:var(--wall)} .w2{fill:var(--wall2)} .tr{fill:var(--trim)} .fl{fill:var(--floor)} .fl2{stroke:var(--floor2)}
 .wd{fill:var(--wood)} .wl{fill:var(--woodlt)} .sb{fill:var(--shelfback)} .sky{fill:var(--sky)}
-.ink{fill:var(--ink)} .inks{stroke:var(--ink)} .ac{fill:var(--accent)} .ac2{fill:var(--accent2)} .tl{fill:var(--teal)} .pn{fill:var(--panel)}
-.sun{opacity:var(--sun)} .stars{opacity:var(--stars)} .glow{opacity:calc(var(--glow) * .55)}
+.ink{fill:var(--ink)} .ac{fill:var(--accent)} .ac2{fill:var(--accent2)} .tl{fill:var(--teal)} .pn{fill:var(--panel)}
+.sun{opacity:var(--sun)} .stars{opacity:var(--stars)}
+#dimmerRect{opacity:var(--dimo,0)}
+.glow{opacity:max(calc(var(--glow) * .55), calc(var(--dimg,0) * .8))}
+.cone{opacity:max(calc(var(--glow) * .35), calc(var(--dimg,0) * .6))}
+.halo{opacity:max(calc(var(--glow) * .3), calc(var(--dimg,0) * .75))}
+.lit{opacity:max(calc(var(--glow) * .85), calc(var(--dimg,0) * 1.3))}
 #lib{transform-box:fill-box;transform-origin:50% 100%;animation:bob 3.2s ease-in-out infinite}
 #lib.cheer{animation:cheer .6s ease}
 #lib.think{animation:think .7s ease}
@@ -76,17 +86,26 @@ button:focus-visible,.book:focus-visible{outline:3px solid var(--accent2);outlin
 .steam{animation:steam 3s ease-in-out infinite;opacity:.6}
 .note{opacity:0}
 .music-on .note{animation:floatnote 2.6s ease-in infinite}
-.up{transition:opacity .5s}
+.hand{transform-box:view-box;animation:spin 60s linear infinite}
+.owl-eyes{animation:look 5s ease-in-out infinite}
+.flake{animation:fall 7s linear infinite}
+.flap{transform-box:fill-box;transform-origin:center;animation:flap 1.6s ease-in-out infinite}
+.sway{transform-box:fill-box;transform-origin:50% 0%;animation:sway 4s ease-in-out infinite}
 .up.pop{animation:pop .7s ease}
 @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-2px)}}
 @keyframes cheer{0%,100%{transform:translateY(0)}40%{transform:translateY(-12px)}}
 @keyframes think{0%,100%{transform:rotate(0)}30%{transform:rotate(-3deg)}70%{transform:rotate(3deg)}}
 @keyframes blink{0%,94%,100%{transform:scaleY(1)}97%{transform:scaleY(.1)}}
 @keyframes swish{0%,100%{transform:rotate(0)}50%{transform:rotate(14deg)}}
-@keyframes twinkle{0%,100%{opacity:1}50%{opacity:.35}}
+@keyframes twinkle{0%,100%{opacity:1}50%{opacity:.4}}
 @keyframes steam{0%{transform:translateY(0);opacity:0}30%{opacity:.6}100%{transform:translateY(-10px);opacity:0}}
 @keyframes floatnote{0%{transform:translate(0,0);opacity:0}20%{opacity:1}100%{transform:translate(14px,-40px);opacity:0}}
 @keyframes pop{0%{transform:scale(.6);opacity:0}70%{transform:scale(1.06);opacity:1}100%{transform:scale(1)}}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes look{0%,40%,100%{transform:translateX(0)}50%,80%{transform:translateX(3px)}}
+@keyframes fall{0%{transform:translateY(-10px)}100%{transform:translateY(95px)}}
+@keyframes flap{0%,100%{transform:scaleX(1) translateY(0)}50%{transform:scaleX(.7) translateY(-3px)}}
+@keyframes sway{0%,100%{transform:rotate(-3deg)}50%{transform:rotate(3deg)}}
 
 /* panel */
 .panel{background:var(--panel);border:2px solid var(--line);border-radius:20px;padding:18px;display:flex;flex-direction:column;gap:16px}
@@ -105,11 +124,14 @@ button:focus-visible,.book:focus-visible{outline:3px solid var(--accent2);outlin
 .day{text-align:left;border:2px solid var(--line);background:var(--panel2);border-radius:16px;padding:14px;display:flex;flex-direction:column;gap:6px;min-height:128px}
 .day:hover:not([disabled]){border-color:var(--teal)}
 .day[disabled]{opacity:.5;cursor:not-allowed}
+.day.chal{border-style:dashed;border-color:var(--accent)}
 .day .dn{font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:700}
 .day .dt{font-family:var(--font-display);font-size:19px;font-weight:700;line-height:1.1}
 .day .ds{font-size:14px;color:var(--muted)}
+.day .db{font-size:13px;font-weight:700;color:var(--accent)}
 .stars-row{display:flex;gap:2px;margin-top:auto}
 .stars-row svg{width:18px;height:18px}
+.sec-h{display:flex;flex-direction:column;gap:4px;margin-top:8px}
 
 /* dialogue */
 .dialog{display:grid;grid-template-columns:1fr 1fr;gap:10px}
@@ -118,6 +140,11 @@ button:focus-visible,.book:focus-visible{outline:3px solid var(--accent2);outlin
 .who{display:inline-block;font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:2px}
 .say p{font-size:16px}
 .say.good{border-color:var(--good)} .say.bad{border-color:var(--bad)}
+.pbar{height:8px;border-radius:99px;background:var(--line);overflow:hidden;margin-top:8px}
+.pbar span{display:block;height:100%;width:100%;background:var(--good);transition:width .1s linear}
+.ctimer{display:flex;align-items:center;gap:10px;font-weight:700;font-variant-numeric:tabular-nums}
+.ctimer .cbar{flex:1;height:12px;border-radius:99px;background:var(--line);overflow:hidden}
+.ctimer .cbar span{display:block;height:100%;background:var(--accent)}
 
 /* work area */
 .work{display:flex;gap:16px;align-items:stretch;flex-wrap:wrap}
@@ -129,18 +156,23 @@ button:focus-visible,.book:focus-visible{outline:3px solid var(--accent2);outlin
 .hc{font-family:var(--font-label);font-weight:700;font-size:15px;margin-top:4px;background:#FFFDF5;color:#222;border-radius:4px;padding:2px 6px;align-self:flex-start}
 .shelf{flex:1 1 380px;min-width:0;border-radius:12px;background:var(--shelfback);padding:10px 8px 0;border:4px solid var(--wood);border-bottom:0;position:relative}
 .shelf::after{content:"";display:block;height:14px;margin:0 -12px;background:var(--woodlt);border-radius:3px;box-shadow:0 4px 0 var(--wood)}
+.shelf.cart{background:var(--panel2);border-color:#8A93A0;border-radius:12px 12px 4px 4px}
+.shelf.cart::after{background:#8A93A0;box-shadow:0 4px 0 #5F6873;height:10px}
+.cart-wheels{display:flex;justify-content:space-between;padding:0 18px;margin-top:-2px}
+.cart-wheels span{width:16px;height:16px;border-radius:50%;background:#3B3B3B;border:3px solid #8A93A0}
 .books{display:flex;align-items:flex-end;justify-content:center;min-height:176px}
 .book{flex:0 1 46px;min-width:28px;height:var(--h);background:var(--c);color:var(--t);border-radius:4px 4px 2px 2px;position:relative;display:flex;flex-direction:column;align-items:center;justify-content:space-between;padding:8px 2px 5px;box-shadow:inset -5px 0 0 rgba(0,0,0,.16),inset 3px 0 0 rgba(255,255,255,.18);border:0;margin:0 1px;overflow:hidden}
 .book::before{content:"";position:absolute;left:0;right:0;top:16%;height:4px;background:rgba(255,255,255,.35)}
-button.book:hover{transform:translateY(-6px)}
 button.book{transition:transform .15s}
+button.book:hover{transform:translateY(-6px)}
+.book.sel{transform:translateY(-16px)!important;box-shadow:0 0 0 3px var(--accent2),inset -5px 0 0 rgba(0,0,0,.16)}
+.book.hint{box-shadow:0 0 0 3px var(--accent2),0 0 14px var(--accent2)}
 .spine-txt{writing-mode:vertical-rl;transform:rotate(180deg);font-family:var(--font-display);font-weight:700;font-size:13px;line-height:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-height:calc(var(--h) - 62px);margin-top:8px}
 .book.nf .spine-txt{font-family:var(--font-body);font-size:11px}
 .label{background:#FFFDF5;color:#222;font-family:var(--font-label);font-weight:700;font-size:10px;line-height:1.1;padding:2px 1px;border-radius:2px;width:100%;text-align:center;overflow-wrap:anywhere}
 .book.mini{flex:0 0 52px;height:150px}
 .book.placed{animation:placed .8s ease}
 .book.wrongpick{animation:shake .4s}
-.book.lifted{opacity:.15}
 .book.dim{opacity:.35;pointer-events:none}
 @keyframes placed{0%{transform:translateY(-30px);box-shadow:0 0 0 4px var(--accent2)}100%{transform:none}}
 .slot{flex:0 0 16px;align-self:stretch;border:0;background:transparent;position:relative;padding:0;border-radius:6px}
@@ -153,6 +185,16 @@ button.book{transition:transform .15s}
 @keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
 .shelf.done .slot{visibility:hidden}
 
+/* duel */
+.duel{display:flex;align-items:center;justify-content:center;gap:14px;flex-wrap:wrap}
+.duel-b{display:flex;align-items:flex-end;gap:10px;padding:12px;border-radius:16px;border:2px solid var(--wood);background:var(--panel2);box-shadow:0 3px 0 var(--wood);text-align:left;min-width:0;max-width:280px}
+.duel-b:hover{background:var(--panel)}
+.duel-b.bad{animation:shake .4s;border-color:var(--bad)}
+.duel-info{display:flex;flex-direction:column;gap:4px;min-width:0}
+.duel-info .hc{font-size:18px}
+.vs{font-family:var(--font-display);font-weight:700;font-size:20px;color:var(--muted)}
+.rounds{text-align:center;font-weight:700;color:var(--muted);font-size:14px}
+
 /* choices (end-cap signs) */
 .choices{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
 .choice{text-align:left;border:2px solid var(--wood);background:var(--panel2);border-radius:12px;padding:10px 12px;display:flex;flex-direction:column;gap:2px;box-shadow:0 3px 0 var(--wood)}
@@ -161,7 +203,6 @@ button.book{transition:transform .15s}
 .choice .cl{font-weight:700;line-height:1.2}
 .choice .cd{font-size:13px;color:var(--muted);line-height:1.3}
 .choice.bad{animation:shake .4s;border-color:var(--bad)}
-.choice.right{border-color:var(--good);background:var(--panel)}
 .choice.dim{opacity:.3;pointer-events:none}
 .card-cat{background:#FFFDF5;color:#222;border-radius:10px;padding:10px 14px;border:1px solid #C9C2B0;font-family:var(--font-label);font-weight:700;box-shadow:2px 3px 0 rgba(0,0,0,.12);max-width:360px;background-image:repeating-linear-gradient(#FFFDF5 0 22px,#D7E6F2 22px 23px)}
 .card-cat .k{color:#B03A5A}
@@ -171,11 +212,16 @@ button.book{transition:transform .15s}
 .dot{width:12px;height:12px;border-radius:50%;background:var(--line)}
 .dot.on{background:var(--accent2)} .dot.ok{background:var(--good)} .dot.meh{background:var(--teal)}
 .earn{font-weight:700;color:var(--good)}
+.earn.neg{color:var(--bad)}
 
 /* shop */
+.tabs{display:flex;gap:6px;flex-wrap:wrap}
+.tab{padding:8px 14px;border-radius:999px;border:2px solid var(--line);background:transparent;font-weight:700}
+.tab[aria-selected="true"]{background:var(--ink);color:var(--panel);border-color:var(--ink)}
 .shop{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px}
 .item{border:2px solid var(--line);background:var(--panel2);border-radius:16px;padding:12px;display:flex;flex-direction:column;gap:6px}
-.item svg{width:100%;height:96px;background:var(--wall);border-radius:10px}
+.item.on{border-color:var(--good)}
+.item svg{width:100%;height:110px;background:var(--wall);border-radius:10px}
 .item .nm{font-family:var(--font-display);font-weight:700;font-size:18px;line-height:1.1}
 .item .pk{font-size:14px;color:var(--muted);flex:1}
 .item .btn{align-self:flex-start;padding:6px 14px;font-size:14px}
@@ -185,6 +231,7 @@ button.book{transition:transform .15s}
 .lesson{display:flex;gap:16px;flex-wrap:wrap;align-items:flex-end}
 .lesson .txt{flex:1 1 320px;min-width:0;display:flex;flex-direction:column;gap:10px}
 .lesson .ex{flex:0 1 260px;min-width:0}
+.twist{background:var(--panel2);border-left:4px solid var(--accent);border-radius:8px;padding:8px 12px;font-size:15px}
 .ex .books{min-height:160px}
 .ex .shelf{flex:none}
 .cheat{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px}
@@ -209,6 +256,8 @@ button.book{transition:transform .15s}
   .pill .sr{display:none}
   .spine-txt{font-size:11px}
   .panel{padding:14px}
+  .dimmer input{width:110px}
+  .duel-b{padding:8px}
 }
 @media (prefers-reduced-motion: reduce){
   *,*::before,*::after{animation:none!important;transition:none!important}
@@ -227,13 +276,16 @@ button.book{transition:transform .15s}
       <button class="tbtn" id="bShop">Cozy Catalog</button>
       <button class="tbtn" id="bCheat">Cheat Sheet</button>
       <button class="tbtn" id="bSound" aria-pressed="true">Sound</button>
-      <button class="tbtn" id="bMusic" aria-pressed="false" hidden>Music</button>
     </div>
   </header>
 
   <div class="scene-wrap" id="sceneWrap">
     <svg id="scene" viewBox="0 0 800 300" role="img" aria-label="The Thinkerton Academy library with Ms. Pagecastle at the circulation desk"></svg>
     <div class="bubble" id="bubble"></div>
+  </div>
+  <div class="scene-bar">
+    <label class="dimmer" for="dim"><svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 10 Q12 0 19 10 Z" class="tl"/><rect x="11" y="10" width="2" height="9" class="ink"/><rect x="7" y="19" width="10" height="3" rx="1" class="ink"/></svg>Room lights <input type="range" id="dim" min="15" max="100" step="1" value="100" aria-label="Room lights brightness"></label>
+    <div class="musicbar" id="musicbar" hidden><button class="tbtn" id="bMusic" aria-pressed="false">Play music</button><span id="nowPlaying"></span></div>
   </div>
 
   <section class="panel" id="panel" aria-live="polite"></section>
@@ -339,6 +391,7 @@ const NF_RAW = `004.16|WIL|Inside Your Laptop
 551.46|DEE|Secrets of the Deep Ocean
 567.9|BON|Dinosaur Discoveries
 576.8|DAR|Evolution in Action
+581.6|LEA|Plants with Personality
 591.5|HOW|Animal Superpowers
 597.3|FIN|Shark Science
 597.9|SCA|Reptiles Rule
@@ -407,7 +460,7 @@ const DEWEY = [
   ['200','Religion','world religions and mythology'],
   ['300','Social Sciences','government, money, school, careers, folklore'],
   ['400','Language','learning languages, grammar, dictionaries'],
-  ['500','Science','math, space, earth, animals, dinosaurs'],
+  ['500','Science','math, space, earth, plants, animals'],
   ['600','Technology','medicine, the body, cooking, cars, pets'],
   ['700','Arts & Recreation','art, music, sports, crafts, movies'],
   ['800','Literature','poetry, plays, essays, writing'],
@@ -432,6 +485,7 @@ const TOPICS = [
   ['sharks','my bio project','597.3'],
   ['volcanoes','Earth Science','551.21'],
   ['dinosaurs','my little brother (okay, and me)','567.9'],
+  ['houseplants','keeping my monstera alive','581.6'],
   ['the periodic table','Chemistry','546'],
   ['algebra help','tomorrow\'s quiz','512'],
   ['baking cookies','the bake sale','641.86'],
@@ -454,6 +508,8 @@ const TOPICS = [
 
 const FRANGES = [['A','C'],['D','G'],['H','L'],['M','R'],['S','Z']];
 const SPINES = [['#C2456B','#fff'],['#2F7A78','#fff'],['#F2B43C','#2B2A3D'],['#4A6FA5','#fff'],['#7E5BA6','#fff'],['#E07A4F','#fff'],['#4F9A5E','#fff'],['#8B4A3C','#fff'],['#F4A7B9','#2B2A3D'],['#9CC5E0','#2B2A3D'],['#3D405B','#fff'],['#D9C27A','#2B2A3D'],['#1F6F8B','#fff']];
+const DEC_PAIRS = [['5','45'],['3','29'],['12','2'],['5','505'],['09','1'],['6','58'],['75','8'],['2','199'],['4','04'],['33','3'],['1','099'],['25','3']];
+const CUTS = ['ADA','BAK','CHO','DIA','EVA','FOX','GUP','HAN','IVE','JUN','KIM','LOP','MOR','NGU','OKA','PAR','QUI','ROS','SAN','TAN','VEL','WAT','YOU','ZHA'];
 
 const NAMES = ['Maya','Jordan','Theo','Priya','Marcus','Sofia','Eli','Aaliyah','Ben','Nadia','Diego','Hana','Owen','Zoe','Malik','Grace','Luca','Imani','Sam','Ava','Kai','Rosa','Noah','Leila'];
 const SKIN = ['#F3D0B0','#E5B48F','#C98E62','#9C6644','#6E4530','#F6DCC7'];
@@ -471,9 +527,10 @@ const shuffle = a => { a=a.slice(); for(let i=a.length-1;i>0;i--){const j=rnd(i+
 const esc = s => String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const norm = s => s.normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase().replace(/[^a-z]/g,'');
 const stripArt = t => t.replace(/^(the|a|an)\s+/i,'');
+const mkN = (call,cut,title) => { const num=parseFloat(call); return {kind:'N',call,num,cut,title,cls:Math.floor(num/100)}; };
 
 const FIC = FIC_RAW.split('\n').map(l=>{const [last,first,title]=l.split('|');return {kind:'F',last,first,title,cut:norm(last).slice(0,3).toUpperCase()};});
-const NF = NF_RAW.split('\n').map(l=>{const [call,cut,title]=l.split('|');const num=parseFloat(call);return {kind:'N',call,num,cut,title,cls:Math.floor(num/100)};});
+const NF = NF_RAW.split('\n').map(l=>{const [call,cut,title]=l.split('|');return mkN(call,cut,title);});
 
 function cmp(a,b){
   if(a.kind==='F'){
@@ -488,6 +545,11 @@ function cmp(a,b){
 const isSorted = arr => arr.every((b,i)=>i===0||cmp(arr[i-1],b)<0);
 const callStr = b => b.kind==='F' ? `FIC ${b.cut}` : `${b.call} ${b.cut}`;
 const nameStr = b => b.kind==='F' ? `${callStr(b)} (${b.last})` : callStr(b);
+function minSwaps(arr){
+  const sorted=arr.slice().sort(cmp); const pos=arr.map(b=>sorted.indexOf(b)); const seen=new Array(arr.length).fill(false); let sw=0;
+  for(let i=0;i<arr.length;i++){ if(seen[i]) continue; let j=i, len=0; while(!seen[j]){ seen[j]=true; j=pos[j]; len++; } sw+=len-1; }
+  return sw;
+}
 
 // why does a come before b?
 function explain(a,b){
@@ -514,9 +576,13 @@ function explain(a,b){
 
 /* ---------------- state ---------------- */
 const KEY='thinkerton-shelf-life-v1';
-let S = {bm:0, owned:{}, stars:{}, unlocked:1, sound:true, music:false, shelved:0};
+let S = {bm:0, owned:{}, stars:{}, unlocked:1, sound:true, music:false, shelved:0, dim:100, best:{}, cstars:{}, equip:{}};
 try{ const raw=localStorage.getItem(KEY); if(raw) S=Object.assign(S,JSON.parse(raw)); }catch(e){}
+S.equip=Object.assign({cardigan:'mustard',record:'lofi',holiday:null,head:null,neck:null,face:null,clock:null},S.equip||{});
+S.best=S.best||{}; S.cstars=S.cstars||{}; if(S.dim==null) S.dim=100;
 function save(){ try{ localStorage.setItem(KEY,JSON.stringify(S)); }catch(e){} }
+const FREE = {mustard:true};
+function has(id){ if(FREE[id]) return true; if(id==='lofi') return !!S.owned.record; return !!S.owned[id]; }
 
 /* ---------------- audio ---------------- */
 let AC=null;
@@ -540,28 +606,49 @@ function sfx(n){
     else if(n==='purr'){ for(let i=0;i<6;i++) tone(70+rnd(15),i*.09,.12,'sawtooth',.04); }
     else if(n==='meow'){ const a=ac(); if(!a) return; const o=a.createOscillator(),g=a.createGain(); o.type='triangle'; const t0=a.currentTime; o.frequency.setValueAtTime(600,t0); o.frequency.linearRampToValueAtTime(900,t0+.12); o.frequency.linearRampToValueAtTime(500,t0+.4); g.gain.setValueAtTime(0,t0); g.gain.linearRampToValueAtTime(.08,t0+.05); g.gain.exponentialRampToValueAtTime(.0001,t0+.45); o.connect(g); g.connect(a.destination); o.start(t0); o.stop(t0+.5); }
     else if(n==='step'){ tone(330,0,.08,'triangle',.05); }
+    else if(n==='leaf'){ tone(392,0,.2,'sine',.06); tone(330,.12,.3,'sine',.05); }
   }catch(e){}
 }
-const MELODY=[523,659,784,659,587,698,880,698,523,659,784,1046,988,784,659,587];
+let rainSrc=null;
+function startRain(){ const a=ac(); if(!a||rainSrc) return; const len=a.sampleRate*2, buf=a.createBuffer(1,len,a.sampleRate), d=buf.getChannelData(0); for(let i=0;i<len;i++) d[i]=Math.random()*2-1; const s=a.createBufferSource(); s.buffer=buf; s.loop=true; const f=a.createBiquadFilter(); f.type='lowpass'; f.frequency.value=900; const g=a.createGain(); g.gain.value=.035; s.connect(f); f.connect(g); g.connect(a.destination); s.start(); rainSrc=s; }
+function stopRain(){ try{ rainSrc&&rainSrc.stop(); }catch(e){} rainSrc=null; }
+const MEL=[523,659,784,659,587,698,880,698,523,659,784,1046,988,784,659,587];
 const BASS=[131,131,147,147,175,175,131,131];
-let musicTimer=null, mi=0;
+const PENTA=[523,587,659,784,880,1046,1175,1319];
+const JAZZ=[[220,262,330,392],[147,220,262,349],[196,247,294,349],[262,330,392,494]];
+const CHIP=[[262,330,392,523],[220,262,330,440],[175,220,262,349],[196,247,294,392]];
+const TRACKS={
+  lofi:{step:300,play(i){ if(i%2===0) tone(MEL[(i/2)%MEL.length],0,.9,'sine',.045); if(i%4===0) tone(BASS[(i/4)%BASS.length],0,1.6,'triangle',.05); }},
+  jazz:{step:260,play(i){ const ch=JAZZ[Math.floor(i/8)%JAZZ.length]; if(i%8===0) ch.forEach((f,k)=>tone(f,k*.03,2,'triangle',.022)); if(i%2===0) tone(ch[0]/2*(i%4===0?1:1.5),0,.35,'sine',.05); if([3,5,6].includes(i%8)) tone(ch[(i*7)%4]*2,0,.4,'sine',.03); }},
+  chip:{step:150,play(i){ const ch=CHIP[Math.floor(i/16)%CHIP.length]; tone(ch[i%4]*2,0,.12,'square',.016); if(i%4===0) tone(ch[0]/2,0,.25,'triangle',.05); }},
+  bells:{step:420,play(i){ const seq=[0,2,4,2,5,4,2,1,0,4,7,5,4,2,1,0]; const f=PENTA[seq[i%seq.length]]; if(i%4!==3){ tone(f,0,2.2,'sine',.04); tone(f*2.76,0,.8,'sine',.008); } if(i%8===0) tone(262,0,3,'sine',.03); }},
+  lullaby:{step:480,play(i){ const m=[659,587,523,587,659,659,659,0,587,587,587,0,659,784,784,0]; const f=m[i%m.length]; if(f) tone(f,0,1.2,'sine',.04); if(i%3===0) tone(131+(Math.floor(i/6)%2)*65,0,1.6,'triangle',.04); }},
+  rain:{step:600,start:startRain,stop:stopRain,play(i){ if(i%2===0) tone(pick(PENTA)/(Math.random()<.5?1:2),0,2.5,'sine',.03); }},
+};
+let musicTimer=null, mi=0, playingId=null;
 function setMusic(on){
-  S.music=on; save();
-  $('#bMusic').setAttribute('aria-pressed',on?'true':'false');
-  $('#scene').classList.toggle('music-on',on&&!!S.owned.record);
-  clearInterval(musicTimer);
-  if(on&&S.owned.record){
-    ac();
-    musicTimer=setInterval(()=>{
-      if(!S.music) return;
-      if(mi%2===0) tone(MELODY[(mi/2)%MELODY.length],0,.9,'sine',.045);
-      if(mi%4===0) tone(BASS[(mi/4)%BASS.length],0,1.6,'triangle',.05);
-      mi++;
-    },300);
+  S.music=on&&!!S.owned.record; save();
+  clearInterval(musicTimer); musicTimer=null;
+  if(playingId&&TRACKS[playingId].stop) TRACKS[playingId].stop();
+  playingId=null;
+  if(S.music){
+    let id=S.equip.record; if(!TRACKS[id]||!has(id)) id='lofi';
+    const T=TRACKS[id]; ac(); playingId=id; mi=0;
+    if(T.start) T.start();
+    musicTimer=setInterval(()=>{ try{ T.play(mi); }catch(e){} mi++; },T.step);
   }
+  updateMusicBar();
+}
+function updateMusicBar(){
+  const bar=$('#musicbar'); bar.hidden=!S.owned.record;
+  const it=ITEMS.find(x=>x.id===(has(S.equip.record)?S.equip.record:'lofi'));
+  $('#bMusic').setAttribute('aria-pressed',S.music?'true':'false');
+  $('#bMusic').textContent=S.music?'Pause music':'Play music';
+  $('#nowPlaying').textContent=it?(S.music?'Now playing: ':'Record: ')+it.name:'';
+  const sc=$('#scene'); if(sc) sc.classList.toggle('music-on',!!S.music);
 }
 
-/* ---------------- scene ---------------- */
+/* ---------------- scene pieces ---------------- */
 function bookcase(x,y,w,h){
   let s=`<rect x="${x}" y="${y}" width="${w}" height="${h}" class="wd" rx="3"/><rect x="${x+6}" y="${y+6}" width="${w-12}" height="${h-12}" class="sb"/>`;
   const rows=4, rh=(h-12)/rows;
@@ -570,9 +657,7 @@ function bookcase(x,y,w,h){
     let bx=x+8;
     while(bx<x+w-14){
       const bw=5+rnd(7), bh=rh-8-rnd(10), c=pick(SPINES)[0];
-      if(Math.random()<.08 && bx<x+w-30){ // leaning book
-        s+=`<rect x="${bx}" y="${by-bh}" width="${bw}" height="${bh}" fill="${c}" opacity=".85" transform="rotate(14 ${bx} ${by})"/>`; bx+=bw+10; continue;
-      }
+      if(Math.random()<.08 && bx<x+w-30){ s+=`<rect x="${bx}" y="${by-bh}" width="${bw}" height="${bh}" fill="${c}" opacity=".85" transform="rotate(14 ${bx} ${by})"/>`; bx+=bw+10; continue; }
       s+=`<rect x="${bx}" y="${by-bh}" width="${bw}" height="${bh}" fill="${c}" opacity=".85" rx="1"/>`;
       bx+=bw+1;
     }
@@ -580,13 +665,31 @@ function bookcase(x,y,w,h){
   }
   return s;
 }
-
-function librarianSVG(){
-  return `<g id="lib" class="clickable" data-who="lib">
-    <rect x="252" y="140" width="96" height="80" rx="30" class="ac2"/>
-    <path d="M286 142 L300 168 L314 142 Z" class="tl"/>
+const heartD=(cx,cy,s)=>`M${cx} ${cy+s*.9} C${cx-s*1.6} ${cy-s*.1} ${cx-s*.8} ${cy-s*1.2} ${cx} ${cy-s*.35} C${cx+s*.8} ${cy-s*1.2} ${cx+s*1.6} ${cy-s*.1} ${cx} ${cy+s*.9}Z`;
+function garland(x0,x1,y,sag,n,item,stroke='#6B4A2E'){
+  let s=`<path d="M${x0} ${y} Q${(x0+x1)/2} ${y+sag*2} ${x1} ${y}" fill="none" stroke="${stroke}" stroke-width="1.4"/>`;
+  for(let k=1;k<n;k++){ const t=k/n; const x=x0+(x1-x0)*t; const yy=y+2*t*(1-t)*sag*2; s+=item(x,yy,k); }
+  return s;
+}
+const CARDIGANS={mustard:'#EFAE36',sage:'#7FB08A',berry:'#C2456B',lavender:'#A58BD6'};
+function librarianSVG(eq=S.equip,preview=false){
+  const card=CARDIGANS[eq.cardigan]||CARDIGANS.mustard;
+  const pocket=eq.cardigan==='berry'?'#EFAE36':'#C93B63';
+  let head='', neck='', glasses='';
+  if(eq.head==='beret') head=`<ellipse cx="310" cy="84" rx="26" ry="9" fill="#C93B63" transform="rotate(-14 310 84)"/><circle cx="313" cy="74" r="3" fill="#C93B63"/>`;
+  if(eq.head==='flowers') head=[[275,99,'#F29BB0'],[282,90,'#F6E7A6'],[292,85,'#FFFFFF'],[304,84,'#F29BB0'],[315,88,'#F6E7A6'],[323,96,'#FFFFFF']].map(([x,y,c],i)=>`<ellipse cx="${x+4}" cy="${y+3}" rx="4" ry="2" fill="#5DA46A" transform="rotate(${i*25-60} ${x} ${y})"/><circle cx="${x}" cy="${y}" r="4.2" fill="${c}"/><circle cx="${x}" cy="${y}" r="1.5" fill="#E2A13A"/>`).join('');
+  if(eq.head==='catears') head=`<path d="M274 98 Q300 70 326 98" fill="none" stroke="#2B2A3D" stroke-width="3"/><polygon points="275,90 279,66 293,82" fill="#2B2A3D"/><polygon points="325,90 321,66 307,82" fill="#2B2A3D"/><polygon points="279,84 281,72 289,81" fill="#F29BB0"/><polygon points="321,84 319,72 311,81" fill="#F29BB0"/>`;
+  if(eq.head==='beanie') head=`<path d="M268 100 Q268 60 300 60 Q332 60 332 100 Z" fill="#2C7775"/><path d="M282 66 V96 M292 62 V96 M300 61 V96 M308 62 V96 M318 66 V96" stroke="#23605E" stroke-width="2"/><rect x="265" y="92" width="70" height="11" rx="5" fill="#23605E"/><circle cx="300" cy="56" r="9" fill="#F3E9C6"/>`;
+  if(eq.neck==='bowtie') neck=`<polygon points="285,136 300,143 285,150" fill="#C93B63"/><polygon points="315,136 300,143 315,150" fill="#C93B63"/><circle cx="300" cy="143" r="3.5" fill="#A8304F"/>`;
+  if(eq.neck==='scarf') neck=`<rect x="306" y="140" width="12" height="36" rx="4" fill="#E07A4F" transform="rotate(-8 312 140)"/><rect x="274" y="132" width="52" height="13" rx="6" fill="#E07A4F"/><rect x="283" y="132" width="5" height="13" fill="#F3E9C6"/><rect x="297" y="132" width="5" height="13" fill="#F3E9C6"/><rect x="311" y="132" width="5" height="13" fill="#F3E9C6"/>`;
+  if(eq.neck==='booknecklace') neck=`<path d="M287 139 Q300 158 313 139" fill="none" stroke="#C9A23A" stroke-width="1.6"/><rect x="295.5" y="150" width="9" height="12" rx="1" fill="#4A6FA5"/><rect x="295.5" y="150" width="2" height="12" fill="#2E4A75"/>`;
+  if(eq.face==='heartglasses') glasses=`<path d="${heartD(290,112,9)}" fill="#F29BB0" fill-opacity=".35" stroke="#C93B63" stroke-width="2.4"/><path d="${heartD(310,112,9)}" fill="#F29BB0" fill-opacity=".35" stroke="#C93B63" stroke-width="2.4"/><path d="M298 110 h4" stroke="#C93B63" stroke-width="2.4"/>`;
+  else { const fc=eq.face==='goldframes'?'#C9A23A':'#2B2A3D'; glasses=`<circle cx="290" cy="112" r="9" fill="#fff" fill-opacity=".18" stroke="${fc}" stroke-width="2.4"/><circle cx="310" cy="112" r="9" fill="#fff" fill-opacity=".18" stroke="${fc}" stroke-width="2.4"/><path d="M299 111 h2" stroke="${fc}" stroke-width="2.4"/>`; }
+  return `<g ${preview?'':'id="lib" class="clickable" data-who="lib"'}>
+    <rect x="252" y="140" width="96" height="80" rx="30" fill="${card}"/>
+    <path d="M286 142 L300 168 L314 142 Z" fill="#2C7775"/>
     <circle cx="276" cy="176" r="3" fill="#fff" opacity=".7"/><circle cx="324" cy="176" r="3" fill="#fff" opacity=".7"/>
-    <rect x="262" y="160" width="12" height="14" rx="3" class="ac" opacity=".8"/>
+    <rect x="262" y="160" width="12" height="14" rx="3" fill="${pocket}" opacity=".85"/>
     <ellipse cx="300" cy="104" rx="34" ry="34" fill="#A8492B"/>
     <circle cx="300" cy="66" r="15" fill="#A8492B"/>
     <rect x="296" y="46" width="5" height="30" rx="1" fill="#F2C94C" transform="rotate(28 298 61)"/>
@@ -596,11 +699,10 @@ function librarianSVG(){
     <path d="M273 104 Q284 82 300 86 Q318 80 328 104 Q318 94 300 96 Q286 92 273 104Z" fill="#A8492B"/>
     <ellipse cx="285" cy="122" rx="5" ry="3" fill="#F29BB0" opacity=".8"/><ellipse cx="315" cy="122" rx="5" ry="3" fill="#F29BB0" opacity=".8"/>
     <g class="eye"><circle cx="290" cy="112" r="2.6" fill="#2B2A3D"/><circle cx="310" cy="112" r="2.6" fill="#2B2A3D"/></g>
-    <circle cx="290" cy="112" r="9" fill="#fff" fill-opacity=".18" stroke="#2B2A3D" stroke-width="2.4"/>
-    <circle cx="310" cy="112" r="9" fill="#fff" fill-opacity=".18" stroke="#2B2A3D" stroke-width="2.4"/>
-    <path d="M299 111 h2" stroke="#2B2A3D" stroke-width="2.4"/>
+    ${glasses}
     <path d="M293 126 Q300 132 307 126" fill="none" stroke="#2B2A3D" stroke-width="2.2" stroke-linecap="round"/>
     <rect x="272" y="122" width="5" height="7" rx="1" fill="#2C7775"/><circle cx="328" cy="125" r="3.5" fill="#C93B63"/>
+    ${neck}${head}
   </g>`;
 }
 
@@ -627,28 +729,57 @@ function studentSVG(st){
     <circle cx="0" cy="-120" r="20" fill="${skin}"/>
     <ellipse cx="-11" cy="-113" rx="4" ry="2.5" fill="#F29BB0" opacity=".6"/><ellipse cx="11" cy="-113" rx="4" ry="2.5" fill="#F29BB0" opacity=".6"/>
     <g class="eye"><circle cx="-7" cy="-121" r="2.4" fill="#2B2A3D"/><circle cx="7" cy="-121" r="2.4" fill="#2B2A3D"/></g>
-    ${mouth}
-    ${front}
-    ${book}`;
+    ${mouth}${front}${book}`;
 }
 
-const UPGRADES = [
-  {id:'rug', name:'Braided Reading Rug', cost:6, perk:'Instantly 40% cozier. Science.', box:[420,240,260,60],
+function clockSVG(id){
+  if(id==='owlclock') return `<g class="up" id="up-owlclock">
+    <polygon points="704,58 708,44 716,54" fill="#8B5A3C"/><polygon points="746,58 742,44 734,54" fill="#8B5A3C"/>
+    <ellipse cx="725" cy="82" rx="24" ry="30" fill="#8B5A3C"/><ellipse cx="725" cy="92" rx="16" ry="17" fill="#E9D3B0"/>
+    <circle cx="715" cy="68" r="8" fill="#fff"/><circle cx="735" cy="68" r="8" fill="#fff"/>
+    <g class="owl-eyes"><circle cx="714" cy="68" r="3.6" fill="#2B2A3D"/><circle cx="734" cy="68" r="3.6" fill="#2B2A3D"/></g>
+    <polygon points="721,75 729,75 725,81" fill="#EFAE36"/>
+    <circle cx="725" cy="93" r="11" fill="#FFFDF5" stroke="#6B4A2E" stroke-width="1.5"/>
+    <path d="M725 93 V86 M725 93 L730 95" stroke="#2B2A3D" stroke-width="1.6" stroke-linecap="round"/>
+    <path class="hand" style="transform-origin:725px 93px" d="M725 93 V84" stroke="#C93B63" stroke-width="1.2" stroke-linecap="round"/>
+    <ellipse cx="707" cy="98" rx="5" ry="10" fill="#6E4428" transform="rotate(14 707 98)"/><ellipse cx="743" cy="98" rx="5" ry="10" fill="#6E4428" transform="rotate(-14 743 98)"/></g>`;
+  if(id==='cloudclock') return `<g class="up" id="up-cloudclock">
+    <circle cx="708" cy="84" r="14" fill="#FFFDF5"/><circle cx="742" cy="84" r="14" fill="#FFFDF5"/><circle cx="725" cy="74" r="20" fill="#FFFDF5"/><rect x="700" y="80" width="50" height="18" rx="9" fill="#FFFDF5"/>
+    <circle cx="725" cy="80" r="12" fill="none" stroke="#9CC5E0" stroke-width="2"/>
+    <path d="M725 80 V71 M725 80 L731 83" stroke="#2B2A3D" stroke-width="1.8" stroke-linecap="round"/>
+    <path class="hand" style="transform-origin:725px 80px" d="M725 80 V69" stroke="#C93B63" stroke-width="1.2" stroke-linecap="round"/>
+    <path d="M708 90 q3 2 6 0 M736 90 q3 2 6 0" stroke="#2B2A3D" stroke-width="1.4" fill="none" stroke-linecap="round"/>
+    <ellipse cx="704" cy="94" rx="3.5" ry="2" fill="#F29BB0"/><ellipse cx="746" cy="94" rx="3.5" ry="2" fill="#F29BB0"/>
+    <path d="M714 106 l-3 6 M725 106 l-3 6 M736 106 l-3 6" stroke="#9CC5E0" stroke-width="2" stroke-linecap="round"/></g>`;
+  return `<circle cx="725" cy="80" r="20" class="pn" stroke="var(--wood)" stroke-width="4"/><path d="M725 80 V67 M725 80 L734 85" stroke="var(--ink)" stroke-width="2.5" stroke-linecap="round"/><path class="hand" style="transform-origin:725px 80px" d="M725 80 V64" stroke="#C93B63" stroke-width="1.2"/>`;
+}
+
+const bat=(x,y,s=1)=>`<g transform="translate(${x} ${y}) scale(${s})"><g class="flap"><path d="M0 0 Q-6 -8 -16 -4 Q-11 -2 -11 3 Q-6 0 0 4 Q6 0 11 3 Q11 -2 16 -4 Q6 -8 0 0Z" fill="#2B2A3D"/><circle cx="-2" cy="-1" r=".9" fill="#FFD36B"/><circle cx="2" cy="-1" r=".9" fill="#FFD36B"/></g></g>`;
+const pumpkin=(x,y,s,face)=>`<g transform="translate(${x} ${y}) scale(${s})"><ellipse cx="-7" cy="0" rx="9" ry="12" fill="#D9701F"/><ellipse cx="7" cy="0" rx="9" ry="12" fill="#D9701F"/><ellipse cx="0" cy="0" rx="9" ry="12.5" fill="#E8822E"/><rect x="-1.5" y="-17" width="3" height="7" rx="1" fill="#5B7A2E"/>${face?'<path d="M-8 -3 l3 -4 l3 4z M2 -3 l3 -4 l3 4z M-8 4 Q0 10 8 4 Q0 7 -8 4z" fill="#3B2412"/>':''}</g>`;
+const pumpkinGlow=(x,y,s)=>`<g transform="translate(${x} ${y}) scale(${s})" class="lit"><path d="M-8 -3 l3 -4 l3 4z M2 -3 l3 -4 l3 4z M-8 4 Q0 10 8 4 Q0 7 -8 4z" fill="#FFC94D"/></g>`;
+const paperFlake=(x,y,r)=>`<g class="sway"><path d="M${x} 0 V${y-r}" stroke="#D7E6F2" stroke-width="1"/><g stroke="#FFFFFF" stroke-width="2" stroke-linecap="round"><path d="M${x} ${y-r} V${y+r}"/><path d="M${x-r*.87} ${y-r/2} L${x+r*.87} ${y+r/2}"/><path d="M${x-r*.87} ${y+r/2} L${x+r*.87} ${y-r/2}"/></g><circle cx="${x}" cy="${y}" r="2" fill="#9CC5E0"/></g>`;
+const lantern=(x,y)=>`<g class="sway"><path d="M${x} 0 V${y-12}" stroke="#7A2E2E" stroke-width="1.2"/><rect x="${x-7}" y="${y-14}" width="14" height="4" rx="1" fill="#E2B65A"/><ellipse cx="${x}" cy="${y}" rx="14" ry="12" fill="#D23B3B"/><path d="M${x-7} ${y-10} Q${x-11} ${y} ${x-7} ${y+10} M${x} ${y-12} V${y+12} M${x+7} ${y-10} Q${x+11} ${y} ${x+7} ${y+10}" stroke="#A82A2A" stroke-width="1" fill="none"/><rect x="${x-7}" y="${y+10}" width="14" height="4" rx="1" fill="#E2B65A"/><path d="M${x-2} ${y+14} V${y+24} M${x} ${y+14} V${y+26} M${x+2} ${y+14} V${y+24}" stroke="#E2B65A" stroke-width="1.2"/></g>`;
+const lanternGlow=(x,y)=>`<ellipse cx="${x}" cy="${y}" rx="9" ry="8" fill="#FFD36B" class="lit"/><circle cx="${x}" cy="${y}" r="26" fill="#FF8A5B" class="halo"/>`;
+
+/* ---------------- catalog ---------------- */
+const ITEMS = [
+  // Library
+  {id:'rug', cat:'lib', name:'Braided Reading Rug', cost:6, perk:'Instantly 40% cozier. Science.', box:[420,240,260,60],
    draw:()=>`<g class="up" id="up-rug"><ellipse cx="550" cy="272" rx="122" ry="22" class="ac"/><ellipse cx="550" cy="272" rx="104" ry="17" class="ac2"/><ellipse cx="550" cy="272" rx="84" ry="13" class="tl"/><ellipse cx="550" cy="272" rx="62" ry="9" class="ac" opacity=".8"/></g>`},
-  {id:'posters', name:'Cute READ Posters', cost:10, perk:'Two posters for the wall. Motivational. Adorable.', box:[354,58,140,100],
+  {id:'posters', cat:'lib', name:'Cute READ Posters', cost:10, perk:'Two posters for the wall. Motivational. Adorable.', box:[354,58,140,100],
    draw:()=>`<g class="up" id="up-posters">
       <rect x="360" y="66" width="62" height="86" rx="4" class="ac"/>
       <rect x="380" y="62" width="22" height="8" fill="#F3E9C6" opacity=".9" transform="rotate(-6 391 66)"/>
-      <text x="391" y="112" text-anchor="middle" style="font-family:var(--font-display);font-weight:700;font-size:24px;fill:#fff">READ</text>
-      <text x="391" y="130" text-anchor="middle" style="font-family:var(--font-body);font-weight:700;font-size:8px;fill:#fff">it's lit(erature)</text>
+      <text x="391" y="110" text-anchor="middle" textLength="44" lengthAdjust="spacingAndGlyphs" style="font-family:var(--font-display);font-weight:700;font-size:19px;fill:#fff">READ</text>
+      <text x="391" y="128" text-anchor="middle" textLength="46" lengthAdjust="spacingAndGlyphs" style="font-family:var(--font-body);font-weight:700;font-size:7px;fill:#fff">it's lit(erature)</text>
       <rect x="432" y="66" width="62" height="86" rx="4" class="tl"/>
       <rect x="452" y="62" width="22" height="8" fill="#F3E9C6" opacity=".9" transform="rotate(5 463 66)"/>
-      <path d="M463 86 L444 80 L444 112 L463 118 Z" fill="#FFFDF5"/><path d="M463 86 L482 80 L482 112 L463 118 Z" fill="#F3E9C6"/>
-      <circle cx="455" cy="96" r="2" fill="#2B2A3D"/><circle cx="471" cy="96" r="2" fill="#2B2A3D"/>
-      <path d="M457 103 Q463 108 469 103" fill="none" stroke="#2B2A3D" stroke-width="1.8" stroke-linecap="round"/>
-      <text x="463" y="132" text-anchor="middle" style="font-family:var(--font-display);font-weight:700;font-size:9px;fill:#fff">GET LOST</text>
-      <text x="463" y="144" text-anchor="middle" style="font-family:var(--font-display);font-weight:700;font-size:9px;fill:#fff">IN A BOOK</text></g>`},
-  {id:'cactus', name:'Spike the Talking Cactus', cost:12, perk:'Unlocks hints! Spike narrows down where a book goes. Also tells jokes.', box:[368,138,54,66],
+      <path d="M463 84 L446 78 L446 108 L463 114 Z" fill="#FFFDF5"/><path d="M463 84 L480 78 L480 108 L463 114 Z" fill="#F3E9C6"/>
+      <circle cx="455" cy="93" r="2" fill="#2B2A3D"/><circle cx="471" cy="93" r="2" fill="#2B2A3D"/>
+      <path d="M457 100 Q463 105 469 100" fill="none" stroke="#2B2A3D" stroke-width="1.8" stroke-linecap="round"/>
+      <text x="463" y="130" text-anchor="middle" textLength="40" lengthAdjust="spacingAndGlyphs" style="font-family:var(--font-display);font-weight:700;font-size:8px;fill:#fff">GET LOST</text>
+      <text x="463" y="142" text-anchor="middle" textLength="44" lengthAdjust="spacingAndGlyphs" style="font-family:var(--font-display);font-weight:700;font-size:8px;fill:#fff">IN A BOOK</text></g>`},
+  {id:'cactus', cat:'lib', name:'Spike the Talking Cactus', cost:12, perk:'Unlocks hints! Spike narrows down where a book goes. Also tells jokes.', box:[368,138,54,66],
    draw:()=>`<g class="up clickable" id="up-cactus" data-who="cactus">
       <rect x="386" y="146" width="18" height="40" rx="9" fill="#5DA46A"/>
       <rect x="375" y="160" width="12" height="6" rx="3" fill="#5DA46A"/><rect x="375" y="151" width="6" height="15" rx="3" fill="#5DA46A"/>
@@ -658,18 +789,20 @@ const UPGRADES = [
       <path d="M392 168 Q395 171 398 168" fill="none" stroke="#2B2A3D" stroke-width="1.4" stroke-linecap="round"/>
       <circle cx="395" cy="145" r="4.5" fill="#F29BB0"/><circle cx="395" cy="145" r="1.6" fill="#F2C94C"/>
       <polygon points="380,184 410,184 406,200 384,200" fill="#C8623C"/><rect x="378" y="181" width="34" height="5" rx="2" fill="#B5532F"/></g>`},
-  {id:'lights', name:'Fairy Lights', cost:18, perk:'Twinkly string lights across the whole library.', box:[0,0,800,40],
+  {id:'lights', cat:'lib', name:'Fairy Lights', cost:18, perk:'Twinkly string lights. They glow brighter when you dim the room.', box:[0,0,800,40],
    draw:()=>{ let s=`<g class="up" id="up-lights"><path d="M0 8 Q100 32 200 8 T400 8 T600 8 T800 8" fill="none" stroke="#3B4A3A" stroke-width="1.5"/>`;
      const cols=['#F6C35B','#EE7193','#7FD1C9','#B9A3F0'];
-     for(let seg=0;seg<4;seg++) for(let k=1;k<8;k++){ const t=k/8; const y=(1-t)*(1-t)*8+2*(1-t)*t*(seg%2?-16:32)+t*t*8; const x=seg*200+t*200;
-       s+=`<circle cx="${x.toFixed(1)}" cy="${(y+4).toFixed(1)}" r="3.6" fill="${cols[(seg*8+k)%4]}" class="twinkle" style="animation-delay:${((seg*8+k)%5)*.4}s"/>`; }
+     for(let seg=0;seg<4;seg++) for(let k=1;k<8;k++){ const t=k/8; const y=(1-t)*(1-t)*8+2*(1-t)*t*(seg%2?-16:32)+t*t*8; const x=seg*200+t*200; const c=cols[(seg*8+k)%4];
+       s+=`<circle cx="${x.toFixed(1)}" cy="${(y+4).toFixed(1)}" r="9" fill="${c}" class="halo"/><circle cx="${x.toFixed(1)}" cy="${(y+4).toFixed(1)}" r="3.6" fill="${c}" class="twinkle" style="animation-delay:${((seg*8+k)%5)*.4}s"/>`; }
      return s+`</g>`; }},
-  {id:'plant', name:'Gerald the Monstera', cost:22, perk:'A large, dramatic plant. Gerald has never been watered on time.', box:[20,160,110,135],
-   draw:()=>`<g class="up" id="up-plant">
+  {id:'plant', cat:'lib', name:'Gerald the Monstera', cost:22, perk:'A large, dramatic plant who has opinions. Tap him to chat.', box:[20,160,110,135],
+   draw:()=>`<g class="up clickable" id="up-plant" data-who="plant">
       ${[[-40,30],[-15,36],[10,34],[35,30],[-60,26],[60,26],[0,40]].map(([a,r],i)=>`<ellipse cx="75" cy="${238-r}" rx="14" ry="${r*0.55}" fill="${i%2?'#3F8A4F':'#4FA35F'}" transform="rotate(${a} 75 242)"/>`).join('')}
       <rect x="54" y="240" width="42" height="46" rx="6" fill="#E9E2D0"/><rect x="50" y="236" width="50" height="9" rx="4" fill="#D8CFB8"/>
-      <circle cx="68" cy="258" r="2" fill="#2B2A3D"/><circle cx="82" cy="258" r="2" fill="#2B2A3D"/><path d="M71 265 Q75 268 79 265" stroke="#2B2A3D" stroke-width="1.6" fill="none"/></g>`},
-  {id:'cat', name:'Dewey the Library Cat', cost:30, perk:'+5 bonus bookmarks after every shift. Pettable.', box:[198,148,56,56],
+      <g class="eye"><circle cx="68" cy="258" r="2.2" fill="#2B2A3D"/><circle cx="82" cy="258" r="2.2" fill="#2B2A3D"/></g>
+      <ellipse cx="63" cy="264" rx="3" ry="1.8" fill="#F29BB0" opacity=".8"/><ellipse cx="87" cy="264" rx="3" ry="1.8" fill="#F29BB0" opacity=".8"/>
+      <path d="M71 265 Q75 269 79 265" stroke="#2B2A3D" stroke-width="1.6" fill="none"/></g>`},
+  {id:'cat', cat:'lib', name:'Dewey the Library Cat', cost:30, perk:'+5 bonus bookmarks after every shift. Pettable.', box:[198,148,56,56],
    draw:()=>`<g class="up clickable" id="up-cat" data-who="cat">
       <path class="tail" d="M238 196 Q252 192 250 176 Q249 168 254 166" fill="none" stroke="#E39B4B" stroke-width="5" stroke-linecap="round"/>
       <ellipse cx="225" cy="186" rx="16" ry="14" fill="#E39B4B"/>
@@ -682,7 +815,7 @@ const UPGRADES = [
       <path d="M212 170 h-6 M212 172 l-5 2 M238 170 h6 M238 172 l5 2" stroke="#2B2A3D" stroke-width=".8"/>
       <rect x="216" y="176" width="18" height="3" rx="1.5" class="tl"/><circle cx="225" cy="181" r="2.5" fill="#F2C94C"/>
       <ellipse cx="218" cy="198" rx="5" ry="3" fill="#F3C08A"/><ellipse cx="232" cy="198" rx="5" ry="3" fill="#F3C08A"/></g>`},
-  {id:'cocoa', name:'Hot Cocoa Cart', cost:38, perk:'Every 3 first-try answers in a row earns +1 bonus bookmark.', box:[425,186,80,96],
+  {id:'cocoa', cat:'lib', name:'Hot Cocoa Cart', cost:38, perk:'Every 3 first-try answers in a row earns +1 bonus bookmark.', box:[425,186,80,96],
    draw:()=>`<g class="up" id="up-cocoa">
       <rect x="432" y="222" width="66" height="8" rx="3" class="wd"/><rect x="436" y="258" width="58" height="6" rx="3" class="wd"/>
       <rect x="436" y="228" width="4" height="40" class="wd"/><rect x="490" y="228" width="4" height="40" class="wd"/>
@@ -691,49 +824,109 @@ const UPGRADES = [
       <path d="M456 210 q5 0 5 5 q0 5 -5 5" fill="none" stroke="var(--accent)" stroke-width="2"/>
       <path class="steam" d="M447 202 q-3 -5 0 -9 q3 -4 0 -8" fill="none" stroke="#fff" stroke-width="2"/>
       <path class="steam" style="animation-delay:1s" d="M469 202 q-3 -5 0 -9 q3 -4 0 -8" fill="none" stroke="#fff" stroke-width="2"/>
-      <rect x="444" y="240" width="40" height="12" rx="2" class="pn"/><text x="464" y="249" text-anchor="middle" style="font-family:var(--font-display);font-size:8px;font-weight:700;fill:var(--ink)">COCOA</text></g>`},
-  {id:'beanbag', name:'Beanbag Nook', cost:45, perk:'A squishy reading spot. Students will fight over it.', box:[690,228,110,72],
+      <rect x="444" y="240" width="40" height="12" rx="2" class="pn"/><text x="464" y="249" text-anchor="middle" textLength="30" lengthAdjust="spacingAndGlyphs" style="font-family:var(--font-display);font-size:8px;font-weight:700;fill:var(--ink)">COCOA</text></g>`},
+  {id:'beanbag', cat:'lib', name:'Beanbag Nook', cost:45, perk:'A squishy reading spot. Students will fight over it.', box:[690,228,110,72],
    draw:()=>`<g class="up" id="up-beanbag"><path d="M700 290 Q690 250 728 240 Q760 232 784 252 Q800 270 790 290 Z" fill="#8E6CC4"/><path d="M712 262 Q730 250 760 256" fill="none" stroke="#fff" stroke-width="3" opacity=".3" stroke-linecap="round"/>
       <rect x="748" y="266" width="22" height="16" rx="2" fill="#F2B43C" transform="rotate(-12 759 274)"/></g>`},
-  {id:'record', name:'Record Player', cost:55, perk:'Unlocks cozy library music. Tap it (or the Music button) to play.', box:[668,150,110,100],
+  {id:'record', cat:'lib', name:'Record Player', cost:55, perk:'Plays cozy library music. Comes with one record; find more in the Records tab.', box:[668,150,110,100],
    draw:()=>`<g class="up clickable" id="up-record" data-who="record">
       <rect x="676" y="200" width="92" height="8" rx="3" class="wd"/><rect x="684" y="208" width="6" height="40" class="wd"/><rect x="754" y="208" width="6" height="40" class="wd"/>
       <rect x="684" y="180" width="76" height="20" rx="4" fill="#C9844D"/><ellipse cx="716" cy="180" rx="26" ry="6" fill="#222"/><ellipse cx="716" cy="180" rx="7" ry="2" class="ac"/>
       <path d="M748 176 L740 182" stroke="#ddd" stroke-width="2.5" stroke-linecap="round"/><circle cx="749" cy="175" r="3" fill="#bbb"/>
       <text class="note" x="720" y="168" style="font-size:16px;fill:var(--ink)">♪</text><text class="note" x="735" y="160" style="font-size:14px;fill:var(--ink);animation-delay:1.2s">♫</text></g>`},
-];
+  {id:'owlclock', cat:'lib', slot:'clock', name:'Owl Clock', cost:14, perk:'A wise little owl whose eyes follow the room.', box:[695,40,60,76], draw:()=>clockSVG('owlclock')},
+  {id:'cloudclock', cat:'lib', slot:'clock', name:'Sleepy Cloud Clock', cost:14, perk:'A dreamy cloud with rosy cheeks and a gentle drizzle.', box:[690,48,70,70], draw:()=>clockSVG('cloudclock')},
 
+  // Holiday decor (one set up at a time)
+  {id:'harvest', cat:'holiday', slot:'holiday', name:'Harvest Garland', cost:10, perk:'Autumn leaves on the shelves and a basket of apples.', box:[95,36,215,250],
+   draw:(L)=>{
+     const leaf=(x,y,k)=>`<ellipse cx="${x}" cy="${y+4}" rx="6" ry="3.5" fill="${['#D9622B','#E8A33A','#B83A2E','#C9822E'][k%4]}" transform="rotate(${k*47%90-45} ${x} ${y+4})"/>`;
+     if(L==='back') return garland(150,290,46,10,11,leaf)+garland(510,650,46,10,11,leaf);
+     if(L==='front') return `<path d="M104 268 L144 268 L139 288 L109 288Z" fill="#B07A3E"/><path d="M104 268 Q124 252 144 268" fill="none" stroke="#8B5A2B" stroke-width="2.5"/>${[[112,265,'#C93B3B'],[122,262,'#D94A3B'],[132,265,'#8DB33A'],[117,270,'#C93B3B'],[128,270,'#D94A3B']].map(([x,y,c])=>`<circle cx="${x}" cy="${y}" r="5" fill="${c}"/>`).join('')}`;
+     return '';
+   }},
+  {id:'spooky', cat:'holiday', slot:'holiday', name:'Spooky Season', cost:10, perk:'Friendly bats, a cobweb, and jack-o\'-lanterns that glow when the lights are low.', box:[130,10,520,280],
+   draw:(L)=>{
+     if(L==='back') return `<path d="M33 35 l24 0 M33 35 l0 24 M33 35 l18 18 M33 35 l24 10 M33 35 l10 24 M45 35 q-2 8 -12 10 M57 35 q-4 14 -24 18 M33 47 q8 -1 9 -12" stroke="#fff" stroke-width=".9" fill="none" opacity=".75"/>${bat(255,30,1)}${bat(575,26,.8)}${bat(625,36,1.1)}`;
+     if(L==='front') return pumpkin(168,268,1.1,true)+pumpkin(146,278,.75,false)+pumpkin(214,182,.55,true);
+     if(L==='glow') return pumpkinGlow(168,268,1.1)+pumpkinGlow(214,182,.55);
+     return '';
+   }},
+  {id:'winter', cat:'holiday', slot:'holiday', name:'Winter Wonderland', cost:14, perk:'Snow falls outside the window, paper snowflakes, and a tiny twinkly tree.', box:[20,20,140,270],
+   draw:(L)=>{
+     if(L==='back') return `<g clip-path="url(#winClip)">${[[40,0],[58,2.3],[75,4.1],[92,1.2],[110,5.4],[120,3.2],[50,6],[100,.6]].map(([x,d])=>`<circle cx="${x}" cy="35" r="1.8" fill="#fff" class="flake" style="animation-delay:-${d}s"/>`).join('')}<path d="M33 121 Q50 110 70 116 Q95 108 127 114 V121Z" fill="#fff"/></g>`+paperFlake(150,34,8)+paperFlake(668,46,9)+paperFlake(780,34,7)+`<path d="M190 192 Q250 204 310 192 Q370 204 432 192" fill="none" stroke="#3F8A4F" stroke-width="5" stroke-linecap="round"/>${[214,250,290,330,370,408].map((x,i)=>`<circle cx="${x}" cy="${197+(i%2)*2}" r="2.5" fill="${i%2?'#EFAE36':'#C93B3B'}"/>`).join('')}`;
+     if(L==='front') return `<rect x="124" y="270" width="8" height="14" fill="#6B4A2E"/><polygon points="128,206 108,238 148,238" fill="#3F8A4F"/><polygon points="128,222 104,256 152,256" fill="#3F8A4F"/><polygon points="128,240 100,274 156,274" fill="#357A44"/>`;
+     if(L==='glow') return `<path d="M128 196 l2.4 5 5.4 .6 -4 3.6 1.2 5.3 -5 -2.8 -5 2.8 1.2 -5.3 -4 -3.6 5.4 -.6z" fill="#FFD36B"/>`+[[120,232,'#C93B3B'],[136,236,'#EFAE36'],[116,252,'#9CC5E0'],[140,250,'#C93B3B'],[126,262,'#EFAE36'],[110,268,'#EE7193'],[146,268,'#9CC5E0']].map(([x,y,c],i)=>`<circle cx="${x}" cy="${y}" r="7" fill="${c}" class="halo"/><circle cx="${x}" cy="${y}" r="2.6" fill="${c}" class="twinkle" style="animation-delay:${i*.3}s"/>`).join('');
+     return '';
+   }},
+  {id:'lanterns', cat:'holiday', slot:'holiday', name:'Paper Lanterns', cost:12, perk:'Red paper lanterns with gold tassels that glow in the evening.', box:[60,0,740,110],
+   draw:(L)=>{
+     if(L==='back') return lantern(95,52)+lantern(690,40)+lantern(765,62);
+     if(L==='glow') return lanternGlow(95,52)+lanternGlow(690,40)+lanternGlow(765,62);
+     return '';
+   }},
+  {id:'hearts', cat:'holiday', slot:'holiday', name:'Paper Hearts', cost:10, perk:'Strings of paper hearts and a heart balloon tied to the desk.', box:[140,36,160,170],
+   draw:(L)=>{
+     const h=(x,y,k)=>`<path d="${heartD(x,y+6,5)}" fill="${k%2?'#EE7193':'#C93B63'}"/>`;
+     if(L==='back') return garland(150,290,46,10,9,h,'#C9A2B0')+garland(510,650,46,10,9,h,'#C9A2B0')+`<path d="${heartD(104,58,8)}" fill="#F4A7B9"/>`;
+     if(L==='front') return `<path d="M196 192 Q186 160 178 140" stroke="#888" stroke-width="1" fill="none"/><g class="sway"><path d="${heartD(178,124,14)}" fill="#E0436A"/><ellipse cx="172" cy="118" rx="3" ry="5" fill="#fff" opacity=".45"/></g>`;
+     return '';
+   }},
+  {id:'spring', cat:'holiday', slot:'holiday', name:'Spring Blossoms', cost:10, perk:'A cherry blossom branch, tulips on the sill, and flowers on the library sign.', box:[20,18,480,118],
+   draw:(L)=>{
+     const fl=(x,y,k)=>`<circle cx="${x}" cy="${y+3}" r="4" fill="${['#F4A7B9','#FFFDF5','#F6E7A6'][k%3]}"/><circle cx="${x}" cy="${y+3}" r="1.4" fill="#E2A13A"/>`;
+     if(L==='back') return `<path d="M33 44 Q70 40 112 62 M70 46 Q80 36 96 36" stroke="#6B4A2E" stroke-width="2.5" fill="none" stroke-linecap="round"/>${[[48,42],[62,40],[78,46],[92,52],[104,58],[84,38],[96,36],[56,46]].map(([x,y])=>`<circle cx="${x}" cy="${y}" r="3.4" fill="#F4A7B9"/><circle cx="${x}" cy="${y}" r="1" fill="#C93B63"/>`).join('')}`+garland(304,496,52,6,13,fl,'#5DA46A')+[[50,'#E0436A'],[64,'#EFAE36'],[78,'#B9A3F0'],[92,'#E0436A']].map(([x,c])=>`<path d="M${x} 124 V108" stroke="#4F9A5E" stroke-width="2"/><path d="M${x-5} 100 Q${x-5} 110 ${x} 110 Q${x+5} 110 ${x+5} 100 L${x+2.5} 103 L${x} 99 L${x-2.5} 103Z" fill="${c}"/>`).join('');
+     return '';
+   }},
+
+  // Records (need the record player)
+  {id:'lofi', cat:'record', slot:'record', needs:'record', name:'Lo-fi Beats to Shelve To', cost:0, color:'#C93B63', perk:'Comes with the record player. Mellow and steady.'},
+  {id:'jazz', cat:'record', slot:'record', needs:'record', name:'Rainy Day Jazz', cost:8, color:'#2C7775', perk:'Soft piano chords and a walking bass line.'},
+  {id:'chip', cat:'record', slot:'record', needs:'record', name:'Chiptune Study Hall', cost:8, color:'#7E5BA6', perk:'Bouncy 8-bit arcade vibes.'},
+  {id:'bells', cat:'record', slot:'record', needs:'record', name:'Snowy Bells', cost:10, color:'#9CC5E0', perk:'Twinkly bells, perfect with Winter Wonderland.'},
+  {id:'lullaby', cat:'record', slot:'record', needs:'record', name:'Gerald\'s Lullaby', cost:8, color:'#7FB08A', perk:'A slow, sleepy waltz. Gerald\'s favorite.'},
+  {id:'rain', cat:'record', slot:'record', needs:'record', name:'Rain on the Window', cost:10, color:'#4A6FA5', perk:'Gentle rain sounds with a few soft piano notes.'},
+
+  // Ms. Pagecastle's closet
+  {id:'mustard', cat:'closet', slot:'cardigan', name:'Mustard Cardigan', cost:0, perk:'Her classic. Pockets full of pencils.'},
+  {id:'sage', cat:'closet', slot:'cardigan', name:'Sage Cardigan', cost:6, perk:'Calm, green, and very plant-adjacent.'},
+  {id:'berry', cat:'closet', slot:'cardigan', name:'Berry Cardigan', cost:6, perk:'A bold berry pink for bold shelving.'},
+  {id:'lavender', cat:'closet', slot:'cardigan', name:'Lavender Cardigan', cost:6, perk:'Soft purple. Smells faintly of old books.'},
+  {id:'beret', cat:'closet', slot:'head', name:'Artsy Beret', cost:8, perk:'For days spent in the 700s.'},
+  {id:'flowers', cat:'closet', slot:'head', name:'Flower Crown', cost:10, perk:'Hand-picked. Gerald is a little jealous.'},
+  {id:'catears', cat:'closet', slot:'head', name:'Cat-Ear Headband', cost:10, perk:'Dewey approves. Probably.'},
+  {id:'beanie', cat:'closet', slot:'head', name:'Pom-Pom Beanie', cost:10, perk:'Cozy for New Hampshire winters.'},
+  {id:'bowtie', cat:'closet', slot:'neck', name:'Bow Tie', cost:6, perk:'Dapper and ready for the Book Fair.'},
+  {id:'scarf', cat:'closet', slot:'neck', name:'Striped Scarf', cost:8, perk:'Long enough to wrap around twice.'},
+  {id:'booknecklace', cat:'closet', slot:'neck', name:'Tiny Book Necklace', cost:8, perk:'A little blue book on a gold chain.'},
+  {id:'heartglasses', cat:'closet', slot:'face', name:'Heart Glasses', cost:8, perk:'She loves every book. Now it shows.'},
+  {id:'goldframes', cat:'closet', slot:'face', name:'Gold Frames', cost:6, perk:'Fancy. For reading the fine print.'},
+];
+const SLOT_LABEL={clock:['Hang it up','Take it down'],holiday:['Put it up','Take it down'],record:['Play','Stop'],cardigan:['Wear it','Wearing'],head:['Wear it','Take it off'],neck:['Wear it','Take it off'],face:['Wear them','Take them off']};
+
+/* ---------------- scene assembly ---------------- */
 let CASES='';
 function sceneBase(){
   if(!CASES) CASES=bookcase(150,44,140,190)+bookcase(510,44,140,190);
-  let s=`
-  <defs><radialGradient id="lampg"><stop offset="0" stop-color="#FFD58A" stop-opacity=".8"/><stop offset="1" stop-color="#FFD58A" stop-opacity="0"/></radialGradient></defs>
+  return `
+  <defs><radialGradient id="lampg"><stop offset="0" stop-color="#FFD58A" stop-opacity=".85"/><stop offset="1" stop-color="#FFD58A" stop-opacity="0"/></radialGradient><clipPath id="winClip"><rect x="33" y="35" width="94" height="86"/></clipPath></defs>
   <rect width="800" height="235" class="w"/>
   <rect y="172" width="800" height="63" class="w2"/>
   <rect y="168" width="800" height="6" class="tr"/>
   <rect y="232" width="800" height="68" class="fl"/>
   ${[248,266,286].map(y=>`<path d="M0 ${y} H800" class="fl2" stroke-width="1.2"/>`).join('')}
-  <!-- window -->
   <rect x="26" y="28" width="108" height="100" rx="6" class="wd"/><rect x="33" y="35" width="94" height="86" class="sky"/>
   <circle cx="102" cy="62" r="12" fill="#FFE08A" class="sun"/>
   <g class="stars"><circle cx="58" cy="56" r="10" fill="#F4ECD0"/><circle cx="63" cy="52" r="9" class="sky"/>${[[90,48],[110,70],[76,90],[48,100],[115,104]].map(([x,y])=>`<circle cx="${x}" cy="${y}" r="1.4" fill="#fff"/>`).join('')}</g>
   <path d="M33 92 Q56 78 80 92 T127 90 V121 H33Z" fill="#6E9C6A" opacity=".75"/>
   <rect x="78" y="35" width="4" height="86" class="wd"/><rect x="33" y="76" width="94" height="4" class="wd"/>
   <rect x="20" y="124" width="120" height="8" rx="3" class="wl"/>
-  <!-- shelves -->
   ${CASES}
-  <!-- sign -->
   <rect x="304" y="20" width="192" height="32" rx="8" class="wd"/>
   <text x="400" y="34" text-anchor="middle" style="font-family:var(--font-body);font-weight:700;font-size:8px;letter-spacing:2px;fill:#F6E7C8">THINKERTON ACADEMY</text>
   <text x="400" y="47" text-anchor="middle" style="font-family:var(--font-display);font-weight:700;font-size:13px;fill:#F6C35B">Library · Est. 1897</text>
-  <!-- clock -->
-  <circle cx="725" cy="80" r="20" class="pn" stroke="var(--wood)" stroke-width="4"/><path d="M725 80 V67 M725 80 L734 85" stroke="var(--ink)" stroke-width="2.5" stroke-linecap="round"/>
-  <!-- quiet-ish sign -->
-  <rect x="686" y="118" width="78" height="22" rx="4" class="pn"/><text x="725" y="133" text-anchor="middle" style="font-family:var(--font-display);font-weight:700;font-size:10px;fill:var(--ink)">quiet-ish zone</text>
-  <!-- lamp glow (night) -->
-  <ellipse cx="300" cy="150" rx="150" ry="100" fill="url(#lampg)" class="glow"/>
-  `;
-  return s;
+  ${clockSVG(has(S.equip.clock)?S.equip.clock:null)}
+  <rect x="686" y="118" width="78" height="22" rx="4" class="pn"/><text x="725" y="133" text-anchor="middle" textLength="62" lengthAdjust="spacingAndGlyphs" style="font-family:var(--font-display);font-weight:700;font-size:10px;fill:var(--ink)">quiet-ish zone</text>`;
 }
 function sceneFront(){
   return `
@@ -742,25 +935,40 @@ function sceneFront(){
   <rect x="205" y="208" width="100" height="50" rx="3" class="wd" opacity=".35"/><rect x="315" y="208" width="100" height="50" rx="3" class="wd" opacity=".35"/>
   <rect x="226" y="222" width="58" height="22" rx="3" class="pn"/><text x="255" y="231" text-anchor="middle" style="font-family:var(--font-body);font-weight:700;font-size:6.5px;letter-spacing:1px;fill:var(--ink)">BOOK</text><text x="255" y="240" text-anchor="middle" style="font-family:var(--font-body);font-weight:700;font-size:6.5px;letter-spacing:1px;fill:var(--ink)">RETURN</text>
   <rect x="336" y="226" width="58" height="5" rx="2" fill="#000" opacity=".35"/>
-  <rect x="330" y="182" width="30" height="9" rx="1" fill="#4A6FA5"/><rect x="333" y="175" width="26" height="8" rx="1" fill="#C2456B"/>
-  <path d="M268 190 h22 v-6 h-22z" fill="#F2C94C"/>`;
+  <path d="M268 190 h22 v-6 h-22z" fill="#F2C94C"/>
+  <rect x="326" y="184" width="30" height="6" rx="2" fill="#6B4A2E"/><rect x="339" y="162" width="4" height="24" fill="#C9A23A"/>
+  <path d="M322 166 Q341 146 360 166 Z" fill="#2F7A55"/><rect x="321" y="164" width="40" height="3" rx="1.5" fill="#C9A23A"/>`;
 }
-
+function bunting(){
+  const cols=['#C93B63','#EFAE36','#2C7775','#7E5BA6','#E07A4F'];
+  return garland(0,800,14,10,24,(x,y,k)=>`<polygon points="${x-7},${y} ${x+7},${y} ${x},${y+13}" fill="${cols[k%5]}"/>`,'#6B4A2E');
+}
+function holidayLayer(L){ const id=S.equip.holiday; if(!id||!has(id)) return ''; const it=ITEMS.find(x=>x.id===id); return it?it.draw(L):''; }
 function drawScene(){
-  const svg=$('#scene');
-  const order=['lights','rug','posters','plant','beanbag','record'];
+  const svg=$('#scene'); const O=id=>has(id)&&ITEMS.find(x=>x.id===id);
   let s=sceneBase();
-  // behind-desk items
-  for(const id of ['lights','posters','plant','record','rug','beanbag']){ const u=UPGRADES.find(x=>x.id===id); if(S.owned[id]) s+=u.draw(); }
+  s+=holidayLayer('back');
+  if(run&&run.def&&run.def.bunting) s+=bunting();
+  for(const id of ['posters','plant','record','rug','beanbag']){ const u=O(id); if(u) s+=u.draw(); }
   s+=`<g id="studentWrap"><g id="student" style="transform:translate(900px,282px)"></g></g>`;
-  if(S.owned.cocoa) s+=UPGRADES.find(x=>x.id==='cocoa').draw();
+  if(O('cocoa')) s+=O('cocoa').draw();
   s+=librarianSVG();
   s+=sceneFront();
-  if(S.owned.cat) s+=UPGRADES.find(x=>x.id==='cat').draw();
-  if(S.owned.cactus) s+=UPGRADES.find(x=>x.id==='cactus').draw();
+  s+=holidayLayer('front');
+  if(O('cat')) s+=O('cat').draw();
+  if(O('cactus')) s+=O('cactus').draw();
+  s+=`<rect id="dimmerRect" width="800" height="300" fill="#0A0F24" pointer-events="none"/>`;
+  s+=`<g pointer-events="none"><ellipse cx="341" cy="178" rx="170" ry="115" fill="url(#lampg)" class="glow"/><polygon points="324,166 358,166 380,194 302,194" fill="#FFE3A3" class="cone"/>${holidayLayer('glow')}</g>`;
+  if(O('lights')) s+=O('lights').draw();
   svg.innerHTML=s;
-  svg.classList.toggle('music-on',!!(S.music&&S.owned.record));
-  if(currentStudent) renderStudent(currentStudent, false);
+  applyDim(); updateMusicBar();
+  if(currentStudent) renderStudent(currentStudent,false);
+}
+function applyDim(){
+  const v=S.dim, sc=$('#scene');
+  sc.style.setProperty('--dimo',((100-v)/100*.62).toFixed(3));
+  sc.style.setProperty('--dimg',((100-v)/85).toFixed(3));
+  $('#dim').value=v;
 }
 
 let bubbleT=null;
@@ -772,18 +980,30 @@ function say(text,x,y){
   let left=Math.min(Math.max(px-bw/2,6),W-bw-6);
   let top=py-bh-4; if(top<6) top=Math.min(py+40/300*H,H-bh-6);
   b.style.left=left+'px'; b.style.top=Math.max(6,top)+'px';
-  clearTimeout(bubbleT); bubbleT=setTimeout(()=>b.classList.remove('show'),2800);
+  clearTimeout(bubbleT); bubbleT=setTimeout(()=>b.classList.remove('show'),3000);
 }
+const POS={lib:[300,58],cactus:[395,138],cat:[225,146],plant:[75,168],record:[716,150]};
 const LIB_FACTS=['Melvil Dewey published his system in 1876. Older than Edison\'s light bulb!','I alphabetize my spice rack. And my socks. Don\'t ask about the socks.','A call number is a book\'s home address.','Fiction goes by author so you can find more books by people you love.','The 000s are the "everything" shelf: encyclopedias, record books, computers.','My earrings are tiny books. Obviously.','Shh... just kidding. Talk all you want, it\'s quiet-ISH.'];
 const CACTUS_LINES=['Smaller numbers go on the left. Always.','.5 and .50 are the same number. Trust me, I\'m a cactus.','Same first letters? Keep reading the name, letter by letter!','I\'m not prickly, I\'m well-organized.','Read the spine label first. FIC means alphabet. Numbers mean Dewey.','Need a hint? Tap the Hint button. I live for this.'];
 const CAT_LINES=['prrrrrrr','mrrp?','*knocks a pencil off the desk*','Dewey approves of your shelving.','*sits on the exact book you need*'];
+const GERALD_LINES=['Gerald: I\'m not dramatic. I\'m EXPRESSIVE.','Gerald: Books about me are in the 580s. Plants! I\'m basically famous.','Gerald: Has anyone watered me? It\'s been three days. Or three minutes. Hard to say.','Gerald: Photosynthesis is my cardio.','Gerald: Leaf me alone, I\'m reading.','Gerald: Spike gets ALL the attention. I have holes in my leaves ON PURPOSE.','Gerald: Turn the lights down. I\'m feeling moody.','Gerald: Fun fact: monsteras can grow to the ceiling. Watch me.'];
+const REACT={
+  cactus:{good:['Spike: Sharp work!','Spike: Looking sharp!','Spike: That was on point.'],bad:['Spike: Prickly one! Try again.','Spike: Shake it off. Cactus style.']},
+  plant:{good:['Gerald: Magnificent! I\'m tearing up. Or that\'s dew.','Gerald: That was leaf-tastic.','Gerald: BRAVO. *rustles dramatically*'],bad:['Gerald: It\'s fine. I\'ve been overwatered before. We recover.','Gerald: Breathe. Photosynthesize. Try again.']},
+  cat:{good:['Dewey: *slow blink of approval*','Dewey: prrrt!'],bad:['Dewey: *knocks the wrong answer off the desk*','Dewey: mrrp. (try again)']},
+};
+function companionReact(kind){
+  const owned=['cactus','plant','cat'].filter(id=>S.owned[id]); if(!owned.length||Math.random()>.35) return;
+  const id=pick(owned); setTimeout(()=>say(pick(REACT[id][kind]),...POS[id]),450);
+}
 document.addEventListener('click',e=>{
-  const t=e.target.closest('[data-who]'); if(!t) return;
+  const t=e.target.closest('#scene [data-who]'); if(!t) return;
   const w=t.dataset.who;
-  if(w==='lib'){ say(pick(LIB_FACTS),300,58); sfx('step'); }
-  if(w==='cactus'){ say('Spike: '+pick(CACTUS_LINES),395,138); sfx('pop'); }
-  if(w==='cat'){ say(pick(CAT_LINES),225,146); sfx(Math.random()<.5?'purr':'meow'); }
-  if(w==='record'){ setMusic(!S.music); say(S.music?'Now playing: Lo-fi Beats to Shelve To':'Music paused',716,150); }
+  if(w==='lib'){ say(pick(LIB_FACTS),...POS.lib); sfx('step'); }
+  if(w==='cactus'){ say('Spike: '+pick(CACTUS_LINES),...POS.cactus); sfx('pop'); }
+  if(w==='cat'){ say(pick(CAT_LINES),...POS.cat); sfx(Math.random()<.5?'purr':'meow'); }
+  if(w==='plant'){ say(pick(GERALD_LINES),...POS.plant); sfx('leaf'); }
+  if(w==='record'){ setMusic(!S.music); say(S.music?$('#nowPlaying').textContent:'Music paused',...POS.record); }
 });
 
 let currentStudent=null;
@@ -825,15 +1045,27 @@ function pickN(n,diff){
   const sorted=by[pick(cs)].slice().sort(cmp); const w=Math.min(sorted.length,n+2); const start=rnd(sorted.length-w+1);
   return shuffle(sorted.slice(start,start+w)).slice(0,n);
 }
+const pickK=(kind,n,diff)=>(kind==='F'?pickF(n,diff):pickN(n,diff)).map(prep);
+function duelPair(kind,diff){
+  let a,b;
+  for(let guard=0;guard<50;guard++){
+    if(kind==='F'){ const all=FIC.slice().sort(cmp); if(diff===0){ a=pick(all); b=pick(all); if(norm(a.last)[0]===norm(b.last)[0]) continue; } else { const i=rnd(all.length-1); a=all[i]; b=all[i+1]; } }
+    else if(diff===0){ a=pick(NF); b=pick(NF); if(a.cls===b.cls) continue; }
+    else if(diff===1||Math.random()<.35){ const s=NF.slice().sort(cmp); const i=rnd(s.length-1); a=s[i]; b=s[i+1]; }
+    else { const base=pick(NF); const w=base.call.split('.')[0]; const [d1,d2]=pick(DEC_PAIRS); a=mkN(w+'.'+d1,pick(CUTS),base.title); b=mkN(w+'.'+d2,pick(CUTS),base.title); }
+    if(cmp(a,b)!==0) break;
+  }
+  const pr=[prep(a),prep(b)]; return Math.random()<.5?pr:pr.reverse();
+}
 function gen(spec){
-  const [type,diff=0]=spec;
+  const [type,diff=0,extra]=spec;
+  const kind=type.slice(-1);
   if(type==='retF'||type==='retN'){
-    const kind=type[3]; const books=(kind==='F'?pickF(7,diff):pickN(7,diff)).map(prep).sort(cmp);
-    const r=rnd(7); const book=books.splice(r,1)[0];
+    const books=pickK(kind,7,diff).sort(cmp); const r=rnd(7); const book=books.splice(r,1)[0];
     return {type:'ret',kind,shelf:books,book,ans:r,student:newStudent(true)};
   }
   if(type==='misF'||type==='misN'){
-    const kind=type[3]; const arr=(kind==='F'?pickF(7,diff):pickN(7,diff)).map(prep).sort(cmp);
+    const arr=pickK(kind,7,diff).sort(cmp);
     const m=rnd(7); const b=arr.splice(m,1)[0];
     const opts=[]; for(let t=0;t<=6;t++) if(Math.abs(t-m)>=2) opts.push(t);
     const t=pick(opts); const disp=arr.slice(); disp.splice(t,0,b);
@@ -841,8 +1073,7 @@ function gen(spec){
   }
   if(type==='findF'){
     const b=prep(pick(FIC)); const L=norm(b.last)[0].toUpperCase();
-    const ans=FRANGES.findIndex(([a,z])=>L>=a&&L<=z);
-    return {type:'findF',book:b,ans,student:newStudent(false)};
+    return {type:'findF',book:b,ans:FRANGES.findIndex(([a,z])=>L>=a&&L<=z),student:newStudent(false)};
   }
   if(type==='findN'){
     const [topic,reason,call]=pick(TOPICS); const num=parseFloat(call); const cls=Math.floor(num/100);
@@ -850,30 +1081,68 @@ function gen(spec){
     const r2=ranges.findIndex(([lo,hi])=>num>=lo&&num<hi+1);
     return {type:'findN',topic,reason,call,num,ans:cls,step2:diff>=1?{ranges,ans:r2}:null,phase:1,student:newStudent(false)};
   }
+  if(type==='duelF'||type==='duelN'){
+    const need=extra||5; const rounds=[]; for(let i=0;i<need;i++) rounds.push(duelPair(kind,diff));
+    return {type:'duel',kind,rounds,r:0,need,student:newStudent(false)};
+  }
+  if(type==='sortF'||type==='sortN'){
+    const n=extra||6; const books=pickK(kind,n,diff); const sorted=books.slice().sort(cmp);
+    let scr; do{ scr=shuffle(books); }while(isSorted(scr)||minSwaps(scr)<Math.min(3,n-2));
+    return {type:'sort',kind,books:scr,sorted,sel:null,swaps:0,min:minSwaps(scr),student:newStudent(false)};
+  }
+  if(type==='cartF'||type==='cartN'){
+    const books=pickK(kind,6,diff); const sorted=books.slice().sort(cmp);
+    const q=pick(diff===0?['first','last']:['first','last','after','before','after','before']);
+    let ref=null, ans;
+    if(q==='first') ans=sorted[0];
+    if(q==='last') ans=sorted[5];
+    if(q==='after'){ const k=rnd(5); ref=sorted[k]; ans=sorted[k+1]; }
+    if(q==='before'){ const k=1+rnd(5); ref=sorted[k]; ans=sorted[k-1]; }
+    let disp; do{ disp=shuffle(books); }while(isSorted(disp));
+    return {type:'cart',kind,disp,sorted,q,ref,ans,student:newStudent(false)};
+  }
 }
 
+/* ---------------- days & challenges ---------------- */
 const DAYS = [
   {t:'First Day at Thinkerton', skill:'Fiction: A to Z by last name',
-   lesson:{h:'Fiction lives A to Z',p:['Welcome aboard, new shelf helper! I\'m Ms. Pagecastle. Fiction books are shelved in <b>alphabetical order by the author\'s last name</b>.','Each spine label says <b>FIC</b> plus the first three letters of the author\'s last name. Smaller letters go on the left, like reading a sentence.'],ex:['Collins','Green','Reynolds']},
-   tasks:[['retF',0],['retF',0],['retF',0],['retF',1],['retF',1]]},
-  {t:'Plot Twist!', skill:'Fiction: close names and fixing mistakes',
-   lesson:{h:'When names start the same',p:['Sachar, Sáenz, and Salinger all start with SA. When the first letters match, <b>keep going letter by letter</b>: SAC, SAE, SAL.','Today some students put books back in the wrong spot. Scan the shelf left to right and find the one that breaks the pattern. Some students will also ask where to find an author.'],ex:['Sachar','Sáenz','Salinger']},
-   tasks:[['retF',1],['misF',0],['findF'],['retF',2],['misF',1],['findF']]},
+   lesson:{h:'Fiction lives A to Z',p:['Welcome aboard, new shelf helper! I\'m Ms. Pagecastle. Fiction books are shelved in <b>alphabetical order by the author\'s last name</b>.','Each spine label says <b>FIC</b> plus the first three letters of the author\'s last name. Smaller letters go on the left, like reading a sentence.'],twist:'<b>New: Which Comes First?</b> Tap the book that goes farther left.',ex:['Collins','Green','Reynolds']},
+   tasks:[['retF',0],['retF',0],['duelF',0,4],['retF',0],['retF',1]]},
+  {t:'Plot Twist!', skill:'Fiction: close names and scrambled shelves',
+   lesson:{h:'When names start the same',p:['Sachar, Sáenz, and Salinger all start with SA. When the first letters match, <b>keep going letter by letter</b>: SAC, SAE, SAL.','Some students put books back in the wrong spot today, and others need help finding an author.'],twist:'<b>New: Shelf Shuffle.</b> A whole shelf got scrambled! Tap two books to swap them until everything is A to Z.',ex:['Sachar','Sáenz','Salinger']},
+   tasks:[['retF',1],['misF',0],['sortF',1,5],['findF'],['misF',1],['duelF',2,4],['findF']]},
   {t:'Meet Mr. Dewey', skill:'Nonfiction: the 10 Dewey classes',
-   lesson:{h:'Meet the Dewey Decimal System',p:['Nonfiction is organized by <b>subject</b> into 10 big classes, from <b>000</b> to <b>999</b>. Sharks? Science, the 500s. Cookbooks? Technology, the 600s.','On the shelf, call numbers go from <b>smallest to largest</b>, left to right. Compare the whole number (before the dot) first.'],exN:['398.2|GRI','597.3|FIN','641.5|RAM']},
-   tasks:[['findN',0],['retN',0],['findN',0],['retN',0],['findN',0],['retN',1]]},
+   lesson:{h:'Meet the Dewey Decimal System',p:['Nonfiction is organized by <b>subject</b> into 10 big classes, from <b>000</b> to <b>999</b>. Sharks? Science, the 500s. Cookbooks? Technology, the 600s.','On the shelf, call numbers go from <b>smallest to largest</b>, left to right. Compare the whole number (before the dot) first.'],twist:'<b>New: Book Cart.</b> A library aide brings a messy cart. Figure out which book goes first or last on the shelf.',exN:['398.2|GRI','597.3|FIN','641.5|RAM']},
+   tasks:[['findN',0],['retN',0],['cartN',0],['findN',0],['duelN',0,4],['retN',1],['findN',0]]},
   {t:'Decimal Drama', skill:'Nonfiction: decimals, digit by digit',
-   lesson:{h:'Decimals: one digit at a time',p:['After the dot, compare <b>one digit at a time</b>, like money. <b>599.53</b> comes BEFORE <b>599.6</b>, because 5 is less than 6. (Think $0.53 vs $0.60.)','If a decimal runs out of digits, it goes first: <b>398.2</b> comes before <b>398.209</b>. And if the numbers match exactly, use the author letters under the number.'],exN:['599.53|ORC','599.6|TUS','599.75|PAW']},
-   tasks:[['retN',2],['retN',2],['misN',1],['findN',1],['retN',2],['misN',2]]},
-  {t:'Rush Hour', skill:'Fiction and nonfiction, mixed',
-   lesson:{h:'Everything, all at once',p:['The bell just rang and everyone needs the library. Check the spine label first: <b>FIC</b> means alphabetical by author. <b>Numbers</b> mean Dewey order, smallest to largest.','Some students will give you a call number from the catalog. Match it to the right shelf range.'],ex:['Lu','McManus','Meyer']},
-   tasks:[['retF',2],['retN',2],['misF',1],['findN',1],['findF'],['misN',2],['retN',2],['retF',2]]},
+   lesson:{h:'Decimals: one digit at a time',p:['After the dot, compare <b>one digit at a time</b>, like money. <b>599.53</b> comes BEFORE <b>599.6</b>, because 5 is less than 6. (Think $0.53 vs $0.60.)','If a decimal runs out of digits, it goes first: <b>398.2</b> comes before <b>398.209</b>. If the numbers match exactly, use the author letters under the number.'],twist:'<b>Twist:</b> the duel round has sneaky pairs like .5 vs .45. Don\'t let the longer number fool you!',exN:['599.53|ORC','599.6|TUS','599.75|PAW']},
+   tasks:[['duelN',2,5],['retN',2],['misN',1],['cartN',1],['sortN',1,6],['findN',1],['retN',2]]},
+  {t:'Rush Hour', skill:'Everything mixed, with patience bars',
+   lesson:{h:'Everything, all at once',p:['The bell just rang and everyone needs the library. Check the spine label first: <b>FIC</b> means alphabetical by author. <b>Numbers</b> mean Dewey order, smallest to largest.','Some students will give you a call number from the catalog. Match it to the right shelf range.'],twist:'<b>Twist: patience bars.</b> Help each student before their bar runs out to earn a speedy bonus bookmark.',ex:['Lu','McManus','Meyer']},
+   patience:25, tasks:[['retF',2],['retN',2],['misF',1],['findN',1],['cartF',1],['findF'],['misN',2],['duelN',2,3],['retN',2]]},
   {t:'Book Fair Eve', skill:'Expert shelver challenge',
-   lesson:{h:'The Book Fair is tomorrow',p:['The whole school is coming tomorrow and every shelf needs to be perfect. Ten students, tricky decimals, sneaky misshelves.','You\'ve got this. Spike believes in you. Dewey the cat is indifferent, but in a supportive way.'],exN:['641.5|ADA','641.5|RAM','641.5945|NON']},
-   tasks:[['retN',2],['misF',2],['findN',1],['retF',2],['misN',2],['retN',2],['findF'],['misN',2],['retF',2],['retN',2]]},
+   lesson:{h:'The Book Fair is tomorrow',p:['The whole school is coming tomorrow and every shelf needs to be perfect. Ten tasks: scrambled shelves, tricky carts, sneaky decimals.','You\'ve got this. Spike believes in you. Dewey the cat is indifferent, but in a supportive way.'],twist:'<b>Twist:</b> the library is decked out in Book Fair bunting. Everything is on the hardest setting.',exN:['641.5|ADA','641.5|RAM','641.5945|NON']},
+   bunting:true, tasks:[['sortN',2,7],['cartN',2],['retF',2],['misN',2],['duelN',2,4],['findN',1],['sortF',2,7],['cartF',2],['retN',2],['misF',2]]},
 ];
-const OPEN = {t:'Open Shift', skill:'Random mix. Great for earning bookmarks.', lesson:{h:'Open Shift',p:['A regular afternoon at the Thinkerton library: a random mix of returns, misshelves, and students who need help. Play as many shifts as you like to earn bookmarks.'],ex:['Bardugo','Barnes','Bradbury']}};
-function openTasks(){ const pool=[['retF',2],['retN',2],['misF',2],['misN',2],['findF'],['findN',1],['retN',1],['retF',1]]; return shuffle(pool).concat([pick(pool)]).slice(0,8); }
+const ALL_POOL=[['retF',2],['retN',2],['misF',2],['misN',2],['findF'],['findN',1],['duelN',2,3],['duelF',2,3],['sortF',1,6],['sortN',1,6],['cartF',1],['cartN',2]];
+const OPEN = {t:'Open Shift', skill:'Random mix. Great for earning bookmarks.', lesson:{h:'Open Shift',p:['A regular afternoon at the Thinkerton library: a random mix of every kind of task. Play as many shifts as you like to earn bookmarks.'],ex:['Bardugo','Barnes','Bradbury']}};
+const CHALLENGES = [
+  {id:'speed', t:'Speed Shelver', skill:'Shelve as many returns as you can in 90 seconds.', unlock:3, timed:90, penalty:5, endless:true,
+   pool:[['retF',1],['retN',1],['retF',2],['retN',2]], metric:R=>R.score, stars:s=>s>=13?3:s>=9?2:s>=4?1:0, unit:'books shelved',
+   lesson:{h:'Speed Shelver',p:['You have <b>90 seconds</b>. Shelve as many returned books as you can.','A wrong answer costs <b>5 seconds</b>, so stay accurate! 4 books earns 1 star, 9 earns 2, and 13 earns 3.'],ex:['Golding','Green','Herbert']}},
+  {id:'reshelve', t:'The Great Re-Shelve', skill:'Sort three scrambled shelves in as few swaps as possible.', unlock:4, low:true,
+   tasks:[['sortF',2,7],['sortN',2,7],['sortN',2,7]], metric:R=>R.extra||0, stars:s=>s<=1?3:s<=4?2:1, unit:'extra swaps',
+   lesson:{h:'The Great Re-Shelve',p:['Three shelves got completely scrambled. Tap two books to swap them, and sort each shelf.','Every shelf has a <b>fewest possible</b> number of swaps. Go over by 1 or less in total for 3 stars.'],ex:['Sachar','Sáenz','Salinger']}},
+  {id:'duel', t:'Decimal Duel', skill:'Pick the call number that comes first. 60 seconds!', unlock:5, timed:60, penalty:3, endless:true,
+   pool:[['duelN',2,1]], metric:R=>R.score, stars:s=>s>=18?3:s>=12?2:s>=5?1:0, unit:'duels won',
+   lesson:{h:'Decimal Duel',p:['Two call numbers at a time. Tap the one that goes <b>first</b> on the shelf. You have <b>60 seconds</b>.','Wrong answers cost 3 seconds. Remember: compare decimals digit by digit!'],exN:['599.53|ORC','599.6|TUS','599.75|PAW']}},
+  {id:'detective', t:'Book Cart Detective', skill:'Six tricky book carts. Which book goes where?', unlock:6,
+   tasks:[['cartN',2],['cartF',2],['cartN',2],['cartF',2],['cartN',2],['cartN',2]], metric:R=>R.first, stars:s=>s>=6?3:s>=4?2:1, unit:'solved on the first try',
+   lesson:{h:'Book Cart Detective',p:['Six messy carts. For each one, figure out which book goes first, last, or right before or after another book.','Line them up in your head, smallest to largest. Solve all six on the first try for 3 stars.'],exN:['641.5|ADA','641.5|RAM','641.5945|NON']}},
+  {id:'streak', t:'Perfect Streak', skill:'Every kind of task until your first mistake.', unlock:7, endless:true, sudden:true,
+   pool:ALL_POOL, metric:R=>R.score, stars:s=>s>=15?3:s>=10?2:s>=5?1:0, unit:'in a row',
+   lesson:{h:'Perfect Streak',p:['Every kind of task, one after another. One mistake ends the run.','5 in a row earns 1 star, 10 earns 2, and 15 earns 3. Hints are allowed!'],ex:['Lu','McManus','Meyer']}},
+];
 
 /* ---------------- rendering ---------------- */
 function bookHTML(b,{cls='',tag='div',attrs=''}={}){
@@ -883,11 +1152,11 @@ function bookHTML(b,{cls='',tag='div',attrs=''}={}){
   const tip=b.kind==='F'?`${b.title} by ${b.first} ${b.last}`:`${b.title} (${b.call} ${b.cut})`;
   return `<${tag} class="book ${b.kind==='N'?'nf':''} ${cls}" style="--c:${c};--t:${t};--h:${b.h}px" title="${esc(tip)}" ${attrs}><span class="spine-txt">${esc(spine)}</span><span class="label">${lbl}</span></${tag}>`;
 }
-function shelfHTML(books,{slots=false,tappable=false,placed=-1,allowed=null,lifted=-1}={}){
+function shelfHTML(books,{slots=false,tappable=false,placed=-1,allowed=null,sel=null,hintB=null}={}){
   let s='<div class="books">';
   books.forEach((b,i)=>{
     if(slots) s+=slotHTML(books,i,allowed);
-    let cls=i===placed?'placed':''; if(i===lifted) cls+=' lifted';
+    let cls=i===placed?'placed':''; if(i===sel) cls+=' sel'; if(hintB&&b===hintB) cls+=' hint';
     if(tappable){ const dim=allowed&&!allowed.includes(i)?' dim':''; s+=bookHTML(b,{cls:cls+dim,tag:'button',attrs:`data-b="${i}" aria-label="${esc(nameStr(b))}"`}); }
     else s+=bookHTML(b,{cls});
   });
@@ -901,10 +1170,10 @@ function slotHTML(books,s,allowed){
   return `<button class="slot${dim}" data-s="${s}" aria-label="${esc(lab)}"></button>`;
 }
 const STAR=(on,cls='')=>`<svg viewBox="0 0 24 24" class="${cls}" aria-hidden="true"><path d="M12 2.5l2.9 6 6.6.9-4.8 4.6 1.2 6.5L12 17.4 6.1 20.5l1.2-6.5L2.5 9.4l6.6-.9z" fill="${on?'var(--accent2)':'none'}" stroke="var(--ink)" stroke-width="1.6" stroke-linejoin="round"/></svg>`;
-function updateBM(){ $('#bm').textContent=S.bm; $('#bMusic').hidden=!S.owned.record; $('#bSound').setAttribute('aria-pressed',S.sound?'true':'false'); }
+function updateBM(){ $('#bm').textContent=S.bm; $('#bSound').setAttribute('aria-pressed',S.sound?'true':'false'); }
 
 const panel=$('#panel');
-let run=null, cur=null;
+let run=null, cur=null, ticker=null;
 
 function showSchedule(){
   stopRun();
@@ -915,41 +1184,75 @@ function showSchedule(){
     h+=`<button class="day" data-day="${i}" ${locked?'disabled':''}><span class="dn">Day ${i+1}${locked?' · locked':''}</span><span class="dt">${d.t}</span><span class="ds">${d.skill}</span><span class="stars-row">${[0,1,2].map(k=>STAR(k<st)).join('')}</span></button>`;
   });
   const openLocked=S.unlocked<=DAYS.length;
-  h+=`<button class="day" data-day="open" ${openLocked?'disabled':''}><span class="dn">Bonus${openLocked?' · finish Day 6':''}</span><span class="dt">Open Shift</span><span class="ds">Random mix, replay anytime</span></button></div>`;
+  h+=`<button class="day" data-day="open" ${openLocked?'disabled':''}><span class="dn">Bonus${openLocked?' · finish Day 6':''}</span><span class="dt">Open Shift</span><span class="ds">Random mix of every task, replay anytime</span></button></div>`;
+  h+=`<div class="sec-h"><span class="eyebrow">Challenge levels</span><h3>Think you're a pro shelver?</h3></div><div class="days">`;
+  CHALLENGES.forEach(C=>{
+    const locked=S.unlocked<C.unlock, st=S.cstars[C.id]||0, best=S.best[C.id];
+    h+=`<button class="day chal" data-chal="${C.id}" ${locked?'disabled':''}><span class="dn">Challenge${locked?' · finish Day '+(C.unlock-1):''}</span><span class="dt">${C.t}</span><span class="ds">${C.skill}</span>${best!=null?`<span class="db">Best: ${best} ${C.unit}</span>`:''}<span class="stars-row">${[0,1,2].map(k=>STAR(k<st)).join('')}</span></button>`;
+  });
+  h+='</div>';
   panel.innerHTML=h;
-  panel.querySelectorAll('.day').forEach(b=>b.onclick=()=>startDay(b.dataset.day==='open'?'open':+b.dataset.day));
+  panel.querySelectorAll('[data-day]').forEach(b=>b.onclick=()=>startRun(b.dataset.day==='open'?'open':'day',b.dataset.day==='open'?null:+b.dataset.day));
+  panel.querySelectorAll('[data-chal]').forEach(b=>b.onclick=()=>startRun('challenge',b.dataset.chal));
 }
 
 function exampleShelf(d){
   let books;
-  if(d.lesson.ex) books=d.lesson.ex.map(n=>FIC.find(b=>b.last===n));
+  if(d.lesson.ex) books=d.lesson.ex.map(n=>FIC.find(b=>norm(b.last)===norm(n)));
   else books=d.lesson.exN.map(s=>{const [c,k]=s.split('|');return NF.find(b=>b.call===c&&b.cut===k);});
   books=books.filter(Boolean).map((b,i)=>({...b,color:SPINES[[0,1,3][i]],h:[140,150,134][i]}));
   return `<div class="shelf">${shelfHTML(books)}</div>`;
 }
 
-function startDay(d){
-  const def=d==='open'?OPEN:DAYS[d];
-  const specs=d==='open'?openTasks():def.tasks;
-  run={day:d,def,tasks:specs.map(gen),i:0,earned:0,first:0,streak:0,results:[]};
-  currentStudent=null;
-  panel.innerHTML=`<div class="lesson"><div class="txt"><span class="eyebrow">${d==='open'?'Bonus':'Day '+(d+1)} · Ms. Pagecastle's tip</span><h2>${def.lesson.h}</h2>${def.lesson.p.map(p=>`<p>${p}</p>`).join('')}<div class="row"><button class="btn" id="go">Open the doors</button><button class="btn ghost" id="back">Back to schedule</button></div></div><div class="ex"><span class="eyebrow">In order, left to right</span>${exampleShelf(def)}</div></div>`;
-  $('#go').onclick=()=>{ sfx('pop'); nextTask(); };
+function startRun(kind,idx){
+  stopRun();
+  const def=kind==='open'?OPEN:kind==='day'?DAYS[idx]:CHALLENGES.find(c=>c.id===idx);
+  const specs=def.tasks||(kind==='open'?shuffle(ALL_POOL).slice(0,8):[]);
+  run={kind,day:kind==='day'?idx:null,def,tasks:specs.map(gen),i:0,earned:0,first:0,combo:0,score:0,extra:0,results:[],
+       timed:def.timed||0,tLeft:def.timed||0,penalty:def.penalty||0,endless:!!def.endless,sudden:!!def.sudden,patience:def.patience||0};
+  currentStudent=null; drawScene();
+  const eb=kind==='open'?'Bonus':kind==='day'?'Day '+(idx+1):'Challenge';
+  panel.innerHTML=`<div class="lesson"><div class="txt"><span class="eyebrow">${eb} · Ms. Pagecastle's tip</span><h2>${def.lesson.h}</h2>${def.lesson.p.map(p=>`<p>${p}</p>`).join('')}${def.lesson.twist?`<div class="twist">${def.lesson.twist}</div>`:''}<div class="row"><button class="btn" id="go">${run.timed?'Start the clock':'Open the doors'}</button><button class="btn ghost" id="back">Back to schedule</button></div></div><div class="ex"><span class="eyebrow">In order, left to right</span>${exampleShelf(def)}</div></div>`;
+  $('#go').onclick=()=>{ sfx('pop'); nextTask(); if(run.timed||run.patience) startTicker(); };
   $('#back').onclick=showSchedule;
-  say('Ready when you are, shelf friend!',300,58);
+  say(kind==='challenge'?'A challenge! Show me what you\'ve got.':'Ready when you are, shelf friend!',...POS.lib);
 }
-function stopRun(){ run=null; cur=null; const g=$('#student'); if(g){ g.style.transform='translate(900px,282px)'; } currentStudent=null; }
+function stopRun(){ stopTicker(); const had=run&&run.def&&run.def.bunting; run=null; cur=null; const g=$('#student'); if(g){ g.style.transform='translate(900px,282px)'; } currentStudent=null; if(had) drawScene(); }
+function startTicker(){ stopTicker(); ticker=setInterval(onTick,100); }
+function stopTicker(){ clearInterval(ticker); ticker=null; }
+function onTick(){
+  if(!run){ stopTicker(); return; }
+  if(run.timed&&!run.ended){
+    run.tLeft-=.1;
+    const f=$('#cfill'); if(f) f.style.width=Math.max(0,run.tLeft/run.timed*100)+'%';
+    const tx=$('#ctxt'); if(tx) tx.textContent=Math.ceil(Math.max(0,run.tLeft))+'s';
+    if(run.tLeft<=0){ run.ended=true; endRun(); return; }
+  }
+  if(run.patience&&cur&&!cur.done&&cur.pLeft>0){
+    cur.pLeft-=.1; const p=$('#pfill'); if(p){ p.style.width=Math.max(0,cur.pLeft/run.patience*100)+'%'; if(cur.pLeft<run.patience*.3) p.style.background='var(--bad)'; }
+    if(cur.pLeft<=0){ cur.stuLine='Um... I\'ll just wait here. (no rush)'; const sl=$('#stuLine'); if(sl) sl.textContent='“'+cur.stuLine+'”'; }
+  }
+}
 
 function nextTask(){
   if(!run) return;
-  if(run.i>=run.tasks.length) return endDay();
-  cur=run.tasks[run.i]; cur.tries=0; cur.hint=false; cur.done=false;
+  if(run.endless&&run.i>=run.tasks.length) run.tasks.push(gen(pick(run.def.pool)));
+  if(run.i>=run.tasks.length) return endRun();
+  cur=run.tasks[run.i]; cur.tries=0; cur.hint=false; cur.done=false; cur.pLeft=run.patience||0;
   currentStudent=cur.student;
   renderStudent(cur.student,true); sfx('step');
   renderTask();
 }
 
-function dotsHTML(){ return `<div class="dots" aria-label="Student ${run.i+1} of ${run.tasks.length}">${run.tasks.map((t,i)=>{const r=run.results[i]; return `<span class="dot ${r===undefined?(i===run.i?'on':''):r?'ok':'meh'}"></span>`;}).join('')}</div>`; }
+function progressHTML(){
+  if(run.endless) return `<span class="pill">${run.def.unit[0].toUpperCase()+run.def.unit.slice(1)}: ${run.score}</span>`;
+  return `<div class="dots" aria-label="Task ${run.i+1} of ${run.tasks.length}">${run.tasks.map((t,i)=>{const r=run.results[i]; return `<span class="dot ${r===undefined?(i===run.i?'on':''):r?'ok':'meh'}"></span>`;}).join('')}</div>`;
+}
+function heldHTML(b,label){
+  const who=b.kind==='F'?`by ${esc(b.first)} ${esc(b.last)}`:'Nonfiction';
+  return `<div class="held"><span class="eyebrow">${label}</span><div class="held-body">${bookHTML(b,{cls:'mini'})}<div class="held-info"><span class="ht">${esc(b.title)}</span><span class="ha">${who}</span><span class="hc">${callStr(b)}</span></div></div></div>`;
+}
+const CART_Q={first:'goes <b>first</b> (farthest left) on the shelf',last:'goes <b>last</b> (farthest right) on the shelf'};
 
 function renderTask(){
   const t=cur, st=t.student;
@@ -987,20 +1290,38 @@ function renderTask(){
       work=`<div class="card-cat" style="flex:1 1 260px"><span class="k">CATALOG RECORD</span><br>Subject: ${esc(t.topic)}<br>Call number: <span style="font-size:20px">${t.call}</span></div><div class="choices" style="flex:2 1 300px">${t.step2.ranges.map(([lo,hi],i)=>`<button class="choice${t.allowed&&!t.allowed.includes(i)?' dim':''}" data-c="${i}"><span class="cn">${fmt(lo)}–${fmt(hi)}.99</span><span class="cd">Shelf ${i+1} in the ${DEWEY[t.ans][0]}s</span></button>`).join('')}</div>`;
     }
   }
+  if(t.type==='duel'){
+    stu=t.stuLine||(t.stuLine=pick(['Quick question! Which of these goes first?','My friend and I are arguing about which one goes first. Settle it!','Pop quiz from me to you: which comes first?']));
+    lib=t.libMsg||'Tap the book that goes <b>first</b> (farther left) on the shelf.';
+    const pair=t.rounds[Math.min(t.r,t.need-1)];
+    work=`<div class="duel" style="flex:1 1 100%">${pair.map((b,i)=>`<button class="duel-b" data-d="${i}">${bookHTML(b,{cls:'mini',tag:'span'})}<span class="duel-info"><span class="hc">${callStr(b)}</span><span class="ha">${b.kind==='F'?esc(b.first+' '+b.last):esc(b.title)}</span></span></button>`).join('<span class="vs">or</span>')}</div>${t.need>1?`<div class="rounds" style="flex:1 1 100%">Round ${Math.min(t.r+1,t.need)} of ${t.need}</div>`:''}`;
+  }
+  if(t.type==='sort'){
+    stu=t.stuLine||(t.stuLine=pick(['Sooo... I tripped and the whole shelf fell. I put them back really fast. Sorry!','The robotics club used this shelf as a ramp. It\'s a mess now.','I was looking for one book and kind of rearranged everything. Oops.']));
+    lib=t.libMsg||`Tap two books to <b>swap</b> them. Put the whole shelf in order! It can be done in <b>${t.min}</b> swaps.`;
+    const shown=t.done?t.sorted:t.books;
+    work=`<div class="shelf" id="shelf" style="flex-basis:100%">${shelfHTML(shown,{tappable:!t.done,sel:t.sel,hintB:t.hintB})}</div>`;
+  }
+  if(t.type==='cart'){
+    stu=t.stuLine||(t.stuLine=pick(['I\'m a library aide this period! Can you help me unload this cart?','Ms. P asked me to put these away but I\'m not sure where to start.','Cart delivery! Where does this one go?']));
+    const q=t.q==='after'?`goes <b>right after</b> <span class="hc">${callStr(t.ref)}</span> on the shelf`:t.q==='before'?`goes <b>right before</b> <span class="hc">${callStr(t.ref)}</span> on the shelf`:CART_Q[t.q];
+    lib=t.libMsg||`Here's a messy cart. Which book ${q}?`;
+    const shown=t.done?t.sorted:t.disp;
+    work=`<div style="flex:1 1 100%;min-width:0"><div class="shelf cart" id="shelf">${shelfHTML(shown,{tappable:!t.done,allowed:t.allowed,placed:t.done?t.sorted.indexOf(t.ans):-1})}</div><div class="cart-wheels" aria-hidden="true"><span></span><span></span></div></div>`;
+  }
   if(t.libOverride) lib=t.libOverride;
   const hintBtn=S.owned.cactus?`<button class="btn ghost" id="hintBtn" ${t.hint||t.done?'disabled':''}>Ask Spike for a hint</button>`:`<button class="btn ghost" id="hintBtn" title="Adopt Spike the Talking Cactus in the Cozy Catalog to unlock hints">Hint (needs Spike)</button>`;
-  panel.innerHTML=`
+  const timer=run.timed?`<div class="ctimer"><span id="ctxt">${Math.ceil(run.tLeft)}s</span><div class="cbar"><span id="cfill" style="width:${run.tLeft/run.timed*100}%"></span></div></div>`:'';
+  const pbar=run.patience&&!t.done?`<div class="pbar" aria-label="Patience"><span id="pfill" style="width:${t.pLeft/run.patience*100}%;${t.pLeft<run.patience*.3?'background:var(--bad)':''}"></span></div>`:'';
+  const nextBtn=t.done&&!run.timed?`<button class="btn" id="nextBtn">${run.over?'See results':'Next student'}</button>`:'';
+  panel.innerHTML=`${timer}
     <div class="dialog">
-      <div class="say"><span class="who">${st.name}</span><p id="stuLine">“${stu}”</p></div>
+      <div class="say"><span class="who">${st.name}</span><p id="stuLine">“${stu}”</p>${pbar}</div>
       <div class="say say-lib ${t.mood||''}" id="libBox"><span class="who">Ms. Pagecastle</span><p id="libLine">${lib}</p></div>
     </div>
     <div class="work">${work}</div>
-    <div class="foot">${dotsHTML()}<div class="row"><span class="earn" id="earn"></span>${t.done?'<button class="btn" id="nextBtn">Next student</button>':hintBtn}</div></div>`;
+    <div class="foot">${progressHTML()}<div class="row"><span class="earn" id="earn"></span>${t.done?nextBtn:hintBtn}</div></div>`;
   wireTask();
-}
-function heldHTML(b,label){
-  const who=b.kind==='F'?`by ${esc(b.first)} ${esc(b.last)}`:'Nonfiction';
-  return `<div class="held"><span class="eyebrow">${label}</span><div class="held-body">${bookHTML(b,{cls:'mini'})}<div class="held-info"><span class="ht">${esc(b.title)}</span><span class="ha">${who}</span><span class="hc">${callStr(b)}</span></div></div></div>`;
 }
 function setLib(html,mood){ cur.libOverride=html; cur.mood=mood; const p=$('#libLine'); if(p) p.innerHTML=html; const box=$('#libBox'); if(box){ box.classList.remove('good','bad'); if(mood) box.classList.add(mood);} }
 
@@ -1008,29 +1329,38 @@ function wireTask(){
   panel.querySelectorAll('.slot').forEach(b=>b.onclick=()=>chooseSlot(+b.dataset.s,b));
   panel.querySelectorAll('button.book').forEach(b=>b.onclick=()=>chooseBook(+b.dataset.b,b));
   panel.querySelectorAll('.choice').forEach(b=>b.onclick=()=>chooseOption(+b.dataset.c,b));
+  panel.querySelectorAll('.duel-b').forEach(b=>b.onclick=()=>chooseDuel(+b.dataset.d,b));
   const hb=$('#hintBtn'); if(hb) hb.onclick=useHint;
-  const nb=$('#nextBtn'); if(nb){ nb.onclick=()=>{ sfx('step'); studentLeave(()=>{ run.i++; nextTask(); }); }; nb.focus({preventScroll:true}); }
+  const nb=$('#nextBtn'); if(nb){ nb.onclick=()=>{ if(run.over) return endRun(); sfx('step'); studentLeave(()=>{ if(!run) return; run.i++; nextTask(); }); }; nb.focus({preventScroll:true}); }
 }
 
 function wrong(el,msg){
+  if(cur.done) return;
   cur.tries++; sfx('bad'); libReact('think');
   if(el){ el.classList.remove('bad','wrongpick'); void el.offsetWidth; el.classList.add(el.classList.contains('book')?'wrongpick':'bad'); }
+  if(run.sudden){ run.over=true; cur.done=true; cur.libOverride=msg+' <b>That ends your streak!</b>'; cur.mood='bad'; renderTask(); return; }
   setLib(msg,'bad');
+  if(run.timed){ run.tLeft-=run.penalty; const e=$('#earn'); if(e){ e.textContent=`−${run.penalty}s`; e.classList.add('neg'); } }
+  companionReact('bad');
 }
 function finishTask(msg){
+  if(cur.done) return;
   cur.done=true; cur.libOverride=msg; cur.mood='good';
   const first=cur.tries===0;
-  let gain=first?(cur.hint?2:3):1;
-  run.results[run.i]=first;
-  if(first){ run.first++; run.streak++; } else run.streak=0;
+  let gain=run.timed?1:first?(cur.hint?2:3):1;
+  run.results[run.i]=first; run.score++;
+  if(first){ run.first++; run.combo++; } else run.combo=0;
   let bonus='';
-  if(first&&S.owned.cocoa&&run.streak%3===0){ gain++; bonus=' (cocoa streak!)'; }
+  if(first&&S.owned.cocoa&&run.combo%3===0&&!run.timed){ gain++; bonus=' (cocoa streak!)'; }
+  if(run.patience&&cur.pLeft>0){ gain++; bonus+=' (speedy!)'; }
   run.earned+=gain; S.bm+=gain; S.shelved++; save(); updateBM();
   sfx('ding'); setTimeout(()=>sfx('coin'),250); libReact('cheer');
   cur.student.happy=true; cur.student.book=null; renderStudent(cur.student,false);
   cur.stuLine=pick(THANKS);
   renderTask();
-  $('#earn').textContent=`+${gain} bookmark${gain>1?'s':''}${bonus}`;
+  const e=$('#earn'); if(e) e.textContent=`+${gain} bookmark${gain>1?'s':''}${bonus}`;
+  if(run.timed){ const R=run; setTimeout(()=>{ if(run===R&&!R.ended){ R.i++; nextTask(); } },650); }
+  else companionReact('good');
 }
 
 function chooseSlot(s,el){
@@ -1040,55 +1370,91 @@ function chooseSlot(s,el){
   if(okL&&okR){
     const placed=shelf.slice(); placed.splice(s,0,b);
     const L=shelf[s-1], R=shelf[s];
-    let why=L&&R?`<b>${callStr(b)}</b> fits right between ${callStr(L)} and ${callStr(R)}.`:L?`<b>${callStr(b)}</b> comes after everything else here, so it goes on the far right.`:`<b>${callStr(b)}</b> comes before everything else here, so it goes on the far left.`;
+    const why=L&&R?`<b>${callStr(b)}</b> fits right between ${callStr(L)} and ${callStr(R)}.`:L?`<b>${callStr(b)}</b> comes after everything else here, so it goes on the far right.`:`<b>${callStr(b)}</b> comes before everything else here, so it goes on the far left.`;
     finishTask(pick(['Perfect!','Nailed it!','Beautiful shelving!','Exactly right!'])+' '+why);
-    const sh=$('#shelf'); sh.classList.add('done'); sh.innerHTML=shelfHTML(placed,{placed:s});
+    const sh=$('#shelf'); if(sh){ sh.classList.add('done'); sh.innerHTML=shelfHTML(placed,{placed:s}); }
     return;
   }
   const msg = !okL ? explain(b,shelf[s-1]) + ` So your book goes further <b>left</b>.` : explain(shelf[s],b) + ` So your book goes further <b>right</b>.`;
   wrong(el,'Not quite! '+msg);
 }
 function chooseBook(k,el){
-  if(cur.done||cur.phase!==1) return;
-  const rest=cur.disp.slice(); const b=rest.splice(k,1)[0];
-  if(isSorted(rest)){
-    sfx('pop');
-    cur.phase=2; cur.book=b; cur.shelf=rest; cur.allowed=null;
-    cur.libMsg=`Found it! <b>${callStr(b)}</b> was out of place. Now tap the gap where it <b>really</b> belongs.`;
-    cur.libOverride=null; cur.mood=null;
-    renderTask(); return;
+  if(cur.done) return;
+  const t=cur;
+  if(t.type==='mis'){
+    if(t.phase!==1) return;
+    const rest=t.disp.slice(); const b=rest.splice(k,1)[0];
+    if(isSorted(rest)){
+      sfx('pop'); t.phase=2; t.book=b; t.shelf=rest; t.allowed=null; t.libOverride=null; t.mood=null;
+      t.libMsg=`Found it! <b>${callStr(b)}</b> was out of place. Now tap the gap where it <b>really</b> belongs.`;
+      renderTask(); return;
+    }
+    return wrong(el,`That one is actually in the right spot. Scan left to right and look for a book that is <b>bigger than the one after it</b>.`);
   }
-  wrong(el,`That one is actually in the right spot. Scan left to right and look for a book that is <b>bigger than the one after it</b>.`);
+  if(t.type==='sort'){
+    if(t.sel===null){ t.sel=k; sfx('step'); renderTask(); return; }
+    if(t.sel===k){ t.sel=null; renderTask(); return; }
+    [t.books[t.sel],t.books[k]]=[t.books[k],t.books[t.sel]]; t.swaps++; t.sel=null; t.hintB=null;
+    if(isSorted(t.books)){
+      const extra=Math.max(0,t.swaps-t.min); run.extra+=extra; t.tries=extra>1?1:0;
+      return finishTask(extra===0?`Perfect! Sorted in <b>${t.swaps}</b> swaps, the fewest possible!`:`Sorted! You used <b>${t.swaps}</b> swaps. The fewest possible was ${t.min}.`);
+    }
+    const ok=t.books.filter((b,i)=>b===t.sorted[i]).length;
+    t.libOverride=null; t.mood=null; t.libMsg=`Swapped! <b>${ok} of ${t.books.length}</b> books are in their final spot. Swaps so far: <b>${t.swaps}</b> (fewest possible: ${t.min}).`;
+    sfx('step'); renderTask(); return;
+  }
+  if(t.type==='cart'){
+    const b=t.disp[k];
+    if(b===t.ans){
+      const why=t.q==='first'?`<b>${callStr(b)}</b> is the smallest, so it goes first.`:t.q==='last'?`<b>${callStr(b)}</b> is the biggest, so it goes last.`:t.q==='after'?`<b>${callStr(b)}</b> comes right after ${callStr(t.ref)}.`:`<b>${callStr(b)}</b> comes right before ${callStr(t.ref)}.`;
+      return finishTask(`Yes! ${why} Here's the whole cart in order.`);
+    }
+    let msg;
+    if(t.q==='first') msg=explain(t.ans,b)+' So another book goes first.';
+    else if(t.q==='last') msg=explain(b,t.ans)+' So another book goes last.';
+    else if(b===t.ref) msg='That\'s the book from the question! Find its neighbor.';
+    else if(t.q==='after') msg=cmp(b,t.ref)<0?explain(b,t.ref)+' So it goes <b>before</b>, not after.':explain(t.ans,b)+' Another book fits in between.';
+    else msg=cmp(b,t.ref)>0?explain(t.ref,b)+' So it goes <b>after</b>, not before.':explain(b,t.ans)+' Another book fits in between.';
+    return wrong(el,'Not quite! '+msg);
+  }
+}
+function chooseDuel(i,el){
+  if(cur.done) return;
+  const t=cur, pair=t.rounds[t.r], fi=cmp(pair[0],pair[1])<0?0:1;
+  if(i===fi){
+    t.r++;
+    if(t.r>=t.need) return finishTask(`Yes! ${explain(pair[i],pair[1-i])}`);
+    sfx('pop'); t.libOverride=null; t.mood='good'; t.libMsg=`Yes! ${explain(pair[i],pair[1-i])} Next round!`; renderTask(); return;
+  }
+  wrong(el,'Not this time! '+explain(pair[fi],pair[i]));
 }
 function chooseOption(i,el){
   if(cur.done) return;
   const t=cur;
   if(t.type==='findF'){
-    if(i===t.ans){ el.classList.add('right'); return finishTask(`Yes! <b>${esc(t.book.last)}</b> starts with <b>${norm(t.book.last)[0].toUpperCase()}</b>, so look in FIC ${FRANGES[i][0]}–${FRANGES[i][1]}. Their spine label says <b>${callStr(t.book)}</b>.`); }
-    const L=norm(t.book.last)[0].toUpperCase();
-    return wrong(el,`Hmm, that section is for last names starting with ${FRANGES[i][0]}–${FRANGES[i][1]}. Remember to use the author's <b>last</b> name: ${esc(t.book.last)}.`+(norm(t.book.first)[0].toUpperCase()>=FRANGES[i][0]&&norm(t.book.first)[0].toUpperCase()<=FRANGES[i][1]?' (That range matches the <b>first</b> name, which is a common mix-up!)':''));
+    if(i===t.ans) return finishTask(`Yes! <b>${esc(t.book.last)}</b> starts with <b>${norm(t.book.last)[0].toUpperCase()}</b>, so look in FIC ${FRANGES[i][0]}–${FRANGES[i][1]}. Their spine label says <b>${callStr(t.book)}</b>.`);
+    const F=norm(t.book.first)[0].toUpperCase();
+    return wrong(el,`Hmm, that section is for last names starting with ${FRANGES[i][0]}–${FRANGES[i][1]}. Remember to use the author's <b>last</b> name: ${esc(t.book.last)}.`+(F>=FRANGES[i][0]&&F<=FRANGES[i][1]?' (That range matches the <b>first</b> name, which is a common mix-up!)':''));
   }
   if(t.type==='findN'){
     if(t.phase===1){
       if(i===t.ans){
         if(t.step2){ sfx('pop'); t.phase=2; t.allowed=null; t.libOverride=null; t.mood=null; t.libMsg=`Yes, the <b>${DEWEY[i][0]}s: ${DEWEY[i][1]}</b>! I looked it up in the catalog. Which <b>shelf range</b> has this call number?`; return renderTask(); }
-        el.classList.add('right');
         return finishTask(`Yes! ${esc(t.topic)} lives in the <b>${DEWEY[i][0]}s, ${DEWEY[i][1]}</b>. The catalog says <b>${t.call}</b>.`);
       }
       return wrong(el,`Close, but the <b>${DEWEY[i][0]}s</b> are for ${DEWEY[i][2]}. What is ${esc(t.topic)} mostly about?`);
     }
     const [lo,hi]=t.step2.ranges[i];
-    if(i===t.step2.ans){ el.classList.add('right'); return finishTask(`Exactly! <b>${t.call}</b> is between ${lo} and ${hi}.99, so it's on that shelf. Happy researching!`); }
+    if(i===t.step2.ans) return finishTask(`Exactly! <b>${t.call}</b> is between ${lo} and ${hi}.99, so it's on that shelf. Happy researching!`);
     return wrong(el,`That shelf holds ${String(lo).padStart(3,'0')} to ${String(hi).padStart(3,'0')}.99. Look at the whole number in <b>${t.call}</b> first. Is it bigger or smaller?`);
   }
 }
 function useHint(){
-  if(!S.owned.cactus){ say('Adopt Spike in the Cozy Catalog to unlock hints!',395,150); setLib('Hints come from <b>Spike the Talking Cactus</b>. Adopt him in the Cozy Catalog! For now, check the <b>Cheat Sheet</b> button up top.',null); return; }
+  if(!S.owned.cactus){ say('Adopt Spike in the Cozy Catalog to unlock hints!',...POS.cactus); setLib('Hints come from <b>Spike the Talking Cactus</b>. Adopt him in the Cozy Catalog! For now, check the <b>Cheat Sheet</b> button up top.',null); return; }
   if(cur.hint||cur.done) return;
   cur.hint=true; sfx('pop');
-  const t=cur;
-  let line='';
-  if((t.type==='ret')||(t.type==='mis'&&t.phase===2)){
+  const t=cur; let line='';
+  if(t.type==='ret'||(t.type==='mis'&&t.phase===2)){
     const r=t.shelf.findIndex(b=>cmp(t.book,b)<0); const ans=r===-1?t.shelf.length:r;
     t.allowed=[ans-1,ans,ans+1].filter(x=>x>=0&&x<=t.shelf.length);
     line='Psst! It goes in one of the glowing gaps.';
@@ -1101,54 +1467,104 @@ function useHint(){
   } else if(t.type==='findN'){
     if(t.phase===1){ t.allowed=[t.ans].concat(shuffle([0,1,2,3,4,5,6,7,8,9].filter(x=>x!==t.ans)).slice(0,2)).sort((a,b)=>a-b); line='I narrowed it to three classes. Think about the subject.'; }
     else { t.allowed=[t.step2.ans,pick([0,1,2].filter(x=>x!==t.step2.ans))].sort(); line='Two shelves left. Compare the whole number first!'; }
+  } else if(t.type==='duel'){
+    line=t.kind==='F'?'Compare the LAST names letter by letter until they differ.':'Whole numbers first. Then decimals one digit at a time. Pretend the shorter decimal has zeros on the end!';
+  } else if(t.type==='sort'){
+    const p=t.books.findIndex((b,i)=>b!==t.sorted[i]); t.hintB=t.sorted[p]; t.sel=null;
+    line=`The glowing book belongs in spot #${p+1} from the left.`;
+  } else if(t.type==='cart'){
+    const ai=t.disp.indexOf(t.ans); t.allowed=[ai,pick(t.disp.map((b,i)=>i).filter(i=>i!==ai&&t.disp[i]!==t.ref))].sort();
+    line='It\'s one of these two. Line them up in your head!';
   }
-  say('Spike: '+line,395,138);
+  say('Spike: '+line,...POS.cactus);
   renderTask();
   setLib('<b>Spike:</b> '+line,null);
 }
 
-function endDay(){
-  const total=run.tasks.length, acc=run.first/total;
-  const stars=acc>=.9?3:acc>=.7?2:1;
-  let bonus=0; if(S.owned.cat){ bonus+=5; }
-  if(run.first===total){ bonus+=5; }
-  S.bm+=bonus; run.earned+=bonus;
-  const isOpen=run.day==='open';
-  if(!isOpen){ S.stars[run.day]=Math.max(S.stars[run.day]||0,stars); S.unlocked=Math.max(S.unlocked,run.day+2); }
-  save(); updateBM(); sfx('pop');
-  const msg=stars===3?'Incredible work! The shelves have never looked better.':stars===2?'Great shift! A few tricky ones, but you figured them out.':'Good effort! Every expert shelver started somewhere. Try the shift again for more stars.';
-  const nextLabel=isOpen?'Another Open Shift':run.day+1<DAYS.length?`Start Day ${run.day+2}`:'Try the Open Shift';
-  panel.innerHTML=`<div style="display:flex;flex-direction:column;gap:10px"><span class="eyebrow">${isOpen?'Open Shift':'Day '+(run.day+1)} complete</span><h2>${run.def.t}: shift complete!</h2><div class="big-stars">${[0,1,2].map(k=>STAR(k<stars,'pop')).join('')}</div><p>${msg}</p></div>
-    <div class="summary"><div class="stat"><b>${run.first}/${total}</b><span>right on the first try</span></div><div class="stat"><b>+${run.earned}</b><span>bookmarks earned</span></div>${S.owned.cat?`<div class="stat"><b>+5</b><span>Dewey the cat bonus</span></div>`:''}${run.first===total?`<div class="stat"><b>+5</b><span>perfect shift bonus</span></div>`:''}<div class="stat"><b>${S.bm}</b><span>bookmarks to spend</span></div></div>
+function endRun(){
+  if(!run) return;
+  stopTicker();
+  const R=run, isC=R.kind==='challenge', C=R.def;
+  let stars, sc, newBest=false;
+  if(isC){
+    sc=C.metric(R); stars=C.stars(sc);
+    const prev=S.best[C.id]; if(prev==null||(C.low?sc<prev:sc>prev)){ S.best[C.id]=sc; newBest=prev!=null; }
+    S.cstars[C.id]=Math.max(S.cstars[C.id]||0,stars);
+  } else {
+    const acc=R.first/R.tasks.length; stars=acc>=.9?3:acc>=.7?2:1;
+    if(R.kind==='day'){ S.stars[R.day]=Math.max(S.stars[R.day]||0,stars); S.unlocked=Math.max(S.unlocked,R.day+2); }
+  }
+  let bonus=0, bonusLines='';
+  if(S.owned.cat){ bonus+=5; bonusLines+=`<div class="stat"><b>+5</b><span>Dewey the cat bonus</span></div>`; }
+  if(!isC&&R.first===R.tasks.length){ bonus+=5; bonusLines+=`<div class="stat"><b>+5</b><span>perfect shift bonus</span></div>`; }
+  if(isC&&stars){ bonus+=stars*3; bonusLines+=`<div class="stat"><b>+${stars*3}</b><span>challenge star bonus</span></div>`; }
+  S.bm+=bonus; R.earned+=bonus; save(); updateBM(); sfx('pop');
+  const msg=stars===3?'Incredible work! The shelves have never looked better.':stars===2?'Great job! A few tricky ones, but you figured them out.':stars===1?'Good effort! Every expert shelver started somewhere. Try again for more stars.':'Tough one! Give it another try. You\'ll get faster every time.';
+  const eb=isC?'Challenge':R.kind==='open'?'Open Shift':'Day '+(R.day+1);
+  const nextLabel=isC?'Try again':R.kind==='open'?'Another Open Shift':R.day+1<DAYS.length?`Start Day ${R.day+2}`:'Try the Open Shift';
+  const mainStat=isC?`<div class="stat"><b>${sc}</b><span>${C.unit}${newBest?' · new best!':''}</span></div>`:`<div class="stat"><b>${R.first}/${R.tasks.length}</b><span>right on the first try</span></div>`;
+  panel.innerHTML=`<div style="display:flex;flex-direction:column;gap:10px"><span class="eyebrow">${eb} complete</span><h2>${R.def.t}: ${R.over?'streak over!':isC&&R.timed?'time\'s up!':'complete!'}</h2><div class="big-stars">${[0,1,2].map(k=>STAR(k<stars,'pop')).join('')}</div><p>${msg}</p></div>
+    <div class="summary">${mainStat}<div class="stat"><b>+${R.earned}</b><span>bookmarks earned</span></div>${bonusLines}<div class="stat"><b>${S.bm}</b><span>bookmarks to spend</span></div></div>
     <div class="row"><button class="btn" id="toShop">Visit the Cozy Catalog</button><button class="btn ghost" id="nextDay">${nextLabel}</button><button class="btn ghost" id="toSched">Schedule</button></div>`;
-  const d=run.day;
-  stopRun(); say(stars===3?'You\'re a shelving superstar!':'Thanks for your help today!',300,58);
-  $('#toShop').onclick=showShop; $('#toSched').onclick=showSchedule;
-  $('#nextDay').onclick=()=>startDay(d==='open'||d+1>=DAYS.length?'open':d+1);
+  stopRun(); say(stars===3?'You\'re a shelving superstar!':'Thanks for your help today!',...POS.lib);
+  $('#toShop').onclick=()=>showShop(); $('#toSched').onclick=showSchedule;
+  $('#nextDay').onclick=()=>{ if(isC) startRun('challenge',C.id); else if(R.kind==='open'||R.day+1>=DAYS.length) startRun('open'); else startRun('day',R.day+1); };
 }
 
-function showShop(){
-  stopRun();
-  let h=`<div style="display:flex;flex-direction:column;gap:6px"><span class="eyebrow">Cozy Catalog</span><h2>Upgrade the library</h2><p>Spend your bookmarks to make the Thinkerton library the coziest place in school. You have <b>${S.bm}</b> bookmark${S.bm===1?'':'s'}.</p></div><div class="shop">`;
-  UPGRADES.forEach(u=>{
-    const own=S.owned[u.id], can=S.bm>=u.cost;
-    const [x,y,w,hh]=u.box;
-    h+=`<div class="item"><svg viewBox="${x-6} ${y-6} ${w+12} ${hh+12}" aria-hidden="true">${u.draw().replace(/id="up-[a-z]+"/,'').replace(/data-who="[a-z]+"/,'')}</svg><span class="nm">${u.name}</span><span class="pk">${u.perk}</span>${own?'<span class="owned">In your library ✓</span>':`<button class="btn" data-buy="${u.id}" ${can?'':'disabled'}>${can?'Get it':'Need '+(u.cost-S.bm)+' more'} · ${u.cost}</button>`}</div>`;
+/* ---------------- catalog UI ---------------- */
+let shopTab='lib';
+const TABS=[['lib','Library'],['holiday','Holiday Decor'],['record','Records'],['closet','Ms. P\'s Closet']];
+function previewSVG(u){
+  if(u.cat==='record') return `<svg viewBox="0 0 120 70" aria-hidden="true"><circle cx="60" cy="35" r="30" fill="#1E1E24"/><circle cx="60" cy="35" r="24" fill="none" stroke="#33333B" stroke-width="1"/><circle cx="60" cy="35" r="18" fill="none" stroke="#33333B" stroke-width="1"/><circle cx="60" cy="35" r="11" fill="${u.color}"/><circle cx="60" cy="35" r="2" fill="#1E1E24"/><path d="M42 18 Q48 12 56 10" stroke="#fff" stroke-width="2" opacity=".25" fill="none" stroke-linecap="round"/></svg>`;
+  if(u.cat==='closet'){ const eq={...S.equip,[u.slot]:u.id}; return `<svg viewBox="240 38 120 132" aria-hidden="true">${librarianSVG(eq,true)}</svg>`; }
+  const [x,y,w,h]=u.box; const inner=u.cat==='holiday'?u.draw('back')+u.draw('front')+u.draw('glow'):u.draw();
+  return `<svg viewBox="${x-6} ${y-6} ${w+12} ${h+12}" aria-hidden="true" style="--dimg:.3">${inner.replace(/id="up-[a-z]+"/g,'').replace(/data-who="[a-z]+"/g,'').replace(/clip-path="url\(#winClip\)"/g,'')}</svg>`;
+}
+function showShop(tab){
+  stopRun(); if(tab) shopTab=tab;
+  let h=`<div style="display:flex;flex-direction:column;gap:6px"><span class="eyebrow">Cozy Catalog</span><h2>Make the library yours</h2><p>Spend bookmarks on decor, records, and outfits for Ms. Pagecastle. You have <b>${S.bm}</b> bookmark${S.bm===1?'':'s'}.</p></div>
+    <div class="tabs" role="tablist">${TABS.map(([id,l])=>`<button class="tab" role="tab" data-tab="${id}" aria-selected="${shopTab===id}">${l}</button>`).join('')}</div><div class="shop">`;
+  ITEMS.filter(u=>u.cat===shopTab).forEach(u=>{
+    const own=has(u.id), can=S.bm>=u.cost, on=u.slot&&S.equip[u.slot]===u.id&&own;
+    let act;
+    if(!own){
+      if(u.needs&&!S.owned[u.needs]) act=`<button class="btn" disabled>Needs the Record Player</button>`;
+      else act=`<button class="btn" data-buy="${u.id}" ${can?'':'disabled'}>${can?'Get it':'Need '+(u.cost-S.bm)+' more'} · ${u.cost}</button>`;
+    } else if(!u.slot) act='<span class="owned">In your library ✓</span>';
+    else if(u.slot==='cardigan') act=on?'<span class="owned">Wearing it ✓</span>':`<button class="btn" data-eq="${u.id}">Wear it</button>`;
+    else if(u.slot==='record') act=on&&S.music?`<button class="btn ghost" data-stop="1">Stop</button>`:`<button class="btn" data-eq="${u.id}">Play</button>`;
+    else act=on?`<button class="btn ghost" data-off="${u.slot}">${SLOT_LABEL[u.slot][1]}</button>`:`<button class="btn" data-eq="${u.id}">${SLOT_LABEL[u.slot][0]}</button>`;
+    h+=`<div class="item${on?' on':''}">${previewSVG(u)}<span class="nm">${u.name}</span><span class="pk">${u.perk}</span>${act}</div>`;
   });
-  h+=`</div><div class="row"><button class="btn ghost" id="toSched">Back to schedule</button></div>`;
+  h+=`</div>${shopTab==='holiday'?'<p class="ha">One holiday set can be up at a time. Switch whenever you like.</p>':''}<div class="row"><button class="btn ghost" id="toSched">Back to schedule</button></div>`;
   panel.innerHTML=h;
+  panel.querySelectorAll('[data-tab]').forEach(b=>b.onclick=()=>showShop(b.dataset.tab));
   panel.querySelectorAll('[data-buy]').forEach(b=>b.onclick=()=>buy(b.dataset.buy));
+  panel.querySelectorAll('[data-eq]').forEach(b=>b.onclick=()=>equip(b.dataset.eq));
+  panel.querySelectorAll('[data-off]').forEach(b=>b.onclick=()=>{ S.equip[b.dataset.off]=null; save(); drawScene(); sfx('step'); showShop(); });
+  panel.querySelectorAll('[data-stop]').forEach(b=>b.onclick=()=>{ setMusic(false); showShop(); });
   $('#toSched').onclick=showSchedule;
 }
+const BUY_LINES={rug:'Ooh, a rug! My toes are so happy.',posters:'READ posters! Very on brand for us.',cactus:'Spike: Hi! I give hints now. And emotional support.',lights:'Twinkle twinkle, little shelf. Try dimming the room lights!',plant:'Gerald: FINALLY. A stage worthy of my leaves.',cat:'DEWEY! Who\'s a good library cat?',cocoa:'Cocoa for everyone! Not near the books, please.',beanbag:'Dibs. Wait, I\'m the librarian. Okay, no dibs.',record:'Tap the record player for tunes!',owlclock:'Whooo knows what time it is? This owl.',cloudclock:'A sleepy little cloud clock. Adorable.',harvest:'Leaves on the shelves! Very New Hampshire.',spooky:'Spooky season! Dim the lights for the full effect.',winter:'Let it snow! Dim the lights to see the tree glow.',lanterns:'The lanterns look magical with the lights down low.',hearts:'Paper hearts everywhere. I love it here.',spring:'Blossoms! Gerald is pretending not to be jealous.'};
 function buy(id){
-  const u=UPGRADES.find(x=>x.id===id); if(S.owned[id]||S.bm<u.cost) return;
+  const u=ITEMS.find(x=>x.id===id); if(has(id)||S.bm<u.cost) return;
+  if(u.needs&&!S.owned[u.needs]) return;
   S.bm-=u.cost; S.owned[id]=true; save(); updateBM(); sfx('coin'); setTimeout(()=>sfx('pop'),200);
+  if(u.slot) return equip(id);
   drawScene();
-  const el=document.getElementById('up-'+id); if(el){ el.classList.add('pop'); el.style.transformBox='fill-box'; el.style.transformOrigin='center'; }
-  const lines={rug:'Ooh, a rug! My toes are so happy.',posters:'READ posters! Very on brand for us.',cactus:'Spike: Hi! I give hints now. And emotional support.',lights:'Twinkle twinkle, little shelf.',plant:'Welcome, Gerald. Please don\'t be dramatic.',cat:'DEWEY! Who\'s a good library cat?',cocoa:'Cocoa for everyone! Not near the books, please.',beanbag:'Dibs. Wait, I\'m the librarian. Okay, no dibs.',record:'Tap the record player for tunes!'};
-  const pos={cactus:[395,138],cat:[225,146]}[id]||[300,58];
-  say(lines[id],pos[0],pos[1]);
-  if(id==='record') setMusic(true);
+  const el=document.getElementById('up-'+id); if(el) el.classList.add('pop');
+  say(BUY_LINES[id]||'Ooh, I love it!',...(POS[id]||POS.lib));
+  if(id==='record'){ S.equip.record='lofi'; setMusic(true); }
+  showShop();
+}
+function equip(id){
+  const u=ITEMS.find(x=>x.id===id); if(!has(id)) return;
+  S.equip[u.slot]=id; save();
+  if(u.slot==='record'){ setMusic(true); say('Now playing: '+u.name,...POS.record); }
+  else {
+    drawScene(); sfx('pop'); libReact('cheer');
+    say(u.cat==='closet'?pick(['How do I look? Be honest. Actually, be nice.','Ooh, very fashionable for a Tuesday.','A librarian should always be ready for a photo.']):(BUY_LINES[id]||'Looks great up there!'),...POS.lib);
+  }
   showShop();
 }
 
@@ -1165,22 +1581,25 @@ function showCheat(){
 
 function confirmLeave(fn){
   if(run && !(panel.querySelector('#go'))){
-    panel.insertAdjacentHTML('afterbegin',`<div class="say bad" id="leaveBox" style="display:flex;gap:10px;align-items:center;flex-wrap:wrap"><p style="flex:1 1 200px">Leave this shift? Bookmarks you've earned so far are saved, but the shift won't count as finished.</p><button class="btn" id="leaveYes">Leave shift</button><button class="btn ghost" id="leaveNo">Keep shelving</button></div>`);
+    if($('#leaveBox')) return;
+    panel.insertAdjacentHTML('afterbegin',`<div class="say bad" id="leaveBox" style="display:flex;gap:10px;align-items:center;flex-wrap:wrap"><p style="flex:1 1 200px">Leave this ${run.kind==='challenge'?'challenge':'shift'}? Bookmarks you've earned so far are saved, but it won't count as finished.</p><button class="btn" id="leaveYes">Leave</button><button class="btn ghost" id="leaveNo">Keep shelving</button></div>`);
     $('#leaveYes').onclick=fn; $('#leaveNo').onclick=()=>$('#leaveBox').remove();
     return;
   }
   fn();
 }
 $('#bSched').onclick=()=>confirmLeave(showSchedule);
-$('#bShop').onclick=()=>confirmLeave(showShop);
+$('#bShop').onclick=()=>confirmLeave(()=>showShop());
 $('#bCheat').onclick=()=>confirmLeave(showCheat);
 $('#bSound').onclick=()=>{ S.sound=!S.sound; save(); updateBM(); if(S.sound) sfx('ding'); };
 $('#bMusic').onclick=()=>setMusic(!S.music);
+$('#dim').oninput=e=>{ S.dim=+e.target.value; applyDim(); };
+$('#dim').onchange=()=>{ save(); if(S.dim<50&&S.owned.plant&&Math.random()<.5) say('Gerald: Ooh, moody lighting. I approve.',...POS.plant); };
 
 /* ---------------- boot ---------------- */
+S.music=false; // audio needs a tap to start
 drawScene(); updateBM(); showSchedule();
-if(S.music&&S.owned.record){ S.music=false; $('#bMusic').setAttribute('aria-pressed','false'); } // audio needs a tap to start
-setTimeout(()=>say(S.shelved?'Welcome back, shelf friend!':'Hi! I\'m Ms. Pagecastle. Pick a shift below!',300,58),600);
+setTimeout(()=>say(S.shelved?'Welcome back, shelf friend!':'Hi! I\'m Ms. Pagecastle. Pick a shift below!',...POS.lib),600);
 </script>
 
 </html>
