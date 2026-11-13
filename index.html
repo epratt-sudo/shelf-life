@@ -596,7 +596,7 @@ try{ const raw=localStorage.getItem(KEY); if(raw) S=Object.assign(S,JSON.parse(r
 S.equip=Object.assign({cardigan:'mustard',record:'lofi',holiday:null,head:null,neck:null,face:null,clock:null},S.equip||{});
 S.best=S.best||{}; S.cstars=S.cstars||{}; if(S.dim==null) S.dim=100;
 function save(){ try{ localStorage.setItem(KEY,JSON.stringify(S)); }catch(e){} }
-const FREE = {mustard:true};
+const FREE = {mustard:true, navyvest:true};
 function has(id){ if(FREE[id]) return true; if(id==='lofi') return !!S.owned.record; return !!S.owned[id]; }
 
 /* ---------------- audio ---------------- */
@@ -690,8 +690,27 @@ const CARDIGANS={mustard:'#EFAE36',sage:'#7FB08A',berry:'#C2456B',lavender:'#A58
 const SKINS=['#F6D2B4','#EBC09A','#D39B6E','#B07650','#8A5536','#5E3A24'];
 const HAIRS=[['#A8492B','Auburn'],['#2B1D14','Black'],['#5A3A22','Brown'],['#D9A852','Blonde'],['#A7ABB3','Silver'],['#8C3B57','Plum']];
 const SCARVES=[['#2C7775','Teal'],['#C93B63','Berry'],['#7E5BA6','Purple'],['#4A6FA5','Blue'],['#D9A852','Gold'],['#E9D3B0','Cream']];
-const STYLES=[['bun','Bun and pencil'],['puff','Puff'],['braids','Braids'],['curly','Curls'],['bob','Bob'],['hijab','Hijab']];
-const LOOK=()=>Object.assign({skin:0,style:'bun',hair:'#A8492B'},S.look||{});
+const STYLES=[['short','Short','mr mx'],['fade','Fade','mr mx'],['bun','Bun and pencil','ms mr mx'],['puff','Puff','ms mr mx'],['braids','Braids','ms mr mx'],['curly','Curls','ms mr mx'],['locs','Locs','ms mr mx'],['bob','Bob','ms mx'],['bald','Bald','mr mx'],['hijab','Hijab','ms mx']];
+const FACIAL=[['none','None'],['stubble','Stubble'],['mustache','Mustache'],['beard','Beard']];
+const WHO={ms:{t:'Ms.',pos:'her',def:'bun',top:'mustard'},mr:{t:'Mr.',pos:'his',def:'short',top:'navyvest'},mx:{t:'Mx.',pos:'their',def:'curly',top:'mustard'}};
+const LOOK=()=>Object.assign({who:'ms',skin:0,style:'bun',hair:'#A8492B',beard:'none'},S.look||{});
+const LN=()=>WHO[LOOK().who].t+' Pagecastle';
+function fixName(s){ const w=LOOK().who; if(w==='ms'||typeof s!=='string') return s; return s.replace(/Ms\. Pagecastle/g,LN()).replace(/Ms\. P(?![a-z])/g,WHO[w].t+' P').replace(/\bher look\b/g,WHO[w].pos+' look'); }
+function allowedFor(id,who){ const it=ITEMS.find(x=>x.id===id); if(!it) return false; const w=it.who||'all'; return w==='all'||who==='mx'||w===who; }
+const TOPS={mustard:['cardigan','#EFAE36'],sage:['cardigan','#7FB08A'],berry:['cardigan','#C2456B'],lavender:['cardigan','#A58BD6'],navyvest:['vest','#2E4A75'],forestvest:['vest','#3F7A4F'],maroonvest:['vest','#8B2E3E'],flannel:['flannel','#B83A3A']};
+function bodySVG(top){
+  const [k,c]=TOPS[top]||TOPS.mustard;
+  if(k==='vest') return `<rect x="252" y="140" width="96" height="80" rx="30" fill="#CFE3F2"/><path d="M264 162 Q264 148 278 143 L300 174 L322 143 Q336 148 336 162 L336 220 L264 220Z" fill="${c}"/><path d="M276 190 l6 -8 l6 8 l-6 8z M312 190 l6 -8 l6 8 l-6 8z M294 206 l6 -8 l6 8 l-6 8z" fill="#fff" opacity=".2"/><polygon points="286,139 300,152 289,155" fill="#fff"/><polygon points="314,139 300,152 311,155" fill="#fff"/>`;
+  if(k==='flannel') return `<rect x="252" y="140" width="96" height="80" rx="30" fill="${c}"/><g stroke="#2B2A3D" stroke-opacity=".28" stroke-width="3"><path d="M258 164 H342 M254 186 H346 M254 208 H346 M276 144 V220 M324 144 V220"/></g><path d="M286 142 L300 166 L314 142 Z" fill="#F3E9C6"/><circle cx="300" cy="182" r="2" fill="#F3E9C6"/><circle cx="300" cy="198" r="2" fill="#F3E9C6"/>`;
+  const pocket=top==='berry'?'#EFAE36':'#C93B63';
+  return `<rect x="252" y="140" width="96" height="80" rx="30" fill="${c}"/><path d="M286 142 L300 168 L314 142 Z" fill="#2C7775"/><circle cx="276" cy="176" r="3" fill="#fff" opacity=".7"/><circle cx="324" cy="176" r="3" fill="#fff" opacity=".7"/><rect x="262" y="160" width="12" height="14" rx="3" fill="${pocket}" opacity=".85"/>`;
+}
+function facialSVG(b,H){
+  if(b==='stubble') return `<path d="M279 118 Q281 140 300 141 Q319 140 321 118 Q316 132 300 134 Q284 132 279 118Z" fill="${H}" opacity=".28"/>`;
+  if(b==='mustache') return `<path d="M290 125 Q295 120 300 123 Q305 120 310 125 Q305 128 300 126 Q295 128 290 125Z" fill="${H}"/>`;
+  if(b==='beard') return `<path d="M276 112 Q277 142 300 144 Q323 142 324 112 Q320 128 310 129 Q300 124 290 129 Q280 128 276 112Z" fill="${H}"/>`;
+  return '';
+}
 function shade(hex,f){ const n=parseInt(hex.slice(1),16); const c=[n>>16,(n>>8)&255,n&255].map(v=>Math.round(v*f)); return '#'+c.map(v=>v.toString(16).padStart(2,'0')).join(''); }
 function hairParts(st,H){
   const pencil=`<rect x="296" y="46" width="5" height="30" rx="1" fill="#F2C94C" transform="rotate(28 298 61)"/><rect x="296" y="44" width="5" height="5" rx="1" fill="#F29BB0" transform="rotate(28 298 61)"/>`;
@@ -702,14 +721,23 @@ function hairParts(st,H){
   if(st==='curly'){ let c=''; for(let a=150;a<=390;a+=20){ const r=a*Math.PI/180; c+=`<circle cx="${(300+29*Math.cos(r)).toFixed(1)}" cy="${(104+29*Math.sin(r)).toFixed(1)}" r="10" fill="${H}"/>`; }
     return {back:`<ellipse cx="300" cy="104" rx="31" ry="31" fill="${H}"/>${c}`, front:[[281,94],[290,88],[300,86],[310,88],[319,94]].map(([x,y])=>`<circle cx="${x}" cy="${y}" r="6.5" fill="${H}"/>`).join('')}; }
   if(st==='bob') return {back:`<path d="M266 134 Q262 76 300 74 Q338 76 334 134 Z" fill="${H}"/>`, front:`<path d="M277 102 Q279 82 300 82 Q321 82 323 102 Q312 96 300 97 Q288 96 277 102Z" fill="${H}"/>`};
+  if(st==='short') return {back:`<ellipse cx="300" cy="102" rx="28" ry="26" fill="${H}"/>`, front:`<path d="M275 108 Q273 84 300 82 Q327 84 325 108 Q322 94 312 92 Q300 87 288 93 Q279 96 275 108Z" fill="${H}"/>`};
+  if(st==='fade') return {back:`<ellipse cx="300" cy="104" rx="27" ry="25" fill="${H}" opacity=".45"/>`, front:`<path d="M276 101 Q276 79 300 79 Q324 79 324 101 Q300 95 276 101Z" fill="${H}"/>`};
+  if(st==='locs'){ let l=''; for(const x of [266,274,282,318,326,334]) l+=`<rect x="${x-3}" y="94" width="7" height="${x<300?62-(x-266):62-(334-x)}" rx="3.5" fill="${H}"/>`;
+    return {back:`<ellipse cx="300" cy="104" rx="33" ry="33" fill="${H}"/>${l}`, front:`<path d="M274 106 Q276 80 300 80 Q324 80 326 106 Q312 92 300 92 Q288 92 274 106Z" fill="${H}"/><path d="M284 86 Q286 96 282 104 M300 82 V94 M316 86 Q314 96 318 104" stroke="#000" stroke-opacity=".15" stroke-width="2" fill="none"/>`}; }
+  if(st==='bald') return {back:'', front:`<ellipse cx="290" cy="95" rx="7" ry="3.5" fill="#fff" opacity=".3" transform="rotate(-20 290 95)"/><rect x="270" y="100" width="4" height="22" rx="1" fill="#F2C94C" transform="rotate(-25 272 111)"/>`};
   if(st==='hijab') return {back:`<path d="M260 156 Q254 76 300 72 Q346 76 340 156 Z" fill="${H}"/>`, front:`<path d="M276 118 Q276 88 300 87 Q324 88 324 118" fill="none" stroke="${H}" stroke-width="7"/><path d="M280 130 Q300 146 320 130 L330 152 Q300 162 270 152Z" fill="${H}"/><path d="M276 118 Q276 88 300 87 Q324 88 324 118" fill="none" stroke="#000" stroke-opacity=".12" stroke-width="2"/>`, hideEar:true};
   return {back:`<ellipse cx="300" cy="104" rx="34" ry="34" fill="${H}"/><circle cx="300" cy="66" r="15" fill="${H}"/>${pencil}`, front:`<path d="M273 104 Q284 82 300 86 Q318 80 328 104 Q318 94 300 96 Q286 92 273 104Z" fill="${H}"/>`};
 }
 function librarianSVG(eq=S.equip,preview=false,look=LOOK()){
   const skin=SKINS[look.skin]||SKINS[0], hp=hairParts(look.style,look.hair), blush=look.skin>=3?'#C9605A':'#F29BB0';
-  const card=CARDIGANS[eq.cardigan]||CARDIGANS.mustard;
-  const pocket=eq.cardigan==='berry'?'#EFAE36':'#C93B63';
+  const who=look.who||'ms';
+  eq={...eq}; for(const k of ['head','neck','face']) if(eq[k]&&!allowedFor(eq[k],who)) eq[k]=null;
+  const top=allowedFor(eq.cardigan,who)?eq.cardigan:WHO[who].top;
   let head='', neck='', glasses='';
+  if(eq.head==='flatcap') head=`<path d="M272 98 Q272 72 300 71 Q326 72 330 92 L342 97 Q330 102 300 99 Q284 99 272 98Z" fill="#6B5B4A"/><path d="M276 92 Q300 86 328 90" stroke="#4E4236" stroke-width="2" fill="none"/>`;
+  if(eq.head==='buckethat') head=`<path d="M276 94 Q278 64 300 64 Q322 64 324 94Z" fill="#7FB08A"/><ellipse cx="300" cy="95" rx="35" ry="7" fill="#6E9C78"/><rect x="277" y="84" width="46" height="5" fill="#EFAE36"/>`;
+  if(eq.neck==='necktie') neck=`<path d="M296 142 h8 l-1.5 6 h-5z" fill="#A8304F"/><path d="M297.5 148 h5 l3 22 l-5.5 7 l-5.5 -7z" fill="#C93B63"/><path d="M297 156 l7 -3 M296 164 l9 -4" stroke="#fff" stroke-opacity=".35" stroke-width="1.5"/>`;
   if(eq.head==='beret') head=`<ellipse cx="310" cy="84" rx="26" ry="9" fill="#C93B63" transform="rotate(-14 310 84)"/><circle cx="313" cy="74" r="3" fill="#C93B63"/>`;
   if(eq.head==='flowers') head=[[275,99,'#F29BB0'],[282,90,'#F6E7A6'],[292,85,'#FFFFFF'],[304,84,'#F29BB0'],[315,88,'#F6E7A6'],[323,96,'#FFFFFF']].map(([x,y,c],i)=>`<ellipse cx="${x+4}" cy="${y+3}" rx="4" ry="2" fill="#5DA46A" transform="rotate(${i*25-60} ${x} ${y})"/><circle cx="${x}" cy="${y}" r="4.2" fill="${c}"/><circle cx="${x}" cy="${y}" r="1.5" fill="#E2A13A"/>`).join('');
   if(eq.head==='catears') head=`<path d="M274 98 Q300 70 326 98" fill="none" stroke="#2B2A3D" stroke-width="3"/><polygon points="275,90 279,66 293,82" fill="#2B2A3D"/><polygon points="325,90 321,66 307,82" fill="#2B2A3D"/><polygon points="279,84 281,72 289,81" fill="#F29BB0"/><polygon points="321,84 319,72 311,81" fill="#F29BB0"/>`;
@@ -720,19 +748,17 @@ function librarianSVG(eq=S.equip,preview=false,look=LOOK()){
   if(eq.face==='heartglasses') glasses=`<path d="${heartD(290,112,9)}" fill="#F29BB0" fill-opacity=".35" stroke="#C93B63" stroke-width="2.4"/><path d="${heartD(310,112,9)}" fill="#F29BB0" fill-opacity=".35" stroke="#C93B63" stroke-width="2.4"/><path d="M298 110 h4" stroke="#C93B63" stroke-width="2.4"/>`;
   else { const fc=eq.face==='goldframes'?'#C9A23A':'#2B2A3D'; glasses=`<circle cx="290" cy="112" r="9" fill="#fff" fill-opacity=".18" stroke="${fc}" stroke-width="2.4"/><circle cx="310" cy="112" r="9" fill="#fff" fill-opacity=".18" stroke="${fc}" stroke-width="2.4"/><path d="M299 111 h2" stroke="${fc}" stroke-width="2.4"/>`; }
   return `<g ${preview?'':'id="lib" class="clickable" data-who="lib"'}>
-    <rect x="252" y="140" width="96" height="80" rx="30" fill="${card}"/>
-    <path d="M286 142 L300 168 L314 142 Z" fill="#2C7775"/>
-    <circle cx="276" cy="176" r="3" fill="#fff" opacity=".7"/><circle cx="324" cy="176" r="3" fill="#fff" opacity=".7"/>
-    <rect x="262" y="160" width="12" height="14" rx="3" fill="${pocket}" opacity=".85"/>
+    ${bodySVG(top)}
     ${hp.back}
     <rect x="292" y="126" width="16" height="16" fill="${shade(skin,.92)}"/>
     <circle cx="300" cy="112" r="25" fill="${skin}"/>
     ${hp.front}
     <ellipse cx="285" cy="122" rx="5" ry="3" fill="${blush}" opacity=".7"/><ellipse cx="315" cy="122" rx="5" ry="3" fill="${blush}" opacity=".7"/>
     <g class="eye"><circle cx="290" cy="112" r="2.6" fill="#2B2A3D"/><circle cx="310" cy="112" r="2.6" fill="#2B2A3D"/></g>
+    ${who==='ms'?'':facialSVG(look.beard,look.style==='hijab'?'#2B1D14':look.hair)}
     ${glasses}
-    <path d="M293 126 Q300 132 307 126" fill="none" stroke="#2B2A3D" stroke-width="2.2" stroke-linecap="round"/>
-    ${hp.hideEar?'':'<rect x="272" y="122" width="5" height="7" rx="1" fill="#2C7775"/><circle cx="328" cy="125" r="3.5" fill="#C93B63"/>'}
+    <path d="M293 126 Q300 132 307 126" fill="none" stroke="${look.beard==='beard'&&who!=='ms'?'#F3E9C6':'#2B2A3D'}" stroke-width="2.2" stroke-linecap="round"/>
+    ${hp.hideEar||who==='mr'?'':'<rect x="272" y="122" width="5" height="7" rx="1" fill="#2C7775"/><circle cx="328" cy="125" r="3.5" fill="#C93B63"/>'}
     ${neck}${head}
   </g>`;
 }
@@ -919,18 +945,25 @@ const ITEMS = [
   {id:'rain', cat:'record', slot:'record', needs:'record', name:'Rain on the Window', cost:10, color:'#4A6FA5', perk:'Gentle rain sounds with a few soft piano notes.'},
 
   // Ms. Pagecastle's closet
-  {id:'mustard', cat:'closet', slot:'cardigan', name:'Mustard Cardigan', cost:0, perk:'Her classic. Pockets full of pencils.'},
-  {id:'sage', cat:'closet', slot:'cardigan', name:'Sage Cardigan', cost:6, perk:'Calm, green, and very plant-adjacent.'},
-  {id:'berry', cat:'closet', slot:'cardigan', name:'Berry Cardigan', cost:6, perk:'A bold berry pink for bold shelving.'},
-  {id:'lavender', cat:'closet', slot:'cardigan', name:'Lavender Cardigan', cost:6, perk:'Soft purple. Smells faintly of old books.'},
+  {id:'mustard', cat:'closet', who:'ms', slot:'cardigan', name:'Mustard Cardigan', cost:0, perk:'The classic. Pockets full of pencils.'},
+  {id:'sage', cat:'closet', who:'ms', slot:'cardigan', name:'Sage Cardigan', cost:6, perk:'Calm, green, and very plant-adjacent.'},
+  {id:'berry', cat:'closet', who:'ms', slot:'cardigan', name:'Berry Cardigan', cost:6, perk:'A bold berry pink for bold shelving.'},
+  {id:'lavender', cat:'closet', who:'ms', slot:'cardigan', name:'Lavender Cardigan', cost:6, perk:'Soft purple. Smells faintly of old books.'},
+  {id:'navyvest', cat:'closet', who:'mr', slot:'cardigan', name:'Navy Sweater Vest', cost:0, perk:'The classic. Argyle, obviously.'},
+  {id:'forestvest', cat:'closet', who:'mr', slot:'cardigan', name:'Forest Sweater Vest', cost:6, perk:'Matches Gerald. Gerald is thrilled.'},
+  {id:'maroonvest', cat:'closet', who:'mr', slot:'cardigan', name:'Maroon Sweater Vest', cost:6, perk:'Very distinguished. Very cozy.'},
+  {id:'flannel', cat:'closet', who:'mr', slot:'cardigan', name:'Red Flannel', cost:8, perk:'Ready for a weekend hike in the White Mountains.'},
   {id:'beret', cat:'closet', slot:'head', name:'Artsy Beret', cost:8, perk:'For days spent in the 700s.'},
-  {id:'flowers', cat:'closet', slot:'head', name:'Flower Crown', cost:10, perk:'Hand-picked. Gerald is a little jealous.'},
+  {id:'flowers', cat:'closet', who:'ms', slot:'head', name:'Flower Crown', cost:10, perk:'Hand-picked. Gerald is a little jealous.'},
+  {id:'flatcap', cat:'closet', who:'mr', slot:'head', name:'Flat Cap', cost:8, perk:'Old-timey newsboy style. Extra! Extra!'},
+  {id:'buckethat', cat:'closet', who:'mr', slot:'head', name:'Bucket Hat', cost:10, perk:'Sage green with a sunny stripe.'},
   {id:'catears', cat:'closet', slot:'head', name:'Cat-Ear Headband', cost:10, perk:'Dewey approves. Probably.'},
   {id:'beanie', cat:'closet', slot:'head', name:'Pom-Pom Beanie', cost:10, perk:'Cozy for New Hampshire winters.'},
   {id:'bowtie', cat:'closet', slot:'neck', name:'Bow Tie', cost:6, perk:'Dapper and ready for the Book Fair.'},
+  {id:'necktie', cat:'closet', who:'mr', slot:'neck', name:'Necktie', cost:6, perk:'Berry red, perfectly knotted.'},
   {id:'scarf', cat:'closet', slot:'neck', name:'Striped Scarf', cost:8, perk:'Long enough to wrap around twice.'},
-  {id:'booknecklace', cat:'closet', slot:'neck', name:'Tiny Book Necklace', cost:8, perk:'A little blue book on a gold chain.'},
-  {id:'heartglasses', cat:'closet', slot:'face', name:'Heart Glasses', cost:8, perk:'She loves every book. Now it shows.'},
+  {id:'booknecklace', cat:'closet', who:'ms', slot:'neck', name:'Tiny Book Necklace', cost:8, perk:'A little blue book on a gold chain.'},
+  {id:'heartglasses', cat:'closet', slot:'face', name:'Heart Glasses', cost:8, perk:'Love for every book, now visible.'},
   {id:'goldframes', cat:'closet', slot:'face', name:'Gold Frames', cost:6, perk:'Fancy. For reading the fine print.'},
 ];
 const SLOT_LABEL={clock:['Hang it up','Take it down'],holiday:['Put it up','Take it down'],record:['Play','Stop'],cardigan:['Wear it','Wearing'],head:['Wear it','Take it off'],neck:['Wear it','Take it off'],face:['Wear them','Take them off']};
@@ -1004,7 +1037,7 @@ function applyDim(){
 
 let bubbleT=null;
 function say(text,x,y){
-  const b=$('#bubble'), wrap=$('#sceneWrap'); b.textContent=text;
+  const b=$('#bubble'), wrap=$('#sceneWrap'); b.textContent=fixName(text);
   b.style.left='0px'; b.style.top='0px'; b.classList.add('show');
   const W=wrap.clientWidth, H=wrap.clientHeight, bw=b.offsetWidth, bh=b.offsetHeight;
   const px=x/800*W, py=y/300*H;
@@ -1204,6 +1237,7 @@ const STAR=(on,cls='')=>`<svg viewBox="0 0 24 24" class="${cls}" aria-hidden="tr
 function updateBM(){ $('#bm').textContent=S.bm; $('#bSound').setAttribute('aria-pressed',S.sound?'true':'false'); }
 
 const panel=$('#panel');
+(()=>{ const d=Object.getOwnPropertyDescriptor(Element.prototype,'innerHTML'); Object.defineProperty(panel,'innerHTML',{get(){return d.get.call(this);},set(v){d.set.call(this,fixName(v));}}); })();
 let run=null, cur=null, ticker=null;
 
 function showSchedule(){
@@ -1556,7 +1590,7 @@ function showShop(tab){
   stopRun(); if(tab) shopTab=tab;
   let h=`<div style="display:flex;flex-direction:column;gap:6px"><span class="eyebrow">Cozy Catalog</span><h2>Make the library yours</h2><p>Spend bookmarks on decor, records, and outfits for Ms. Pagecastle. You have <b>${S.bm}</b> bookmark${S.bm===1?'':'s'}.</p></div>
     <div class="tabs" role="tablist">${TABS.map(([id,l])=>`<button class="tab" role="tab" data-tab="${id}" aria-selected="${shopTab===id}">${l}</button>`).join('')}</div><div class="shop">`;
-  ITEMS.filter(u=>u.cat===shopTab).forEach(u=>{
+  ITEMS.filter(u=>u.cat===shopTab&&(u.cat!=='closet'||allowedFor(u.id,LOOK().who))).forEach(u=>{
     const own=has(u.id), can=S.bm>=u.cost, on=u.slot&&S.equip[u.slot]===u.id&&own;
     let act;
     if(!own){
@@ -1608,13 +1642,21 @@ function showCreator(first){
   <div class="creator">
     <div class="portrait"><svg viewBox="240 38 120 150" aria-label="Preview of your librarian">${librarianSVG(S.equip,true,L)}</svg></div>
     <div class="opts">
+      <div class="optrow"><span class="eyebrow">Your librarian</span><div class="tabs">${Object.entries(WHO).map(([id,w])=>`<button class="tab" data-who-pick="${id}" aria-selected="${L.who===id}">${w.t}&nbsp;Pagecastle</button>`).join('')}</div>${L.who==='mx'?'<span class="ha">Mx. (said “mix”) is a title that isn\'t tied to a gender. Mx. Pagecastle can wear anything from either closet.</span>':''}</div>
       <div class="optrow"><span class="eyebrow">Skin tone</span><div class="swatches">${SKINS.map((c,i)=>`<button class="sw" data-skin="${i}" style="background:${c}" aria-label="Skin tone ${i+1} of ${SKINS.length}" aria-pressed="${L.skin===i}"></button>`).join('')}</div></div>
-      <div class="optrow"><span class="eyebrow">Hairstyle</span><div class="styles">${STYLES.map(([id,n])=>`<button class="stylebtn" data-style="${id}" aria-pressed="${L.style===id}">${head(id)}${n}</button>`).join('')}</div></div>
+      <div class="optrow"><span class="eyebrow">Hairstyle</span><div class="styles">${STYLES.filter(s=>s[2].includes(L.who)).map(([id,n])=>`<button class="stylebtn" data-style="${id}" aria-pressed="${L.style===id}">${head(id)}${n}</button>`).join('')}</div></div>
       <div class="optrow"><span class="eyebrow">${isH?'Scarf color':'Hair color'}</span><div class="swatches">${pal.map(([c,n])=>`<button class="sw" data-hair="${c}" style="background:${c}" aria-label="${n}" title="${n}" aria-pressed="${L.hair===c}"></button>`).join('')}</div></div>
+      ${L.who==='ms'?'':`<div class="optrow"><span class="eyebrow">Facial hair</span><div class="tabs">${FACIAL.map(([id,n])=>`<button class="tab" data-beard="${id}" aria-selected="${L.beard===id}">${n}</button>`).join('')}</div></div>`}
       <div class="row"><button class="btn" id="lookDone">${first?'Start my first shift':'Looks great!'}</button></div>
     </div>
   </div>`;
-  const set=(k,v)=>{ const n={...LOOK(),[k]:v}; if(k==='style'){ const was=LOOK().style==='hijab', now=v==='hijab'; if(was!==now) n.hair=(now?SCARVES:HAIRS)[0][0]; } S.look=n; save(); drawScene(); sfx('step'); showCreator(first); };
+  const set=(k,v)=>{ const n={...LOOK(),[k]:v};
+    if(k==='who'){ const ok=STYLES.find(s=>s[0]===n.style)[2].includes(v); if(!ok) n.style=WHO[v].def; if(v==='ms') n.beard='none';
+      if(!allowedFor(S.equip.cardigan,v)) S.equip.cardigan=WHO[v].top; for(const sl of ['head','neck','face']) if(S.equip[sl]&&!allowedFor(S.equip[sl],v)) S.equip[sl]=null; }
+    const was=LOOK().style==='hijab', now=n.style==='hijab'; if(was!==now) n.hair=(now?SCARVES:HAIRS)[0][0];
+    S.look=n; save(); drawScene(); sfx('step'); showCreator(first); };
+  panel.querySelectorAll('[data-who-pick]').forEach(b=>b.onclick=()=>set('who',b.dataset.whoPick));
+  panel.querySelectorAll('[data-beard]').forEach(b=>b.onclick=()=>set('beard',b.dataset.beard));
   panel.querySelectorAll('[data-skin]').forEach(b=>b.onclick=()=>set('skin',+b.dataset.skin));
   panel.querySelectorAll('[data-style]').forEach(b=>b.onclick=()=>set('style',b.dataset.style));
   panel.querySelectorAll('[data-hair]').forEach(b=>b.onclick=()=>set('hair',b.dataset.hair));
