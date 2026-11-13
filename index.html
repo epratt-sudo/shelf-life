@@ -1,0 +1,1187 @@
+<p>test</p>
+  <b>x</b><!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}</style>
+<title>Shelf Life at Thinkerton</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Courier+Prime:wght@700&family=Gluten:wght@500;700&display=swap">
+<style>
+/* Layout: a cozy library diorama (SVG stage) on top, the circulation-desk "clipboard" panel below where the shelving happens */
+:root{
+  --bg:#E3EBE0; --panel:#FAFBF6; --panel2:#EFF4EC; --ink:#2B2A3D; --muted:#5C6070; --line:#C7D5C2;
+  --wall:#B5CCB0; --wall2:#9DB898; --trim:#EDE3CF; --floor:#C68D57; --floor2:#B07746;
+  --wood:#77472A; --woodlt:#A86A3D; --shelfback:#4E3020;
+  --accent:#C93B63; --accent2:#EFAE36; --teal:#2C7775; --good:#2E8A52; --bad:#C3433B;
+  --sky:#A9DBF2; --sun:1; --stars:0; --glow:0;
+  --font-display:'Gluten','Comic Sans MS',cursive;
+  --font-body:'Atkinson Hyperlegible',system-ui,-apple-system,sans-serif;
+  --font-label:'Courier Prime','Courier New',monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#172024; --panel:#212C2D; --panel2:#283536; --ink:#F2ECDF; --muted:#A8B3AD; --line:#3A4A49;
+    --wall:#2A4441; --wall2:#223836; --trim:#4A5A52; --floor:#6A4529; --floor2:#5A3A22;
+    --wood:#3F2717; --woodlt:#6E4426; --shelfback:#2A1A10;
+    --accent:#EE7193; --accent2:#F4C25A; --teal:#5CBFB9; --good:#5CC284; --bad:#F07B72;
+    --sky:#1B2A50; --sun:0; --stars:1; --glow:1; color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#172024; --panel:#212C2D; --panel2:#283536; --ink:#F2ECDF; --muted:#A8B3AD; --line:#3A4A49;
+  --wall:#2A4441; --wall2:#223836; --trim:#4A5A52; --floor:#6A4529; --floor2:#5A3A22;
+  --wood:#3F2717; --woodlt:#6E4426; --shelfback:#2A1A10;
+  --accent:#EE7193; --accent2:#F4C25A; --teal:#5CBFB9; --good:#5CC284; --bad:#F07B72;
+  --sky:#1B2A50; --sun:0; --stars:1; --glow:1; color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--font-body);font-size:16px;line-height:1.45}
+.app{max-width:980px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:14px 40px;display:flex;flex-direction:column;gap:14px}
+button{font:inherit;color:inherit;cursor:pointer}
+button:focus-visible,.book:focus-visible{outline:3px solid var(--accent2);outline-offset:2px}
+
+/* top bar */
+.topbar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:space-between}
+.brand{display:flex;align-items:center;gap:10px;min-width:0}
+.brand h1{font-family:var(--font-display);font-weight:700;font-size:clamp(22px,4vw,30px);line-height:1;margin:0;text-wrap:balance}
+.brand small{display:block;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-top:4px}
+.tools{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.pill{display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border-radius:999px;background:var(--panel);border:2px solid var(--line);font-weight:700;font-variant-numeric:tabular-nums}
+.pill svg{width:16px;height:20px}
+.tbtn{padding:6px 12px;border-radius:999px;background:transparent;border:2px solid var(--line);font-weight:700;font-size:14px}
+.tbtn:hover{background:var(--panel)}
+.tbtn[aria-pressed="true"]{background:var(--teal);border-color:var(--teal);color:var(--panel)}
+
+/* scene */
+.scene-wrap{position:relative;border-radius:20px;overflow:hidden;border:4px solid var(--wood);background:var(--wall)}
+#scene{display:block;width:100%;height:auto}
+.bubble{position:absolute;background:var(--panel);color:var(--ink);border:2px solid var(--ink);border-radius:14px;padding:5px 10px;font-size:13px;font-weight:700;max-width:220px;pointer-events:none;opacity:0;transition:opacity .25s;white-space:normal;text-align:center}
+.bubble.show{opacity:1}
+@media (max-width:640px){.bubble{font-size:11px;max-width:62%;padding:3px 8px}}
+.clickable{cursor:pointer}
+.w{fill:var(--wall)} .w2{fill:var(--wall2)} .tr{fill:var(--trim)} .fl{fill:var(--floor)} .fl2{stroke:var(--floor2)}
+.wd{fill:var(--wood)} .wl{fill:var(--woodlt)} .sb{fill:var(--shelfback)} .sky{fill:var(--sky)}
+.ink{fill:var(--ink)} .inks{stroke:var(--ink)} .ac{fill:var(--accent)} .ac2{fill:var(--accent2)} .tl{fill:var(--teal)} .pn{fill:var(--panel)}
+.sun{opacity:var(--sun)} .stars{opacity:var(--stars)} .glow{opacity:calc(var(--glow) * .55)}
+#lib{transform-box:fill-box;transform-origin:50% 100%;animation:bob 3.2s ease-in-out infinite}
+#lib.cheer{animation:cheer .6s ease}
+#lib.think{animation:think .7s ease}
+.eye{transform-box:fill-box;transform-origin:center;animation:blink 4.5s infinite}
+#student{transition:transform .9s cubic-bezier(.4,.1,.3,1)}
+.tail{transform-box:fill-box;transform-origin:0% 100%;animation:swish 2.4s ease-in-out infinite}
+.twinkle{animation:twinkle 2.2s ease-in-out infinite}
+.steam{animation:steam 3s ease-in-out infinite;opacity:.6}
+.note{opacity:0}
+.music-on .note{animation:floatnote 2.6s ease-in infinite}
+.up{transition:opacity .5s}
+.up.pop{animation:pop .7s ease}
+@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-2px)}}
+@keyframes cheer{0%,100%{transform:translateY(0)}40%{transform:translateY(-12px)}}
+@keyframes think{0%,100%{transform:rotate(0)}30%{transform:rotate(-3deg)}70%{transform:rotate(3deg)}}
+@keyframes blink{0%,94%,100%{transform:scaleY(1)}97%{transform:scaleY(.1)}}
+@keyframes swish{0%,100%{transform:rotate(0)}50%{transform:rotate(14deg)}}
+@keyframes twinkle{0%,100%{opacity:1}50%{opacity:.35}}
+@keyframes steam{0%{transform:translateY(0);opacity:0}30%{opacity:.6}100%{transform:translateY(-10px);opacity:0}}
+@keyframes floatnote{0%{transform:translate(0,0);opacity:0}20%{opacity:1}100%{transform:translate(14px,-40px);opacity:0}}
+@keyframes pop{0%{transform:scale(.6);opacity:0}70%{transform:scale(1.06);opacity:1}100%{transform:scale(1)}}
+
+/* panel */
+.panel{background:var(--panel);border:2px solid var(--line);border-radius:20px;padding:18px;display:flex;flex-direction:column;gap:16px}
+.panel h2{font-family:var(--font-display);font-weight:700;font-size:26px;line-height:1.1;margin:0;text-wrap:balance}
+.panel h3{font-family:var(--font-display);font-weight:700;font-size:20px;margin:0}
+.panel p{margin:0;max-width:65ch}
+.eyebrow{font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:700}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.btn{padding:10px 18px;border-radius:14px;border:2px solid var(--ink);background:var(--accent2);color:#2B2A3D;font-weight:700;box-shadow:0 3px 0 var(--ink);transition:transform .1s}
+.btn:active{transform:translateY(2px);box-shadow:0 1px 0 var(--ink)}
+.btn.ghost{background:transparent;color:var(--ink)}
+.btn[disabled]{opacity:.45;cursor:not-allowed}
+
+/* schedule */
+.days{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:12px}
+.day{text-align:left;border:2px solid var(--line);background:var(--panel2);border-radius:16px;padding:14px;display:flex;flex-direction:column;gap:6px;min-height:128px}
+.day:hover:not([disabled]){border-color:var(--teal)}
+.day[disabled]{opacity:.5;cursor:not-allowed}
+.day .dn{font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:700}
+.day .dt{font-family:var(--font-display);font-size:19px;font-weight:700;line-height:1.1}
+.day .ds{font-size:14px;color:var(--muted)}
+.stars-row{display:flex;gap:2px;margin-top:auto}
+.stars-row svg{width:18px;height:18px}
+
+/* dialogue */
+.dialog{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.say{border-radius:16px;padding:10px 14px;background:var(--panel2);border:2px solid var(--line);min-width:0}
+.say-lib{border-color:var(--accent2)}
+.who{display:inline-block;font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:2px}
+.say p{font-size:16px}
+.say.good{border-color:var(--good)} .say.bad{border-color:var(--bad)}
+
+/* work area */
+.work{display:flex;gap:16px;align-items:stretch;flex-wrap:wrap}
+.held{flex:0 1 240px;min-width:0;background:var(--panel2);border:2px dashed var(--accent);border-radius:16px;padding:12px;display:flex;flex-direction:column;gap:8px}
+.held-body{display:flex;gap:12px;align-items:flex-end}
+.held-info{min-width:0;display:flex;flex-direction:column;gap:2px}
+.ht{font-weight:700;line-height:1.2}
+.ha{font-size:14px;color:var(--muted)}
+.hc{font-family:var(--font-label);font-weight:700;font-size:15px;margin-top:4px;background:#FFFDF5;color:#222;border-radius:4px;padding:2px 6px;align-self:flex-start}
+.shelf{flex:1 1 380px;min-width:0;border-radius:12px;background:var(--shelfback);padding:10px 8px 0;border:4px solid var(--wood);border-bottom:0;position:relative}
+.shelf::after{content:"";display:block;height:14px;margin:0 -12px;background:var(--woodlt);border-radius:3px;box-shadow:0 4px 0 var(--wood)}
+.books{display:flex;align-items:flex-end;justify-content:center;min-height:176px}
+.book{flex:0 1 46px;min-width:28px;height:var(--h);background:var(--c);color:var(--t);border-radius:4px 4px 2px 2px;position:relative;display:flex;flex-direction:column;align-items:center;justify-content:space-between;padding:8px 2px 5px;box-shadow:inset -5px 0 0 rgba(0,0,0,.16),inset 3px 0 0 rgba(255,255,255,.18);border:0;margin:0 1px;overflow:hidden}
+.book::before{content:"";position:absolute;left:0;right:0;top:16%;height:4px;background:rgba(255,255,255,.35)}
+button.book:hover{transform:translateY(-6px)}
+button.book{transition:transform .15s}
+.spine-txt{writing-mode:vertical-rl;transform:rotate(180deg);font-family:var(--font-display);font-weight:700;font-size:13px;line-height:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-height:calc(var(--h) - 62px);margin-top:8px}
+.book.nf .spine-txt{font-family:var(--font-body);font-size:11px}
+.label{background:#FFFDF5;color:#222;font-family:var(--font-label);font-weight:700;font-size:10px;line-height:1.1;padding:2px 1px;border-radius:2px;width:100%;text-align:center;overflow-wrap:anywhere}
+.book.mini{flex:0 0 52px;height:150px}
+.book.placed{animation:placed .8s ease}
+.book.wrongpick{animation:shake .4s}
+.book.lifted{opacity:.15}
+.book.dim{opacity:.35;pointer-events:none}
+@keyframes placed{0%{transform:translateY(-30px);box-shadow:0 0 0 4px var(--accent2)}100%{transform:none}}
+.slot{flex:0 0 16px;align-self:stretch;border:0;background:transparent;position:relative;padding:0;border-radius:6px}
+.slot::before{content:"";position:absolute;left:50%;top:18px;bottom:4px;width:0;border-left:2px dashed rgba(255,255,255,.35);transform:translateX(-50%)}
+.slot::after{content:"";position:absolute;left:50%;top:2px;transform:translateX(-50%);border:6px solid transparent;border-top:9px solid var(--accent2)}
+.slot:hover,.slot:focus-visible{background:rgba(239,174,54,.28)}
+.slot.bad{animation:shake .4s;background:rgba(195,67,59,.4)}
+.slot.dim{visibility:hidden;pointer-events:none}
+.slot.hintglow{background:rgba(239,174,54,.22)}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
+.shelf.done .slot{visibility:hidden}
+
+/* choices (end-cap signs) */
+.choices{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
+.choice{text-align:left;border:2px solid var(--wood);background:var(--panel2);border-radius:12px;padding:10px 12px;display:flex;flex-direction:column;gap:2px;box-shadow:0 3px 0 var(--wood)}
+.choice:hover{background:var(--panel)}
+.choice .cn{font-family:var(--font-label);font-weight:700;font-size:20px;color:var(--accent)}
+.choice .cl{font-weight:700;line-height:1.2}
+.choice .cd{font-size:13px;color:var(--muted);line-height:1.3}
+.choice.bad{animation:shake .4s;border-color:var(--bad)}
+.choice.right{border-color:var(--good);background:var(--panel)}
+.choice.dim{opacity:.3;pointer-events:none}
+.card-cat{background:#FFFDF5;color:#222;border-radius:10px;padding:10px 14px;border:1px solid #C9C2B0;font-family:var(--font-label);font-weight:700;box-shadow:2px 3px 0 rgba(0,0,0,.12);max-width:360px;background-image:repeating-linear-gradient(#FFFDF5 0 22px,#D7E6F2 22px 23px)}
+.card-cat .k{color:#B03A5A}
+
+.foot{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.dots{display:flex;gap:6px;flex-wrap:wrap}
+.dot{width:12px;height:12px;border-radius:50%;background:var(--line)}
+.dot.on{background:var(--accent2)} .dot.ok{background:var(--good)} .dot.meh{background:var(--teal)}
+.earn{font-weight:700;color:var(--good)}
+
+/* shop */
+.shop{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px}
+.item{border:2px solid var(--line);background:var(--panel2);border-radius:16px;padding:12px;display:flex;flex-direction:column;gap:6px}
+.item svg{width:100%;height:96px;background:var(--wall);border-radius:10px}
+.item .nm{font-family:var(--font-display);font-weight:700;font-size:18px;line-height:1.1}
+.item .pk{font-size:14px;color:var(--muted);flex:1}
+.item .btn{align-self:flex-start;padding:6px 14px;font-size:14px}
+.owned{font-weight:700;color:var(--good)}
+
+/* lesson + cheat sheet */
+.lesson{display:flex;gap:16px;flex-wrap:wrap;align-items:flex-end}
+.lesson .txt{flex:1 1 320px;min-width:0;display:flex;flex-direction:column;gap:10px}
+.lesson .ex{flex:0 1 260px;min-width:0}
+.ex .books{min-height:160px}
+.ex .shelf{flex:none}
+.cheat{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px}
+.cheat section{background:var(--panel2);border-radius:14px;padding:14px;display:flex;flex-direction:column;gap:8px;min-width:0}
+.dewey{width:100%;border-collapse:collapse;font-size:14px}
+.dewey td{padding:4px 6px;border-bottom:1px solid var(--line);vertical-align:top}
+.dewey td:first-child{font-family:var(--font-label);font-weight:700;color:var(--accent);white-space:nowrap}
+.summary{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px}
+.stat{background:var(--panel2);border-radius:14px;padding:12px}
+.stat b{display:block;font-family:var(--font-display);font-size:28px;font-variant-numeric:tabular-nums}
+.stat span{font-size:13px;color:var(--muted)}
+.big-stars{display:flex;gap:6px}
+.big-stars svg{width:40px;height:40px}
+.big-stars svg.pop{animation:pop .6s ease both}
+
+@media (max-width:640px){
+  .dialog{grid-template-columns:1fr}
+  .held{flex:1 1 100%}
+  .book{min-width:26px}
+  .slot{flex-basis:13px}
+  .label{font-size:8.5px;letter-spacing:-.4px}
+  .pill .sr{display:none}
+  .spine-txt{font-size:11px}
+  .panel{padding:14px}
+}
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important}
+}
+</style>
+
+<div class="app" id="app">
+  <header class="topbar">
+    <div class="brand">
+      <svg width="40" height="40" viewBox="0 0 40 40" aria-hidden="true"><rect x="6" y="6" width="9" height="28" rx="2" class="ac"/><rect x="16" y="10" width="8" height="24" rx="2" class="tl"/><rect x="25" y="8" width="9" height="26" rx="2" class="ac2" transform="rotate(8 29 34)"/></svg>
+      <div><h1>Shelf Life</h1><small>Thinkerton Academy Library</small></div>
+    </div>
+    <div class="tools">
+      <span class="pill" title="Bookmarks earned"><svg viewBox="0 0 16 20" aria-hidden="true"><path d="M2 1h12v18l-6-5-6 5z" class="ac"/></svg><span id="bm">0</span><span class="sr" style="font-weight:400;font-size:13px;color:var(--muted)">bookmarks</span></span>
+      <button class="tbtn" id="bSched">Schedule</button>
+      <button class="tbtn" id="bShop">Cozy Catalog</button>
+      <button class="tbtn" id="bCheat">Cheat Sheet</button>
+      <button class="tbtn" id="bSound" aria-pressed="true">Sound</button>
+      <button class="tbtn" id="bMusic" aria-pressed="false" hidden>Music</button>
+    </div>
+  </header>
+
+  <div class="scene-wrap" id="sceneWrap">
+    <svg id="scene" viewBox="0 0 800 300" role="img" aria-label="The Thinkerton Academy library with Ms. Pagecastle at the circulation desk"></svg>
+    <div class="bubble" id="bubble"></div>
+  </div>
+
+  <section class="panel" id="panel" aria-live="polite"></section>
+</div>
+
+<script>
+/* ---------------- data ---------------- */
+const FIC_RAW = `Acevedo|Elizabeth|The Poet X
+Adeyemi|Tomi|Children of Blood and Bone
+Alexander|Kwame|The Crossover
+Anderson|Laurie Halse|Speak
+Austen|Jane|Pride and Prejudice
+Bardugo|Leigh|Six of Crows
+Barnes|Jennifer Lynn|The Inheritance Games
+Bradbury|Ray|Fahrenheit 451
+Brontë|Charlotte|Jane Eyre
+Cline|Ernest|Ready Player One
+Collins|Suzanne|The Hunger Games
+Dashner|James|The Maze Runner
+Deonn|Tracy|Legendborn
+Fitzgerald|F. Scott|The Great Gatsby
+Golding|William|Lord of the Flies
+Green|John|The Fault in Our Stars
+Herbert|Frank|Dune
+Hinton|S. E.|The Outsiders
+Huxley|Aldous|Brave New World
+Jackson|Holly|A Good Girl's Guide to Murder
+Lee|Harper|To Kill a Mockingbird
+Lowry|Lois|The Giver
+Lu|Marie|Warcross
+McManus|Karen M.|One of Us Is Lying
+Meyer|Marissa|Cinder
+Myers|Walter Dean|Monster
+Orwell|George|Animal Farm
+Palacio|R. J.|Wonder
+Paulsen|Gary|Hatchet
+Reynolds|Jason|Long Way Down
+Riordan|Rick|The Lightning Thief
+Roth|Veronica|Divergent
+Rowell|Rainbow|Eleanor & Park
+Sachar|Louis|Holes
+Sáenz|Benjamin Alire|Aristotle and Dante Discover the Secrets of the Universe
+Salinger|J. D.|The Catcher in the Rye
+Sepetys|Ruta|Salt to the Sea
+Shelley|Mary|Frankenstein
+Shusterman|Neal|Scythe
+Silvera|Adam|They Both Die at the End
+Steinbeck|John|Of Mice and Men
+Stevenson|ND|Nimona
+Stone|Nic|Dear Martin
+Thomas|Angie|The Hate U Give
+Tolkien|J. R. R.|The Hobbit
+Vonnegut|Kurt|Slaughterhouse-Five
+Walker|Alice|The Color Purple
+Wein|Elizabeth|Code Name Verity
+Yang|Gene Luen|American Born Chinese
+Zoboi|Ibi|Pride
+Zusak|Markus|The Book Thief`;
+
+const NF_RAW = `004.16|WIL|Inside Your Laptop
+005.133|PAR|Python for Beginners
+005.8|KIM|Cybersecurity Basics
+006.3|NGU|Robots That Think
+031.02|HAL|Weird but True Facts
+032.02|REC|Record Breakers
+070.4|DIA|So You Want to Be a Journalist
+133.1|MOR|Haunted New England
+152.4|LEE|Feelings, Explained
+153.4|ROS|Think Like a Detective
+154.63|BAR|The Science of Dreams
+155.5|ORT|The Teenage Brain Guide
+158.1|WAT|Get Your Life Together
+170|POL|Big Questions in Ethics
+200|TAY|World Religions
+292.13|HOM|Gods of Olympus
+293.13|FRE|Norse Myths
+299.31|ASH|Myths of Ancient Egypt
+302.23|COO|Social Media and You
+323.1|JON|The Civil Rights Movement
+332.024|BUC|Money Smarts for Teens
+342.73|LIN|The Constitution, Explained
+363.7|GRE|Climate Action Now
+371.3|STU|Study Hacks
+378.1|COL|Getting Into College
+391|VEL|A History of Fashion
+394.26|HAL|Holidays Around the World
+398.2|GRI|Folktales from Everywhere
+398.209|OKA|Tales of the Trickster
+398.4|DRA|Dragons and Other Legends
+419.7|SIG|Learn ASL
+423|WEB|Word Nerd Dictionary
+428.1|VOC|Vocab Power
+468|GAR|Spanish in a Snap
+495.6|TAN|Japanese for Beginners
+510|PIE|Math Mysteries
+512|ALV|Algebra Survival Guide
+520|STA|Stargazing 101
+523.43|MAR|Mission to Mars
+523.8|NOV|Black Holes and Beyond
+530|QUI|Physics of Superheroes
+546|MEN|The Periodic Table
+551.21|FIR|Volcano!
+551.46|DEE|Secrets of the Deep Ocean
+567.9|BON|Dinosaur Discoveries
+576.8|DAR|Evolution in Action
+591.5|HOW|Animal Superpowers
+597.3|FIN|Shark Science
+597.9|SCA|Reptiles Rule
+598.2|FEA|Backyard Birds
+599.53|ORC|Whales and Dolphins
+599.6|TUS|Elephants
+599.75|PAW|Big Cats
+599.885|APE|Gorillas
+610|CAR|So You Want to Be a Doctor
+612.8|NEU|Your Amazing Brain
+613.7|FIT|Strong Body Guide
+621.38|VOL|Electronics Projects
+629.13|WIN|Taking Flight
+629.25|MOT|How Engines Work
+629.892|BOT|Build a Robot
+635|GAR|Grow Your Own Garden
+636.7|PUP|Puppy Training 101
+636.8|WHI|Cat Care
+641.5|ADA|Easy Dorm Meals
+641.5|RAM|Cooking for Teens
+641.5945|NON|The Italian Kitchen
+641.815|LOA|Bread Basics
+641.86|COO|Cookie Lab
+709|ART|Art History in 50 Pieces
+720|ARC|Amazing Buildings
+741.2|SKE|Sketchbook Starter
+741.5|MAN|Drawing Manga
+741.5973|COM|History of Comics
+746.43|KNI|Knit Happens
+770|SHU|Photography for Beginners
+781.64|BEA|Make a Beat
+787.87|STR|Guitar Basics
+791.43|FIL|Making Movies
+793.73|PUZ|Brain Teasers
+794.8|PIX|Video Game History
+796.323|HOO|Basketball Skills
+796.332|GRI|Football Playbook
+796.334|GOA|Soccer Smarts
+796.357|BAT|Baseball by the Numbers
+796.42|RUN|Track and Field
+808.02|WRI|Write Your Story
+808.81|POE|Poems to Read Aloud
+811.54|VER|Verses from the City
+812|PLA|American Plays
+822.33|SHA|Shakespeare's Comedies
+822.33|TRA|Shakespeare's Tragedies
+909|WOR|World History Atlas
+910.4|EXP|Great Explorers
+915.2|JAP|Travel Guide: Japan
+917.3|ROA|Road Trip USA
+920|SCI|Scientists Who Changed the World
+930|ANC|Ancient Civilizations
+932|PHA|Ancient Egypt
+938|SPA|Ancient Greece
+940.3|TRE|World War I
+940.53|WOR|World War II
+940.54|DDA|D-Day
+973.3|REV|The American Revolution
+973.7|CIV|The Civil War
+973.92|SIX|The 1960s
+974.2|GRA|New Hampshire History`;
+
+const DEWEY = [
+  ['000','Computers & General Works','computers, coding, encyclopedias, record books'],
+  ['100','Philosophy & Psychology','how we think and feel, ethics, the mind'],
+  ['200','Religion','world religions and mythology'],
+  ['300','Social Sciences','government, money, school, careers, folklore'],
+  ['400','Language','learning languages, grammar, dictionaries'],
+  ['500','Science','math, space, earth, animals, dinosaurs'],
+  ['600','Technology','medicine, the body, cooking, cars, pets'],
+  ['700','Arts & Recreation','art, music, sports, crafts, movies'],
+  ['800','Literature','poetry, plays, essays, writing'],
+  ['900','History & Geography','history, travel, biography'],
+];
+
+const TOPICS = [
+  ['learning to code in Python','my comp sci class','005.133'],
+  ['the biggest world records ever','a trivia night','032.02'],
+  ['why we dream','psych class','154.63'],
+  ['how to deal with test stress','finals week, honestly','155.9'],
+  ['Greek gods like Zeus and Athena','English class','292.13'],
+  ['world religions','Global Studies','200'],
+  ['how the U.S. Constitution works','Civics','342.73'],
+  ['fairy tales and folktales','a creative writing project','398.2'],
+  ['the Civil Rights Movement','my history presentation','323.1'],
+  ['budgeting my first paycheck','my new job at the ice cream shop','332.024'],
+  ['applying to college','my guidance meeting','378.1'],
+  ['learning Spanish','my trip this summer','468'],
+  ['American Sign Language','the ASL club','419.7'],
+  ['black holes','astronomy club','523.8'],
+  ['sharks','my bio project','597.3'],
+  ['volcanoes','Earth Science','551.21'],
+  ['dinosaurs','my little brother (okay, and me)','567.9'],
+  ['the periodic table','Chemistry','546'],
+  ['algebra help','tomorrow\'s quiz','512'],
+  ['baking cookies','the bake sale','641.86'],
+  ['training my new puppy','my very chewy puppy','636.7'],
+  ['how car engines work','auto tech class','629.25'],
+  ['the human brain','Anatomy','612.8'],
+  ['drawing manga','art club','741.5'],
+  ['basketball drills','tryouts','796.323'],
+  ['learning guitar','my band (we have one song)','787.87'],
+  ['photography','yearbook','770'],
+  ['knitting','my grandma\'s birthday gift','746.43'],
+  ['poems by American poets','poetry month','811.54'],
+  ['Shakespeare\'s plays','English 10','822.33'],
+  ['World War II','U.S. History','940.53'],
+  ['ancient Egypt','World History','932'],
+  ['traveling in Japan','the exchange trip','915.2'],
+  ['the American Revolution','my history essay','973.3'],
+  ['New Hampshire history','a local history project','974.2'],
+];
+
+const FRANGES = [['A','C'],['D','G'],['H','L'],['M','R'],['S','Z']];
+const SPINES = [['#C2456B','#fff'],['#2F7A78','#fff'],['#F2B43C','#2B2A3D'],['#4A6FA5','#fff'],['#7E5BA6','#fff'],['#E07A4F','#fff'],['#4F9A5E','#fff'],['#8B4A3C','#fff'],['#F4A7B9','#2B2A3D'],['#9CC5E0','#2B2A3D'],['#3D405B','#fff'],['#D9C27A','#2B2A3D'],['#1F6F8B','#fff']];
+
+const NAMES = ['Maya','Jordan','Theo','Priya','Marcus','Sofia','Eli','Aaliyah','Ben','Nadia','Diego','Hana','Owen','Zoe','Malik','Grace','Luca','Imani','Sam','Ava','Kai','Rosa','Noah','Leila'];
+const SKIN = ['#F3D0B0','#E5B48F','#C98E62','#9C6644','#6E4530','#F6DCC7'];
+const HAIR = ['#2B1D14','#5A3A22','#B5652B','#E2B65A','#1F1F2E','#8C3B57','#3E6FB0'];
+const HOOD = ['#3E7CB1','#C2456B','#4F9A5E','#8E6CC4','#E08A3C','#2F7A78','#C94F4F','#4A4E69','#D9A53A'];
+
+const RET_LINES = ['Hi! Returning this one. Loved it.','Back on time for once!','Here you go. That ending though!!','Returning this. My cat sat on it, sorry.','Done! Can I get something like it next?','Finished it in one night. No regrets.','Dropping this off before lunch!'];
+const THANKS = ['Thanks, Ms. P!','You\'re the best!','Whoa, that was fast.','Library magic!','Okay that was kind of satisfying.','Thank youuu!'];
+
+/* ---------------- helpers ---------------- */
+const $ = s => document.querySelector(s);
+const rnd = n => Math.floor(Math.random()*n);
+const pick = a => a[rnd(a.length)];
+const shuffle = a => { a=a.slice(); for(let i=a.length-1;i>0;i--){const j=rnd(i+1);[a[i],a[j]]=[a[j],a[i]]} return a; };
+const esc = s => String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const norm = s => s.normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase().replace(/[^a-z]/g,'');
+const stripArt = t => t.replace(/^(the|a|an)\s+/i,'');
+
+const FIC = FIC_RAW.split('\n').map(l=>{const [last,first,title]=l.split('|');return {kind:'F',last,first,title,cut:norm(last).slice(0,3).toUpperCase()};});
+const NF = NF_RAW.split('\n').map(l=>{const [call,cut,title]=l.split('|');const num=parseFloat(call);return {kind:'N',call,num,cut,title,cls:Math.floor(num/100)};});
+
+function cmp(a,b){
+  if(a.kind==='F'){
+    const A=norm(a.last),B=norm(b.last); if(A!==B) return A<B?-1:1;
+    const fa=norm(a.first),fb=norm(b.first); if(fa!==fb) return fa<fb?-1:1;
+    const ta=norm(stripArt(a.title)),tb=norm(stripArt(b.title)); return ta<tb?-1:ta>tb?1:0;
+  }
+  if(a.num!==b.num) return a.num<b.num?-1:1;
+  if(a.cut!==b.cut) return a.cut<b.cut?-1:1;
+  return a.title<b.title?-1:a.title>b.title?1:0;
+}
+const isSorted = arr => arr.every((b,i)=>i===0||cmp(arr[i-1],b)<0);
+const callStr = b => b.kind==='F' ? `FIC ${b.cut}` : `${b.call} ${b.cut}`;
+const nameStr = b => b.kind==='F' ? `${callStr(b)} (${b.last})` : callStr(b);
+
+// why does a come before b?
+function explain(a,b){
+  if(a.kind==='F'){
+    const A=norm(a.last),B=norm(b.last);
+    if(A!==B){
+      let i=0; while(i<A.length&&i<B.length&&A[i]===B[i]) i++;
+      if(i===0) return `<b>${esc(a.last)}</b> comes before <b>${esc(b.last)}</b> because <b>${A[0].toUpperCase()}</b> comes before <b>${B[0].toUpperCase()}</b> in the alphabet.`;
+      if(i>=A.length) return `<b>${esc(a.last)}</b> and <b>${esc(b.last)}</b> start the same way, but ${esc(a.last)} runs out of letters first. Nothing comes before something!`;
+      return `<b>${esc(a.last)}</b> and <b>${esc(b.last)}</b> both start with “${A.slice(0,i).toUpperCase()}”, so check the next letter: <b>${A[i].toUpperCase()}</b> comes before <b>${B[i].toUpperCase()}</b>.`;
+    }
+    return `Same last name! So we use the first name: <b>${esc(a.first)}</b> comes before <b>${esc(b.first)}</b>.`;
+  }
+  const wa=a.call.split('.')[0], wb=b.call.split('.')[0];
+  if(wa!==wb) return `Compare the whole numbers first: <b>${wa}</b> comes before <b>${wb}</b>.`;
+  if(a.num!==b.num){
+    const da=a.call.split('.')[1]||'', db=b.call.split('.')[1]||'';
+    let i=0; while(i<da.length&&i<db.length&&da[i]===db[i]) i++;
+    if(i>=da.length) return `Both are <b>${wa}</b>, so read the decimals digit by digit: <b>.${da||'0'}</b> runs out of digits first, so <b>${a.call}</b> comes before <b>${b.call}</b>.`;
+    return `Both are <b>${wa}</b>, so read the decimals one digit at a time: in <b>.${da}</b> vs <b>.${db}</b>, the first difference is <b>${da[i]}</b> vs <b>${db[i]}</b>. Since ${da[i]} &lt; ${db[i]}, <b>${a.call}</b> goes first.`;
+  }
+  return `Same number (<b>${a.call}</b>)! So use the author letters: <b>${a.cut}</b> comes before <b>${b.cut}</b>.`;
+}
+
+/* ---------------- state ---------------- */
+const KEY='thinkerton-shelf-life-v1';
+let S = {bm:0, owned:{}, stars:{}, unlocked:1, sound:true, music:false, shelved:0};
+try{ const raw=localStorage.getItem(KEY); if(raw) S=Object.assign(S,JSON.parse(raw)); }catch(e){}
+function save(){ try{ localStorage.setItem(KEY,JSON.stringify(S)); }catch(e){} }
+
+/* ---------------- audio ---------------- */
+let AC=null;
+function ac(){ if(!AC){ try{ AC=new (window.AudioContext||window.webkitAudioContext)(); }catch(e){} } if(AC&&AC.state==='suspended') AC.resume(); return AC; }
+function tone(f,t,dur,type='sine',vol=.12){
+  const a=ac(); if(!a) return;
+  const o=a.createOscillator(), g=a.createGain(), lp=a.createBiquadFilter();
+  lp.type='lowpass'; lp.frequency.value=2200;
+  o.type=type; o.frequency.value=f;
+  const t0=a.currentTime+t;
+  g.gain.setValueAtTime(0,t0); g.gain.linearRampToValueAtTime(vol,t0+.02); g.gain.exponentialRampToValueAtTime(.0001,t0+dur);
+  o.connect(lp); lp.connect(g); g.connect(a.destination); o.start(t0); o.stop(t0+dur+.05);
+}
+function sfx(n){
+  if(!S.sound) return;
+  try{
+    if(n==='ding'){ tone(784,0,.35); tone(1046,.09,.5); }
+    else if(n==='bad'){ tone(220,0,.25,'triangle',.1); tone(196,.1,.3,'triangle',.08); }
+    else if(n==='coin'){ tone(988,0,.15,'square',.05); tone(1319,.07,.3,'square',.05); }
+    else if(n==='pop'){ tone(523,0,.15); tone(659,.06,.15); tone(784,.12,.3); }
+    else if(n==='purr'){ for(let i=0;i<6;i++) tone(70+rnd(15),i*.09,.12,'sawtooth',.04); }
+    else if(n==='meow'){ const a=ac(); if(!a) return; const o=a.createOscillator(),g=a.createGain(); o.type='triangle'; const t0=a.currentTime; o.frequency.setValueAtTime(600,t0); o.frequency.linearRampToValueAtTime(900,t0+.12); o.frequency.linearRampToValueAtTime(500,t0+.4); g.gain.setValueAtTime(0,t0); g.gain.linearRampToValueAtTime(.08,t0+.05); g.gain.exponentialRampToValueAtTime(.0001,t0+.45); o.connect(g); g.connect(a.destination); o.start(t0); o.stop(t0+.5); }
+    else if(n==='step'){ tone(330,0,.08,'triangle',.05); }
+  }catch(e){}
+}
+const MELODY=[523,659,784,659,587,698,880,698,523,659,784,1046,988,784,659,587];
+const BASS=[131,131,147,147,175,175,131,131];
+let musicTimer=null, mi=0;
+function setMusic(on){
+  S.music=on; save();
+  $('#bMusic').setAttribute('aria-pressed',on?'true':'false');
+  $('#scene').classList.toggle('music-on',on&&!!S.owned.record);
+  clearInterval(musicTimer);
+  if(on&&S.owned.record){
+    ac();
+    musicTimer=setInterval(()=>{
+      if(!S.music) return;
+      if(mi%2===0) tone(MELODY[(mi/2)%MELODY.length],0,.9,'sine',.045);
+      if(mi%4===0) tone(BASS[(mi/4)%BASS.length],0,1.6,'triangle',.05);
+      mi++;
+    },300);
+  }
+}
+
+/* ---------------- scene ---------------- */
+function bookcase(x,y,w,h){
+  let s=`<rect x="${x}" y="${y}" width="${w}" height="${h}" class="wd" rx="3"/><rect x="${x+6}" y="${y+6}" width="${w-12}" height="${h-12}" class="sb"/>`;
+  const rows=4, rh=(h-12)/rows;
+  for(let r=0;r<rows;r++){
+    const by=y+6+rh*(r+1);
+    let bx=x+8;
+    while(bx<x+w-14){
+      const bw=5+rnd(7), bh=rh-8-rnd(10), c=pick(SPINES)[0];
+      if(Math.random()<.08 && bx<x+w-30){ // leaning book
+        s+=`<rect x="${bx}" y="${by-bh}" width="${bw}" height="${bh}" fill="${c}" opacity=".85" transform="rotate(14 ${bx} ${by})"/>`; bx+=bw+10; continue;
+      }
+      s+=`<rect x="${bx}" y="${by-bh}" width="${bw}" height="${bh}" fill="${c}" opacity=".85" rx="1"/>`;
+      bx+=bw+1;
+    }
+    s+=`<rect x="${x+4}" y="${by-2}" width="${w-8}" height="5" class="wl"/>`;
+  }
+  return s;
+}
+
+function librarianSVG(){
+  return `<g id="lib" class="clickable" data-who="lib">
+    <rect x="252" y="140" width="96" height="80" rx="30" class="ac2"/>
+    <path d="M286 142 L300 168 L314 142 Z" class="tl"/>
+    <circle cx="276" cy="176" r="3" fill="#fff" opacity=".7"/><circle cx="324" cy="176" r="3" fill="#fff" opacity=".7"/>
+    <rect x="262" y="160" width="12" height="14" rx="3" class="ac" opacity=".8"/>
+    <ellipse cx="300" cy="104" rx="34" ry="34" fill="#A8492B"/>
+    <circle cx="300" cy="66" r="15" fill="#A8492B"/>
+    <rect x="296" y="46" width="5" height="30" rx="1" fill="#F2C94C" transform="rotate(28 298 61)"/>
+    <rect x="296" y="44" width="5" height="5" rx="1" fill="#F29BB0" transform="rotate(28 298 61)"/>
+    <rect x="292" y="126" width="16" height="16" fill="#F1C7A5"/>
+    <circle cx="300" cy="112" r="25" fill="#F6D2B4"/>
+    <path d="M273 104 Q284 82 300 86 Q318 80 328 104 Q318 94 300 96 Q286 92 273 104Z" fill="#A8492B"/>
+    <ellipse cx="285" cy="122" rx="5" ry="3" fill="#F29BB0" opacity=".8"/><ellipse cx="315" cy="122" rx="5" ry="3" fill="#F29BB0" opacity=".8"/>
+    <g class="eye"><circle cx="290" cy="112" r="2.6" fill="#2B2A3D"/><circle cx="310" cy="112" r="2.6" fill="#2B2A3D"/></g>
+    <circle cx="290" cy="112" r="9" fill="#fff" fill-opacity=".18" stroke="#2B2A3D" stroke-width="2.4"/>
+    <circle cx="310" cy="112" r="9" fill="#fff" fill-opacity=".18" stroke="#2B2A3D" stroke-width="2.4"/>
+    <path d="M299 111 h2" stroke="#2B2A3D" stroke-width="2.4"/>
+    <path d="M293 126 Q300 132 307 126" fill="none" stroke="#2B2A3D" stroke-width="2.2" stroke-linecap="round"/>
+    <rect x="272" y="122" width="5" height="7" rx="1" fill="#2C7775"/><circle cx="328" cy="125" r="3.5" fill="#C93B63"/>
+  </g>`;
+}
+
+function studentSVG(st){
+  const {skin,hair,hood,style}=st;
+  let back='', front='';
+  if(style===1) back=`<rect x="-24" y="-136" width="48" height="58" rx="20" fill="${hair}"/>`;
+  if(style===0) front=`<path d="M-21 -120 Q-20 -142 0 -142 Q20 -142 21 -120 Q12 -132 0 -131 Q-12 -132 -21 -120Z" fill="${hair}"/>`;
+  if(style===1) front=`<path d="M-21 -118 Q-20 -142 0 -142 Q20 -142 21 -118 Q10 -130 -4 -128 Q-14 -126 -21 -118Z" fill="${hair}"/>`;
+  if(style===2) front=`<circle cx="-19" cy="-140" r="10" fill="${hair}"/><circle cx="19" cy="-140" r="10" fill="${hair}"/><path d="M-21 -120 Q-20 -142 0 -142 Q20 -142 21 -120 Q10 -130 0 -130 Q-10 -130 -21 -120Z" fill="${hair}"/>`;
+  if(style===3) front=[[-16,-132],[-6,-140],[6,-140],[16,-132],[-20,-122],[20,-122]].map(([x,y])=>`<circle cx="${x}" cy="${y}" r="8" fill="${hair}"/>`).join('');
+  if(style===4) front=`<circle cx="0" cy="-146" r="9" fill="${hair}"/><path d="M-21 -120 Q-20 -142 0 -142 Q20 -142 21 -120 Q10 -131 0 -130 Q-10 -131 -21 -120Z" fill="${hair}"/>`;
+  if(style===5) front=`<path d="M-22 -122 Q-22 -146 0 -146 Q22 -146 22 -122Z" fill="${st.hat}"/><rect x="-23" y="-126" width="46" height="7" rx="3" fill="${st.hat}" opacity=".85"/><circle cx="0" cy="-148" r="5" fill="#fff"/>`;
+  const book = st.book ? `<g transform="rotate(-8 0 -70)"><rect x="-4" y="-88" width="26" height="34" rx="2" fill="${st.book}"/><rect x="-4" y="-88" width="4" height="34" fill="#000" opacity=".2"/><rect x="2" y="-80" width="14" height="3" fill="#fff" opacity=".6"/></g>` : '';
+  const mouth = st.happy ? `<path d="M-6 -112 Q0 -104 6 -112Z" fill="#7A2E2E"/>` : `<path d="M-5 -111 Q0 -107 5 -111" fill="none" stroke="#2B2A3D" stroke-width="2" stroke-linecap="round"/>`;
+  return `
+    <ellipse cx="0" cy="0" rx="30" ry="5" fill="#000" opacity=".15"/>
+    <rect x="-17" y="-42" width="13" height="40" rx="5" fill="#3A4060"/><rect x="4" y="-42" width="13" height="40" rx="5" fill="#3A4060"/>
+    <ellipse cx="-11" cy="-2" rx="10" ry="5" fill="#F5F5F0"/><ellipse cx="11" cy="-2" rx="10" ry="5" fill="#F5F5F0"/>
+    ${back}
+    <rect x="-28" y="-100" width="56" height="64" rx="20" fill="${hood}"/>
+    <rect x="-14" y="-62" width="28" height="14" rx="5" fill="#000" opacity=".12"/>
+    <path d="M-6 -100 L-6 -84 M6 -100 L6 -84" stroke="#fff" stroke-width="2" opacity=".7"/>
+    <circle cx="0" cy="-120" r="20" fill="${skin}"/>
+    <ellipse cx="-11" cy="-113" rx="4" ry="2.5" fill="#F29BB0" opacity=".6"/><ellipse cx="11" cy="-113" rx="4" ry="2.5" fill="#F29BB0" opacity=".6"/>
+    <g class="eye"><circle cx="-7" cy="-121" r="2.4" fill="#2B2A3D"/><circle cx="7" cy="-121" r="2.4" fill="#2B2A3D"/></g>
+    ${mouth}
+    ${front}
+    ${book}`;
+}
+
+const UPGRADES = [
+  {id:'rug', name:'Braided Reading Rug', cost:6, perk:'Instantly 40% cozier. Science.', box:[420,240,260,60],
+   draw:()=>`<g class="up" id="up-rug"><ellipse cx="550" cy="272" rx="122" ry="22" class="ac"/><ellipse cx="550" cy="272" rx="104" ry="17" class="ac2"/><ellipse cx="550" cy="272" rx="84" ry="13" class="tl"/><ellipse cx="550" cy="272" rx="62" ry="9" class="ac" opacity=".8"/></g>`},
+  {id:'posters', name:'Cute READ Posters', cost:10, perk:'Two posters for the wall. Motivational. Adorable.', box:[354,58,140,100],
+   draw:()=>`<g class="up" id="up-posters">
+      <rect x="360" y="66" width="62" height="86" rx="4" class="ac"/>
+      <rect x="380" y="62" width="22" height="8" fill="#F3E9C6" opacity=".9" transform="rotate(-6 391 66)"/>
+      <text x="391" y="112" text-anchor="middle" style="font-family:var(--font-display);font-weight:700;font-size:24px;fill:#fff">READ</text>
+      <text x="391" y="130" text-anchor="middle" style="font-family:var(--font-body);font-weight:700;font-size:8px;fill:#fff">it's lit(erature)</text>
+      <rect x="432" y="66" width="62" height="86" rx="4" class="tl"/>
+      <rect x="452" y="62" width="22" height="8" fill="#F3E9C6" opacity=".9" transform="rotate(5 463 66)"/>
+      <path d="M463 86 L444 80 L444 112 L463 118 Z" fill="#FFFDF5"/><path d="M463 86 L482 80 L482 112 L463 118 Z" fill="#F3E9C6"/>
+      <circle cx="455" cy="96" r="2" fill="#2B2A3D"/><circle cx="471" cy="96" r="2" fill="#2B2A3D"/>
+      <path d="M457 103 Q463 108 469 103" fill="none" stroke="#2B2A3D" stroke-width="1.8" stroke-linecap="round"/>
+      <text x="463" y="132" text-anchor="middle" style="font-family:var(--font-display);font-weight:700;font-size:9px;fill:#fff">GET LOST</text>
+      <text x="463" y="144" text-anchor="middle" style="font-family:var(--font-display);font-weight:700;font-size:9px;fill:#fff">IN A BOOK</text></g>`},
+  {id:'cactus', name:'Spike the Talking Cactus', cost:12, perk:'Unlocks hints! Spike narrows down where a book goes. Also tells jokes.', box:[368,138,54,66],
+   draw:()=>`<g class="up clickable" id="up-cactus" data-who="cactus">
+      <rect x="386" y="146" width="18" height="40" rx="9" fill="#5DA46A"/>
+      <rect x="375" y="160" width="12" height="6" rx="3" fill="#5DA46A"/><rect x="375" y="151" width="6" height="15" rx="3" fill="#5DA46A"/>
+      <rect x="403" y="164" width="12" height="6" rx="3" fill="#5DA46A"/><rect x="409" y="156" width="6" height="14" rx="3" fill="#5DA46A"/>
+      <path d="M390 152 l-2 -2 M400 154 l2 -2 M392 176 l-2 1 M401 172 l2 1" stroke="#2E5E37" stroke-width="1.4"/>
+      <circle cx="391" cy="163" r="1.8" fill="#2B2A3D"/><circle cx="399" cy="163" r="1.8" fill="#2B2A3D"/>
+      <path d="M392 168 Q395 171 398 168" fill="none" stroke="#2B2A3D" stroke-width="1.4" stroke-linecap="round"/>
+      <circle cx="395" cy="145" r="4.5" fill="#F29BB0"/><circle cx="395" cy="145" r="1.6" fill="#F2C94C"/>
+      <polygon points="380,184 410,184 406,200 384,200" fill="#C8623C"/><rect x="378" y="181" width="34" height="5" rx="2" fill="#B5532F"/></g>`},
+  {id:'lights', name:'Fairy Lights', cost:18, perk:'Twinkly string lights across the whole library.', box:[0,0,800,40],
+   draw:()=>{ let s=`<g class="up" id="up-lights"><path d="M0 8 Q100 32 200 8 T400 8 T600 8 T800 8" fill="none" stroke="#3B4A3A" stroke-width="1.5"/>`;
+     const cols=['#F6C35B','#EE7193','#7FD1C9','#B9A3F0'];
+     for(let seg=0;seg<4;seg++) for(let k=1;k<8;k++){ const t=k/8; const y=(1-t)*(1-t)*8+2*(1-t)*t*(seg%2?-16:32)+t*t*8; const x=seg*200+t*200;
+       s+=`<circle cx="${x.toFixed(1)}" cy="${(y+4).toFixed(1)}" r="3.6" fill="${cols[(seg*8+k)%4]}" class="twinkle" style="animation-delay:${((seg*8+k)%5)*.4}s"/>`; }
+     return s+`</g>`; }},
+  {id:'plant', name:'Gerald the Monstera', cost:22, perk:'A large, dramatic plant. Gerald has never been watered on time.', box:[20,160,110,135],
+   draw:()=>`<g class="up" id="up-plant">
+      ${[[-40,30],[-15,36],[10,34],[35,30],[-60,26],[60,26],[0,40]].map(([a,r],i)=>`<ellipse cx="75" cy="${238-r}" rx="14" ry="${r*0.55}" fill="${i%2?'#3F8A4F':'#4FA35F'}" transform="rotate(${a} 75 242)"/>`).join('')}
+      <rect x="54" y="240" width="42" height="46" rx="6" fill="#E9E2D0"/><rect x="50" y="236" width="50" height="9" rx="4" fill="#D8CFB8"/>
+      <circle cx="68" cy="258" r="2" fill="#2B2A3D"/><circle cx="82" cy="258" r="2" fill="#2B2A3D"/><path d="M71 265 Q75 268 79 265" stroke="#2B2A3D" stroke-width="1.6" fill="none"/></g>`},
+  {id:'cat', name:'Dewey the Library Cat', cost:30, perk:'+5 bonus bookmarks after every shift. Pettable.', box:[198,148,56,56],
+   draw:()=>`<g class="up clickable" id="up-cat" data-who="cat">
+      <path class="tail" d="M238 196 Q252 192 250 176 Q249 168 254 166" fill="none" stroke="#E39B4B" stroke-width="5" stroke-linecap="round"/>
+      <ellipse cx="225" cy="186" rx="16" ry="14" fill="#E39B4B"/>
+      <path d="M216 180 q3 -3 6 0 M226 178 q3 -3 6 0" stroke="#B86F2A" stroke-width="2" fill="none"/>
+      <polygon points="213,162 216,148 224,158" fill="#E39B4B"/><polygon points="237,162 234,148 226,158" fill="#E39B4B"/>
+      <polygon points="215,159 217,152 221,157" fill="#F29BB0"/><polygon points="235,159 233,152 229,157" fill="#F29BB0"/>
+      <circle cx="225" cy="166" r="12" fill="#E39B4B"/>
+      <path d="M219 165 q2 2 4 0 M227 165 q2 2 4 0" stroke="#2B2A3D" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+      <path d="M225 169 l-1.5 1.5 h3z" fill="#C93B63"/>
+      <path d="M212 170 h-6 M212 172 l-5 2 M238 170 h6 M238 172 l5 2" stroke="#2B2A3D" stroke-width=".8"/>
+      <rect x="216" y="176" width="18" height="3" rx="1.5" class="tl"/><circle cx="225" cy="181" r="2.5" fill="#F2C94C"/>
+      <ellipse cx="218" cy="198" rx="5" ry="3" fill="#F3C08A"/><ellipse cx="232" cy="198" rx="5" ry="3" fill="#F3C08A"/></g>`},
+  {id:'cocoa', name:'Hot Cocoa Cart', cost:38, perk:'Every 3 first-try answers in a row earns +1 bonus bookmark.', box:[425,186,80,96],
+   draw:()=>`<g class="up" id="up-cocoa">
+      <rect x="432" y="222" width="66" height="8" rx="3" class="wd"/><rect x="436" y="258" width="58" height="6" rx="3" class="wd"/>
+      <rect x="436" y="228" width="4" height="40" class="wd"/><rect x="490" y="228" width="4" height="40" class="wd"/>
+      <circle cx="440" cy="272" r="6" fill="#3B3B3B"/><circle cx="490" cy="272" r="6" fill="#3B3B3B"/>
+      <rect x="442" y="206" width="14" height="16" rx="3" class="ac"/><rect x="462" y="206" width="14" height="16" rx="3" class="tl"/><rect x="481" y="208" width="12" height="14" rx="3" class="ac2"/>
+      <path d="M456 210 q5 0 5 5 q0 5 -5 5" fill="none" stroke="var(--accent)" stroke-width="2"/>
+      <path class="steam" d="M447 202 q-3 -5 0 -9 q3 -4 0 -8" fill="none" stroke="#fff" stroke-width="2"/>
+      <path class="steam" style="animation-delay:1s" d="M469 202 q-3 -5 0 -9 q3 -4 0 -8" fill="none" stroke="#fff" stroke-width="2"/>
+      <rect x="444" y="240" width="40" height="12" rx="2" class="pn"/><text x="464" y="249" text-anchor="middle" style="font-family:var(--font-display);font-size:8px;font-weight:700;fill:var(--ink)">COCOA</text></g>`},
+  {id:'beanbag', name:'Beanbag Nook', cost:45, perk:'A squishy reading spot. Students will fight over it.', box:[690,228,110,72],
+   draw:()=>`<g class="up" id="up-beanbag"><path d="M700 290 Q690 250 728 240 Q760 232 784 252 Q800 270 790 290 Z" fill="#8E6CC4"/><path d="M712 262 Q730 250 760 256" fill="none" stroke="#fff" stroke-width="3" opacity=".3" stroke-linecap="round"/>
+      <rect x="748" y="266" width="22" height="16" rx="2" fill="#F2B43C" transform="rotate(-12 759 274)"/></g>`},
+  {id:'record', name:'Record Player', cost:55, perk:'Unlocks cozy library music. Tap it (or the Music button) to play.', box:[668,150,110,100],
+   draw:()=>`<g class="up clickable" id="up-record" data-who="record">
+      <rect x="676" y="200" width="92" height="8" rx="3" class="wd"/><rect x="684" y="208" width="6" height="40" class="wd"/><rect x="754" y="208" width="6" height="40" class="wd"/>
+      <rect x="684" y="180" width="76" height="20" rx="4" fill="#C9844D"/><ellipse cx="716" cy="180" rx="26" ry="6" fill="#222"/><ellipse cx="716" cy="180" rx="7" ry="2" class="ac"/>
+      <path d="M748 176 L740 182" stroke="#ddd" stroke-width="2.5" stroke-linecap="round"/><circle cx="749" cy="175" r="3" fill="#bbb"/>
+      <text class="note" x="720" y="168" style="font-size:16px;fill:var(--ink)">♪</text><text class="note" x="735" y="160" style="font-size:14px;fill:var(--ink);animation-delay:1.2s">♫</text></g>`},
+];
+
+let CASES='';
+function sceneBase(){
+  if(!CASES) CASES=bookcase(150,44,140,190)+bookcase(510,44,140,190);
+  let s=`
+  <defs><radialGradient id="lampg"><stop offset="0" stop-color="#FFD58A" stop-opacity=".8"/><stop offset="1" stop-color="#FFD58A" stop-opacity="0"/></radialGradient></defs>
+  <rect width="800" height="235" class="w"/>
+  <rect y="172" width="800" height="63" class="w2"/>
+  <rect y="168" width="800" height="6" class="tr"/>
+  <rect y="232" width="800" height="68" class="fl"/>
+  ${[248,266,286].map(y=>`<path d="M0 ${y} H800" class="fl2" stroke-width="1.2"/>`).join('')}
+  <!-- window -->
+  <rect x="26" y="28" width="108" height="100" rx="6" class="wd"/><rect x="33" y="35" width="94" height="86" class="sky"/>
+  <circle cx="102" cy="62" r="12" fill="#FFE08A" class="sun"/>
+  <g class="stars"><circle cx="58" cy="56" r="10" fill="#F4ECD0"/><circle cx="63" cy="52" r="9" class="sky"/>${[[90,48],[110,70],[76,90],[48,100],[115,104]].map(([x,y])=>`<circle cx="${x}" cy="${y}" r="1.4" fill="#fff"/>`).join('')}</g>
+  <path d="M33 92 Q56 78 80 92 T127 90 V121 H33Z" fill="#6E9C6A" opacity=".75"/>
+  <rect x="78" y="35" width="4" height="86" class="wd"/><rect x="33" y="76" width="94" height="4" class="wd"/>
+  <rect x="20" y="124" width="120" height="8" rx="3" class="wl"/>
+  <!-- shelves -->
+  ${CASES}
+  <!-- sign -->
+  <rect x="304" y="20" width="192" height="32" rx="8" class="wd"/>
+  <text x="400" y="34" text-anchor="middle" style="font-family:var(--font-body);font-weight:700;font-size:8px;letter-spacing:2px;fill:#F6E7C8">THINKERTON ACADEMY</text>
+  <text x="400" y="47" text-anchor="middle" style="font-family:var(--font-display);font-weight:700;font-size:13px;fill:#F6C35B">Library · Est. 1897</text>
+  <!-- clock -->
+  <circle cx="725" cy="80" r="20" class="pn" stroke="var(--wood)" stroke-width="4"/><path d="M725 80 V67 M725 80 L734 85" stroke="var(--ink)" stroke-width="2.5" stroke-linecap="round"/>
+  <!-- quiet-ish sign -->
+  <rect x="686" y="118" width="78" height="22" rx="4" class="pn"/><text x="725" y="133" text-anchor="middle" style="font-family:var(--font-display);font-weight:700;font-size:10px;fill:var(--ink)">quiet-ish zone</text>
+  <!-- lamp glow (night) -->
+  <ellipse cx="300" cy="150" rx="150" ry="100" fill="url(#lampg)" class="glow"/>
+  `;
+  return s;
+}
+function sceneFront(){
+  return `
+  <rect x="195" y="196" width="232" height="72" rx="4" class="wl"/>
+  <rect x="190" y="190" width="242" height="10" rx="3" class="wd"/>
+  <rect x="205" y="208" width="100" height="50" rx="3" class="wd" opacity=".35"/><rect x="315" y="208" width="100" height="50" rx="3" class="wd" opacity=".35"/>
+  <rect x="226" y="222" width="58" height="22" rx="3" class="pn"/><text x="255" y="231" text-anchor="middle" style="font-family:var(--font-body);font-weight:700;font-size:6.5px;letter-spacing:1px;fill:var(--ink)">BOOK</text><text x="255" y="240" text-anchor="middle" style="font-family:var(--font-body);font-weight:700;font-size:6.5px;letter-spacing:1px;fill:var(--ink)">RETURN</text>
+  <rect x="336" y="226" width="58" height="5" rx="2" fill="#000" opacity=".35"/>
+  <rect x="330" y="182" width="30" height="9" rx="1" fill="#4A6FA5"/><rect x="333" y="175" width="26" height="8" rx="1" fill="#C2456B"/>
+  <path d="M268 190 h22 v-6 h-22z" fill="#F2C94C"/>`;
+}
+
+function drawScene(){
+  const svg=$('#scene');
+  const order=['lights','rug','posters','plant','beanbag','record'];
+  let s=sceneBase();
+  // behind-desk items
+  for(const id of ['lights','posters','plant','record','rug','beanbag']){ const u=UPGRADES.find(x=>x.id===id); if(S.owned[id]) s+=u.draw(); }
+  s+=`<g id="studentWrap"><g id="student" style="transform:translate(900px,282px)"></g></g>`;
+  if(S.owned.cocoa) s+=UPGRADES.find(x=>x.id==='cocoa').draw();
+  s+=librarianSVG();
+  s+=sceneFront();
+  if(S.owned.cat) s+=UPGRADES.find(x=>x.id==='cat').draw();
+  if(S.owned.cactus) s+=UPGRADES.find(x=>x.id==='cactus').draw();
+  svg.innerHTML=s;
+  svg.classList.toggle('music-on',!!(S.music&&S.owned.record));
+  if(currentStudent) renderStudent(currentStudent, false);
+}
+
+let bubbleT=null;
+function say(text,x,y){
+  const b=$('#bubble'), wrap=$('#sceneWrap'); b.textContent=text;
+  b.style.left='0px'; b.style.top='0px'; b.classList.add('show');
+  const W=wrap.clientWidth, H=wrap.clientHeight, bw=b.offsetWidth, bh=b.offsetHeight;
+  const px=x/800*W, py=y/300*H;
+  let left=Math.min(Math.max(px-bw/2,6),W-bw-6);
+  let top=py-bh-4; if(top<6) top=Math.min(py+40/300*H,H-bh-6);
+  b.style.left=left+'px'; b.style.top=Math.max(6,top)+'px';
+  clearTimeout(bubbleT); bubbleT=setTimeout(()=>b.classList.remove('show'),2800);
+}
+const LIB_FACTS=['Melvil Dewey published his system in 1876. Older than Edison\'s light bulb!','I alphabetize my spice rack. And my socks. Don\'t ask about the socks.','A call number is a book\'s home address.','Fiction goes by author so you can find more books by people you love.','The 000s are the "everything" shelf: encyclopedias, record books, computers.','My earrings are tiny books. Obviously.','Shh... just kidding. Talk all you want, it\'s quiet-ISH.'];
+const CACTUS_LINES=['Smaller numbers go on the left. Always.','.5 and .50 are the same number. Trust me, I\'m a cactus.','Same first letters? Keep reading the name, letter by letter!','I\'m not prickly, I\'m well-organized.','Read the spine label first. FIC means alphabet. Numbers mean Dewey.','Need a hint? Tap the Hint button. I live for this.'];
+const CAT_LINES=['prrrrrrr','mrrp?','*knocks a pencil off the desk*','Dewey approves of your shelving.','*sits on the exact book you need*'];
+document.addEventListener('click',e=>{
+  const t=e.target.closest('[data-who]'); if(!t) return;
+  const w=t.dataset.who;
+  if(w==='lib'){ say(pick(LIB_FACTS),300,58); sfx('step'); }
+  if(w==='cactus'){ say('Spike: '+pick(CACTUS_LINES),395,138); sfx('pop'); }
+  if(w==='cat'){ say(pick(CAT_LINES),225,146); sfx(Math.random()<.5?'purr':'meow'); }
+  if(w==='record'){ setMusic(!S.music); say(S.music?'Now playing: Lo-fi Beats to Shelve To':'Music paused',716,150); }
+});
+
+let currentStudent=null;
+function newStudent(withBook){
+  return {name:pick(NAMES), skin:pick(SKIN), hair:pick(HAIR), hood:pick(HOOD), hat:pick(HOOD), style:rnd(6), book:withBook?pick(SPINES)[0]:null, happy:false};
+}
+function renderStudent(st,animateIn){
+  const g=$('#student'); if(!g) return;
+  g.innerHTML=studentSVG(st);
+  if(animateIn){ g.style.transition='none'; g.style.transform='translate(900px,282px)'; g.getBoundingClientRect(); g.style.transition=''; requestAnimationFrame(()=>{ g.style.transform='translate(560px,282px)'; }); }
+  else g.style.transform='translate(560px,282px)';
+}
+function studentLeave(cb){
+  const g=$('#student'); if(!g){cb&&cb();return;}
+  g.style.transform='translate(900px,282px)';
+  setTimeout(()=>{ cb&&cb(); },650);
+}
+function libReact(kind){ const l=$('#lib'); if(!l) return; l.classList.remove('cheer','think'); void l.getBoundingClientRect(); l.classList.add(kind); setTimeout(()=>l.classList.remove(kind),800); }
+
+/* ---------------- task generation ---------------- */
+const prep = b => ({...b, color:pick(SPINES), h:128+rnd(40)});
+function pickF(n,diff){
+  const all=FIC.slice().sort(cmp);
+  if(diff===0){ const out=[], seen=new Set(); for(const b of shuffle(all)){ const l=norm(b.last)[0]; if(!seen.has(l)){seen.add(l);out.push(b);} if(out.length===n) break; } return out; }
+  if(diff===1) return shuffle(all).slice(0,n);
+  const w=n+2, start=rnd(all.length-w+1); return shuffle(all.slice(start,start+w)).slice(0,n);
+}
+function pickN(n,diff){
+  const by={}; NF.forEach(b=>(by[b.cls]=by[b.cls]||[]).push(b));
+  if(diff===0){ return shuffle(Object.keys(by)).slice(0,n).map(c=>pick(by[c])); }
+  if(diff===1){
+    const cs=Object.keys(by).map(Number).filter(c=>by[c].length>=4 && (by[c+1]||by[c-1]));
+    const c=pick(cs); const nb=(by[c+1]&&(Math.random()<.5||!by[c-1]))?c+1:c-1;
+    let pool=shuffle(by[c]).slice(0,4).concat(shuffle(by[nb]));
+    if(pool.length<n) pool=pool.concat(shuffle(NF.filter(b=>!pool.includes(b))));
+    return pool.slice(0,n);
+  }
+  const cs=Object.keys(by).map(Number).filter(c=>by[c].length>=n+1);
+  const sorted=by[pick(cs)].slice().sort(cmp); const w=Math.min(sorted.length,n+2); const start=rnd(sorted.length-w+1);
+  return shuffle(sorted.slice(start,start+w)).slice(0,n);
+}
+function gen(spec){
+  const [type,diff=0]=spec;
+  if(type==='retF'||type==='retN'){
+    const kind=type[3]; const books=(kind==='F'?pickF(7,diff):pickN(7,diff)).map(prep).sort(cmp);
+    const r=rnd(7); const book=books.splice(r,1)[0];
+    return {type:'ret',kind,shelf:books,book,ans:r,student:newStudent(true)};
+  }
+  if(type==='misF'||type==='misN'){
+    const kind=type[3]; const arr=(kind==='F'?pickF(7,diff):pickN(7,diff)).map(prep).sort(cmp);
+    const m=rnd(7); const b=arr.splice(m,1)[0];
+    const opts=[]; for(let t=0;t<=6;t++) if(Math.abs(t-m)>=2) opts.push(t);
+    const t=pick(opts); const disp=arr.slice(); disp.splice(t,0,b);
+    return {type:'mis',kind,disp,moved:t,book:b,shelf:arr,ans:m,phase:1,student:newStudent(false)};
+  }
+  if(type==='findF'){
+    const b=prep(pick(FIC)); const L=norm(b.last)[0].toUpperCase();
+    const ans=FRANGES.findIndex(([a,z])=>L>=a&&L<=z);
+    return {type:'findF',book:b,ans,student:newStudent(false)};
+  }
+  if(type==='findN'){
+    const [topic,reason,call]=pick(TOPICS); const num=parseFloat(call); const cls=Math.floor(num/100);
+    const base=cls*100; const ranges=[[base,base+32],[base+33,base+65],[base+66,base+99]];
+    const r2=ranges.findIndex(([lo,hi])=>num>=lo&&num<hi+1);
+    return {type:'findN',topic,reason,call,num,ans:cls,step2:diff>=1?{ranges,ans:r2}:null,phase:1,student:newStudent(false)};
+  }
+}
+
+const DAYS = [
+  {t:'First Day at Thinkerton', skill:'Fiction: A to Z by last name',
+   lesson:{h:'Fiction lives A to Z',p:['Welcome aboard, new shelf helper! I\'m Ms. Pagecastle. Fiction books are shelved in <b>alphabetical order by the author\'s last name</b>.','Each spine label says <b>FIC</b> plus the first three letters of the author\'s last name. Smaller letters go on the left, like reading a sentence.'],ex:['Collins','Green','Reynolds']},
+   tasks:[['retF',0],['retF',0],['retF',0],['retF',1],['retF',1]]},
+  {t:'Plot Twist!', skill:'Fiction: close names and fixing mistakes',
+   lesson:{h:'When names start the same',p:['Sachar, Sáenz, and Salinger all start with SA. When the first letters match, <b>keep going letter by letter</b>: SAC, SAE, SAL.','Today some students put books back in the wrong spot. Scan the shelf left to right and find the one that breaks the pattern. Some students will also ask where to find an author.'],ex:['Sachar','Sáenz','Salinger']},
+   tasks:[['retF',1],['misF',0],['findF'],['retF',2],['misF',1],['findF']]},
+  {t:'Meet Mr. Dewey', skill:'Nonfiction: the 10 Dewey classes',
+   lesson:{h:'Meet the Dewey Decimal System',p:['Nonfiction is organized by <b>subject</b> into 10 big classes, from <b>000</b> to <b>999</b>. Sharks? Science, the 500s. Cookbooks? Technology, the 600s.','On the shelf, call numbers go from <b>smallest to largest</b>, left to right. Compare the whole number (before the dot) first.'],exN:['398.2|GRI','597.3|FIN','641.5|RAM']},
+   tasks:[['findN',0],['retN',0],['findN',0],['retN',0],['findN',0],['retN',1]]},
+  {t:'Decimal Drama', skill:'Nonfiction: decimals, digit by digit',
+   lesson:{h:'Decimals: one digit at a time',p:['After the dot, compare <b>one digit at a time</b>, like money. <b>599.53</b> comes BEFORE <b>599.6</b>, because 5 is less than 6. (Think $0.53 vs $0.60.)','If a decimal runs out of digits, it goes first: <b>398.2</b> comes before <b>398.209</b>. And if the numbers match exactly, use the author letters under the number.'],exN:['599.53|ORC','599.6|TUS','599.75|PAW']},
+   tasks:[['retN',2],['retN',2],['misN',1],['findN',1],['retN',2],['misN',2]]},
+  {t:'Rush Hour', skill:'Fiction and nonfiction, mixed',
+   lesson:{h:'Everything, all at once',p:['The bell just rang and everyone needs the library. Check the spine label first: <b>FIC</b> means alphabetical by author. <b>Numbers</b> mean Dewey order, smallest to largest.','Some students will give you a call number from the catalog. Match it to the right shelf range.'],ex:['Lu','McManus','Meyer']},
+   tasks:[['retF',2],['retN',2],['misF',1],['findN',1],['findF'],['misN',2],['retN',2],['retF',2]]},
+  {t:'Book Fair Eve', skill:'Expert shelver challenge',
+   lesson:{h:'The Book Fair is tomorrow',p:['The whole school is coming tomorrow and every shelf needs to be perfect. Ten students, tricky decimals, sneaky misshelves.','You\'ve got this. Spike believes in you. Dewey the cat is indifferent, but in a supportive way.'],exN:['641.5|ADA','641.5|RAM','641.5945|NON']},
+   tasks:[['retN',2],['misF',2],['findN',1],['retF',2],['misN',2],['retN',2],['findF'],['misN',2],['retF',2],['retN',2]]},
+];
+const OPEN = {t:'Open Shift', skill:'Random mix. Great for earning bookmarks.', lesson:{h:'Open Shift',p:['A regular afternoon at the Thinkerton library: a random mix of returns, misshelves, and students who need help. Play as many shifts as you like to earn bookmarks.'],ex:['Bardugo','Barnes','Bradbury']}};
+function openTasks(){ const pool=[['retF',2],['retN',2],['misF',2],['misN',2],['findF'],['findN',1],['retN',1],['retF',1]]; return shuffle(pool).concat([pick(pool)]).slice(0,8); }
+
+/* ---------------- rendering ---------------- */
+function bookHTML(b,{cls='',tag='div',attrs=''}={}){
+  const [c,t]=b.color;
+  const lbl=b.kind==='F'?`FIC<br>${b.cut}`:`${b.call}<br>${b.cut}`;
+  const spine=b.kind==='F'?b.last.toUpperCase():b.title;
+  const tip=b.kind==='F'?`${b.title} by ${b.first} ${b.last}`:`${b.title} (${b.call} ${b.cut})`;
+  return `<${tag} class="book ${b.kind==='N'?'nf':''} ${cls}" style="--c:${c};--t:${t};--h:${b.h}px" title="${esc(tip)}" ${attrs}><span class="spine-txt">${esc(spine)}</span><span class="label">${lbl}</span></${tag}>`;
+}
+function shelfHTML(books,{slots=false,tappable=false,placed=-1,allowed=null,lifted=-1}={}){
+  let s='<div class="books">';
+  books.forEach((b,i)=>{
+    if(slots) s+=slotHTML(books,i,allowed);
+    let cls=i===placed?'placed':''; if(i===lifted) cls+=' lifted';
+    if(tappable){ const dim=allowed&&!allowed.includes(i)?' dim':''; s+=bookHTML(b,{cls:cls+dim,tag:'button',attrs:`data-b="${i}" aria-label="${esc(nameStr(b))}"`}); }
+    else s+=bookHTML(b,{cls});
+  });
+  if(slots) s+=slotHTML(books,books.length,allowed);
+  return s+'</div>';
+}
+function slotHTML(books,s,allowed){
+  const L=books[s-1], R=books[s];
+  const lab=!L?`Place before ${nameStr(R)}`:!R?`Place after ${nameStr(L)}`:`Place between ${nameStr(L)} and ${nameStr(R)}`;
+  const dim=allowed&&!allowed.includes(s)?' dim':allowed?' hintglow':'';
+  return `<button class="slot${dim}" data-s="${s}" aria-label="${esc(lab)}"></button>`;
+}
+const STAR=(on,cls='')=>`<svg viewBox="0 0 24 24" class="${cls}" aria-hidden="true"><path d="M12 2.5l2.9 6 6.6.9-4.8 4.6 1.2 6.5L12 17.4 6.1 20.5l1.2-6.5L2.5 9.4l6.6-.9z" fill="${on?'var(--accent2)':'none'}" stroke="var(--ink)" stroke-width="1.6" stroke-linejoin="round"/></svg>`;
+function updateBM(){ $('#bm').textContent=S.bm; $('#bMusic').hidden=!S.owned.record; $('#bSound').setAttribute('aria-pressed',S.sound?'true':'false'); }
+
+const panel=$('#panel');
+let run=null, cur=null;
+
+function showSchedule(){
+  stopRun();
+  const total=Object.values(S.stars).reduce((a,b)=>a+b,0);
+  let h=`<div class="row" style="justify-content:space-between;align-items:flex-end"><div style="display:flex;flex-direction:column;gap:6px"><span class="eyebrow">Shift schedule</span><h2>Help wanted at the Thinkerton library</h2><p>Ms. Pagecastle needs a shelf helper. Shelve returns, fix misshelved books, and help students find what they need. Earn bookmarks to make the library cozier.</p></div><span class="pill">${STAR(true)} ${total} / 18 stars</span></div><div class="days">`;
+  DAYS.forEach((d,i)=>{
+    const locked=i+1>S.unlocked, st=S.stars[i]||0;
+    h+=`<button class="day" data-day="${i}" ${locked?'disabled':''}><span class="dn">Day ${i+1}${locked?' · locked':''}</span><span class="dt">${d.t}</span><span class="ds">${d.skill}</span><span class="stars-row">${[0,1,2].map(k=>STAR(k<st)).join('')}</span></button>`;
+  });
+  const openLocked=S.unlocked<=DAYS.length;
+  h+=`<button class="day" data-day="open" ${openLocked?'disabled':''}><span class="dn">Bonus${openLocked?' · finish Day 6':''}</span><span class="dt">Open Shift</span><span class="ds">Random mix, replay anytime</span></button></div>`;
+  panel.innerHTML=h;
+  panel.querySelectorAll('.day').forEach(b=>b.onclick=()=>startDay(b.dataset.day==='open'?'open':+b.dataset.day));
+}
+
+function exampleShelf(d){
+  let books;
+  if(d.lesson.ex) books=d.lesson.ex.map(n=>FIC.find(b=>b.last===n));
+  else books=d.lesson.exN.map(s=>{const [c,k]=s.split('|');return NF.find(b=>b.call===c&&b.cut===k);});
+  books=books.filter(Boolean).map((b,i)=>({...b,color:SPINES[[0,1,3][i]],h:[140,150,134][i]}));
+  return `<div class="shelf">${shelfHTML(books)}</div>`;
+}
+
+function startDay(d){
+  const def=d==='open'?OPEN:DAYS[d];
+  const specs=d==='open'?openTasks():def.tasks;
+  run={day:d,def,tasks:specs.map(gen),i:0,earned:0,first:0,streak:0,results:[]};
+  currentStudent=null;
+  panel.innerHTML=`<div class="lesson"><div class="txt"><span class="eyebrow">${d==='open'?'Bonus':'Day '+(d+1)} · Ms. Pagecastle's tip</span><h2>${def.lesson.h}</h2>${def.lesson.p.map(p=>`<p>${p}</p>`).join('')}<div class="row"><button class="btn" id="go">Open the doors</button><button class="btn ghost" id="back">Back to schedule</button></div></div><div class="ex"><span class="eyebrow">In order, left to right</span>${exampleShelf(def)}</div></div>`;
+  $('#go').onclick=()=>{ sfx('pop'); nextTask(); };
+  $('#back').onclick=showSchedule;
+  say('Ready when you are, shelf friend!',300,58);
+}
+function stopRun(){ run=null; cur=null; const g=$('#student'); if(g){ g.style.transform='translate(900px,282px)'; } currentStudent=null; }
+
+function nextTask(){
+  if(!run) return;
+  if(run.i>=run.tasks.length) return endDay();
+  cur=run.tasks[run.i]; cur.tries=0; cur.hint=false; cur.done=false;
+  currentStudent=cur.student;
+  renderStudent(cur.student,true); sfx('step');
+  renderTask();
+}
+
+function dotsHTML(){ return `<div class="dots" aria-label="Student ${run.i+1} of ${run.tasks.length}">${run.tasks.map((t,i)=>{const r=run.results[i]; return `<span class="dot ${r===undefined?(i===run.i?'on':''):r?'ok':'meh'}"></span>`;}).join('')}</div>`; }
+
+function renderTask(){
+  const t=cur, st=t.student;
+  let stu='', lib='', work='';
+  if(t.type==='ret'){
+    stu=t.stuLine||(t.stuLine=pick(RET_LINES));
+    lib=t.kind==='F'?'Fiction goes by the author\'s <b>last name</b>, A to Z. Tap the gap where this book belongs.':'Nonfiction goes by <b>call number</b>, smallest to largest. Tap the gap where this book belongs.';
+    work=heldHTML(t.book,'Returned book')+`<div class="shelf" id="shelf">${shelfHTML(t.shelf,{slots:true,allowed:t.allowed})}</div>`;
+  }
+  if(t.type==='mis'){
+    if(t.phase===1){
+      stu=t.stuLine||(t.stuLine=pick(['Um, I think someone messed up this shelf? I can\'t find anything.','Is this shelf supposed to look like this? Something seems off.','My friend put a book back and now this shelf looks weird.']));
+      lib='One book on this shelf is in the wrong spot. <b>Tap the troublemaker!</b>';
+      work=`<div class="shelf" id="shelf" style="flex-basis:100%">${shelfHTML(t.disp,{tappable:true,allowed:t.allowed})}</div>`;
+    } else {
+      stu=t.stuLine;
+      lib=t.libMsg||'Gotcha! Now tap the gap where it <b>really</b> belongs.';
+      work=heldHTML(t.book,'Misshelved book')+`<div class="shelf" id="shelf">${shelfHTML(t.shelf,{slots:true,allowed:t.allowed})}</div>`;
+    }
+  }
+  if(t.type==='findF'){
+    const b=t.book;
+    stu=t.stuLine||(t.stuLine=`Do you have anything by ${b.first} ${b.last}? I heard <i>${esc(b.title)}</i> is really good.`);
+    lib='Fiction is shelved A to Z by the author\'s <b>last name</b>. Which section should we check?';
+    work=`<div class="choices" style="flex:1 1 100%">${FRANGES.map(([a,z],i)=>`<button class="choice${t.allowed&&!t.allowed.includes(i)?' dim':''}" data-c="${i}"><span class="cn">FIC ${a}–${z}</span><span class="cd">Authors whose last names start with ${a} through ${z}</span></button>`).join('')}</div>`;
+  }
+  if(t.type==='findN'){
+    stu=t.stuLine||(t.stuLine=`Hi! I need a book about ${esc(t.topic)} for ${esc(t.reason)}.`);
+    if(t.phase===1){
+      lib='Nonfiction is grouped by <b>subject</b>. Which Dewey class should we look in?';
+      work=`<div class="choices" style="flex:1 1 100%">${DEWEY.map(([n,l,d],i)=>`<button class="choice${t.allowed&&!t.allowed.includes(i)?' dim':''}" data-c="${i}"><span class="cn">${n}s</span><span class="cl">${l}</span><span class="cd">${d}</span></button>`).join('')}</div>`;
+    } else {
+      lib=t.libMsg||'Yes! I looked it up in the catalog. Which <b>shelf range</b> has this call number?';
+      const fmt=n=>String(n).padStart(3,'0');
+      work=`<div class="card-cat" style="flex:1 1 260px"><span class="k">CATALOG RECORD</span><br>Subject: ${esc(t.topic)}<br>Call number: <span style="font-size:20px">${t.call}</span></div><div class="choices" style="flex:2 1 300px">${t.step2.ranges.map(([lo,hi],i)=>`<button class="choice${t.allowed&&!t.allowed.includes(i)?' dim':''}" data-c="${i}"><span class="cn">${fmt(lo)}–${fmt(hi)}.99</span><span class="cd">Shelf ${i+1} in the ${DEWEY[t.ans][0]}s</span></button>`).join('')}</div>`;
+    }
+  }
+  if(t.libOverride) lib=t.libOverride;
+  const hintBtn=S.owned.cactus?`<button class="btn ghost" id="hintBtn" ${t.hint||t.done?'disabled':''}>Ask Spike for a hint</button>`:`<button class="btn ghost" id="hintBtn" title="Adopt Spike the Talking Cactus in the Cozy Catalog to unlock hints">Hint (needs Spike)</button>`;
+  panel.innerHTML=`
+    <div class="dialog">
+      <div class="say"><span class="who">${st.name}</span><p id="stuLine">“${stu}”</p></div>
+      <div class="say say-lib ${t.mood||''}" id="libBox"><span class="who">Ms. Pagecastle</span><p id="libLine">${lib}</p></div>
+    </div>
+    <div class="work">${work}</div>
+    <div class="foot">${dotsHTML()}<div class="row"><span class="earn" id="earn"></span>${t.done?'<button class="btn" id="nextBtn">Next student</button>':hintBtn}</div></div>`;
+  wireTask();
+}
+function heldHTML(b,label){
+  const who=b.kind==='F'?`by ${esc(b.first)} ${esc(b.last)}`:'Nonfiction';
+  return `<div class="held"><span class="eyebrow">${label}</span><div class="held-body">${bookHTML(b,{cls:'mini'})}<div class="held-info"><span class="ht">${esc(b.title)}</span><span class="ha">${who}</span><span class="hc">${callStr(b)}</span></div></div></div>`;
+}
+function setLib(html,mood){ cur.libOverride=html; cur.mood=mood; const p=$('#libLine'); if(p) p.innerHTML=html; const box=$('#libBox'); if(box){ box.classList.remove('good','bad'); if(mood) box.classList.add(mood);} }
+
+function wireTask(){
+  panel.querySelectorAll('.slot').forEach(b=>b.onclick=()=>chooseSlot(+b.dataset.s,b));
+  panel.querySelectorAll('button.book').forEach(b=>b.onclick=()=>chooseBook(+b.dataset.b,b));
+  panel.querySelectorAll('.choice').forEach(b=>b.onclick=()=>chooseOption(+b.dataset.c,b));
+  const hb=$('#hintBtn'); if(hb) hb.onclick=useHint;
+  const nb=$('#nextBtn'); if(nb){ nb.onclick=()=>{ sfx('step'); studentLeave(()=>{ run.i++; nextTask(); }); }; nb.focus({preventScroll:true}); }
+}
+
+function wrong(el,msg){
+  cur.tries++; sfx('bad'); libReact('think');
+  if(el){ el.classList.remove('bad','wrongpick'); void el.offsetWidth; el.classList.add(el.classList.contains('book')?'wrongpick':'bad'); }
+  setLib(msg,'bad');
+}
+function finishTask(msg){
+  cur.done=true; cur.libOverride=msg; cur.mood='good';
+  const first=cur.tries===0;
+  let gain=first?(cur.hint?2:3):1;
+  run.results[run.i]=first;
+  if(first){ run.first++; run.streak++; } else run.streak=0;
+  let bonus='';
+  if(first&&S.owned.cocoa&&run.streak%3===0){ gain++; bonus=' (cocoa streak!)'; }
+  run.earned+=gain; S.bm+=gain; S.shelved++; save(); updateBM();
+  sfx('ding'); setTimeout(()=>sfx('coin'),250); libReact('cheer');
+  cur.student.happy=true; cur.student.book=null; renderStudent(cur.student,false);
+  cur.stuLine=pick(THANKS);
+  renderTask();
+  $('#earn').textContent=`+${gain} bookmark${gain>1?'s':''}${bonus}`;
+}
+
+function chooseSlot(s,el){
+  if(cur.done) return;
+  const shelf=cur.shelf, b=cur.book;
+  const okL=s===0||cmp(shelf[s-1],b)<0, okR=s===shelf.length||cmp(b,shelf[s])<0;
+  if(okL&&okR){
+    const placed=shelf.slice(); placed.splice(s,0,b);
+    const L=shelf[s-1], R=shelf[s];
+    let why=L&&R?`<b>${callStr(b)}</b> fits right between ${callStr(L)} and ${callStr(R)}.`:L?`<b>${callStr(b)}</b> comes after everything else here, so it goes on the far right.`:`<b>${callStr(b)}</b> comes before everything else here, so it goes on the far left.`;
+    finishTask(pick(['Perfect!','Nailed it!','Beautiful shelving!','Exactly right!'])+' '+why);
+    const sh=$('#shelf'); sh.classList.add('done'); sh.innerHTML=shelfHTML(placed,{placed:s});
+    return;
+  }
+  const msg = !okL ? explain(b,shelf[s-1]) + ` So your book goes further <b>left</b>.` : explain(shelf[s],b) + ` So your book goes further <b>right</b>.`;
+  wrong(el,'Not quite! '+msg);
+}
+function chooseBook(k,el){
+  if(cur.done||cur.phase!==1) return;
+  const rest=cur.disp.slice(); const b=rest.splice(k,1)[0];
+  if(isSorted(rest)){
+    sfx('pop');
+    cur.phase=2; cur.book=b; cur.shelf=rest; cur.allowed=null;
+    cur.libMsg=`Found it! <b>${callStr(b)}</b> was out of place. Now tap the gap where it <b>really</b> belongs.`;
+    cur.libOverride=null; cur.mood=null;
+    renderTask(); return;
+  }
+  wrong(el,`That one is actually in the right spot. Scan left to right and look for a book that is <b>bigger than the one after it</b>.`);
+}
+function chooseOption(i,el){
+  if(cur.done) return;
+  const t=cur;
+  if(t.type==='findF'){
+    if(i===t.ans){ el.classList.add('right'); return finishTask(`Yes! <b>${esc(t.book.last)}</b> starts with <b>${norm(t.book.last)[0].toUpperCase()}</b>, so look in FIC ${FRANGES[i][0]}–${FRANGES[i][1]}. Their spine label says <b>${callStr(t.book)}</b>.`); }
+    const L=norm(t.book.last)[0].toUpperCase();
+    return wrong(el,`Hmm, that section is for last names starting with ${FRANGES[i][0]}–${FRANGES[i][1]}. Remember to use the author's <b>last</b> name: ${esc(t.book.last)}.`+(norm(t.book.first)[0].toUpperCase()>=FRANGES[i][0]&&norm(t.book.first)[0].toUpperCase()<=FRANGES[i][1]?' (That range matches the <b>first</b> name, which is a common mix-up!)':''));
+  }
+  if(t.type==='findN'){
+    if(t.phase===1){
+      if(i===t.ans){
+        if(t.step2){ sfx('pop'); t.phase=2; t.allowed=null; t.libOverride=null; t.mood=null; t.libMsg=`Yes, the <b>${DEWEY[i][0]}s: ${DEWEY[i][1]}</b>! I looked it up in the catalog. Which <b>shelf range</b> has this call number?`; return renderTask(); }
+        el.classList.add('right');
+        return finishTask(`Yes! ${esc(t.topic)} lives in the <b>${DEWEY[i][0]}s, ${DEWEY[i][1]}</b>. The catalog says <b>${t.call}</b>.`);
+      }
+      return wrong(el,`Close, but the <b>${DEWEY[i][0]}s</b> are for ${DEWEY[i][2]}. What is ${esc(t.topic)} mostly about?`);
+    }
+    const [lo,hi]=t.step2.ranges[i];
+    if(i===t.step2.ans){ el.classList.add('right'); return finishTask(`Exactly! <b>${t.call}</b> is between ${lo} and ${hi}.99, so it's on that shelf. Happy researching!`); }
+    return wrong(el,`That shelf holds ${String(lo).padStart(3,'0')} to ${String(hi).padStart(3,'0')}.99. Look at the whole number in <b>${t.call}</b> first. Is it bigger or smaller?`);
+  }
+}
+function useHint(){
+  if(!S.owned.cactus){ say('Adopt Spike in the Cozy Catalog to unlock hints!',395,150); setLib('Hints come from <b>Spike the Talking Cactus</b>. Adopt him in the Cozy Catalog! For now, check the <b>Cheat Sheet</b> button up top.',null); return; }
+  if(cur.hint||cur.done) return;
+  cur.hint=true; sfx('pop');
+  const t=cur;
+  let line='';
+  if((t.type==='ret')||(t.type==='mis'&&t.phase===2)){
+    const r=t.shelf.findIndex(b=>cmp(t.book,b)<0); const ans=r===-1?t.shelf.length:r;
+    t.allowed=[ans-1,ans,ans+1].filter(x=>x>=0&&x<=t.shelf.length);
+    line='Psst! It goes in one of the glowing gaps.';
+  } else if(t.type==='mis'){
+    t.allowed=[t.moved-1,t.moved,t.moved+1].filter(x=>x>=0&&x<t.disp.length);
+    line='The troublemaker is one of these three. Check their neighbors!';
+  } else if(t.type==='findF'){
+    t.allowed=[t.ans,pick([0,1,2,3,4].filter(x=>x!==t.ans))].sort();
+    line='It\'s one of these two. Use the LAST name!';
+  } else if(t.type==='findN'){
+    if(t.phase===1){ t.allowed=[t.ans].concat(shuffle([0,1,2,3,4,5,6,7,8,9].filter(x=>x!==t.ans)).slice(0,2)).sort((a,b)=>a-b); line='I narrowed it to three classes. Think about the subject.'; }
+    else { t.allowed=[t.step2.ans,pick([0,1,2].filter(x=>x!==t.step2.ans))].sort(); line='Two shelves left. Compare the whole number first!'; }
+  }
+  say('Spike: '+line,395,138);
+  renderTask();
+  setLib('<b>Spike:</b> '+line,null);
+}
+
+function endDay(){
+  const total=run.tasks.length, acc=run.first/total;
+  const stars=acc>=.9?3:acc>=.7?2:1;
+  let bonus=0; if(S.owned.cat){ bonus+=5; }
+  if(run.first===total){ bonus+=5; }
+  S.bm+=bonus; run.earned+=bonus;
+  const isOpen=run.day==='open';
+  if(!isOpen){ S.stars[run.day]=Math.max(S.stars[run.day]||0,stars); S.unlocked=Math.max(S.unlocked,run.day+2); }
+  save(); updateBM(); sfx('pop');
+  const msg=stars===3?'Incredible work! The shelves have never looked better.':stars===2?'Great shift! A few tricky ones, but you figured them out.':'Good effort! Every expert shelver started somewhere. Try the shift again for more stars.';
+  const nextLabel=isOpen?'Another Open Shift':run.day+1<DAYS.length?`Start Day ${run.day+2}`:'Try the Open Shift';
+  panel.innerHTML=`<div style="display:flex;flex-direction:column;gap:10px"><span class="eyebrow">${isOpen?'Open Shift':'Day '+(run.day+1)} complete</span><h2>${run.def.t}: shift complete!</h2><div class="big-stars">${[0,1,2].map(k=>STAR(k<stars,'pop')).join('')}</div><p>${msg}</p></div>
+    <div class="summary"><div class="stat"><b>${run.first}/${total}</b><span>right on the first try</span></div><div class="stat"><b>+${run.earned}</b><span>bookmarks earned</span></div>${S.owned.cat?`<div class="stat"><b>+5</b><span>Dewey the cat bonus</span></div>`:''}${run.first===total?`<div class="stat"><b>+5</b><span>perfect shift bonus</span></div>`:''}<div class="stat"><b>${S.bm}</b><span>bookmarks to spend</span></div></div>
+    <div class="row"><button class="btn" id="toShop">Visit the Cozy Catalog</button><button class="btn ghost" id="nextDay">${nextLabel}</button><button class="btn ghost" id="toSched">Schedule</button></div>`;
+  const d=run.day;
+  stopRun(); say(stars===3?'You\'re a shelving superstar!':'Thanks for your help today!',300,58);
+  $('#toShop').onclick=showShop; $('#toSched').onclick=showSchedule;
+  $('#nextDay').onclick=()=>startDay(d==='open'||d+1>=DAYS.length?'open':d+1);
+}
+
+function showShop(){
+  stopRun();
+  let h=`<div style="display:flex;flex-direction:column;gap:6px"><span class="eyebrow">Cozy Catalog</span><h2>Upgrade the library</h2><p>Spend your bookmarks to make the Thinkerton library the coziest place in school. You have <b>${S.bm}</b> bookmark${S.bm===1?'':'s'}.</p></div><div class="shop">`;
+  UPGRADES.forEach(u=>{
+    const own=S.owned[u.id], can=S.bm>=u.cost;
+    const [x,y,w,hh]=u.box;
+    h+=`<div class="item"><svg viewBox="${x-6} ${y-6} ${w+12} ${hh+12}" aria-hidden="true">${u.draw().replace(/id="up-[a-z]+"/,'').replace(/data-who="[a-z]+"/,'')}</svg><span class="nm">${u.name}</span><span class="pk">${u.perk}</span>${own?'<span class="owned">In your library ✓</span>':`<button class="btn" data-buy="${u.id}" ${can?'':'disabled'}>${can?'Get it':'Need '+(u.cost-S.bm)+' more'} · ${u.cost}</button>`}</div>`;
+  });
+  h+=`</div><div class="row"><button class="btn ghost" id="toSched">Back to schedule</button></div>`;
+  panel.innerHTML=h;
+  panel.querySelectorAll('[data-buy]').forEach(b=>b.onclick=()=>buy(b.dataset.buy));
+  $('#toSched').onclick=showSchedule;
+}
+function buy(id){
+  const u=UPGRADES.find(x=>x.id===id); if(S.owned[id]||S.bm<u.cost) return;
+  S.bm-=u.cost; S.owned[id]=true; save(); updateBM(); sfx('coin'); setTimeout(()=>sfx('pop'),200);
+  drawScene();
+  const el=document.getElementById('up-'+id); if(el){ el.classList.add('pop'); el.style.transformBox='fill-box'; el.style.transformOrigin='center'; }
+  const lines={rug:'Ooh, a rug! My toes are so happy.',posters:'READ posters! Very on brand for us.',cactus:'Spike: Hi! I give hints now. And emotional support.',lights:'Twinkle twinkle, little shelf.',plant:'Welcome, Gerald. Please don\'t be dramatic.',cat:'DEWEY! Who\'s a good library cat?',cocoa:'Cocoa for everyone! Not near the books, please.',beanbag:'Dibs. Wait, I\'m the librarian. Okay, no dibs.',record:'Tap the record player for tunes!'};
+  const pos={cactus:[395,138],cat:[225,146]}[id]||[300,58];
+  say(lines[id],pos[0],pos[1]);
+  if(id==='record') setMusic(true);
+  showShop();
+}
+
+function showCheat(){
+  stopRun();
+  panel.innerHTML=`<div style="display:flex;flex-direction:column;gap:6px"><span class="eyebrow">Ms. Pagecastle's cheat sheet</span><h2>How to shelve like a pro</h2></div>
+  <div class="cheat">
+    <section><h3>Fiction</h3><p>Shelved <b>A to Z by the author's last name</b>. Spine labels say <b>FIC</b> + the first 3 letters of the last name.</p><p>If the first letters match, keep comparing letter by letter (SAC → SAE → SAL). If one name runs out of letters first, it goes first (Lu before Lucas).</p><p>Same last name? Use the first name, then the title.</p></section>
+    <section><h3>Nonfiction call numbers</h3><p>Shelved <b>smallest to largest</b>, left to right.</p><p>1. Compare the <b>whole number</b> before the dot.<br>2. Compare decimals <b>one digit at a time</b>: 599.53 comes before 599.6.<br>3. A decimal that runs out of digits goes first: 398.2 before 398.209.<br>4. Same number? Use the author letters: 641.5 ADA before 641.5 RAM.</p></section>
+    <section style="grid-column:1/-1"><h3>The 10 Dewey classes</h3><div style="overflow-x:auto"><table class="dewey">${DEWEY.map(([n,l,d])=>`<tr><td>${n}–${String(+n+99).padStart(3,'0')}</td><td><b>${l}</b></td><td>${d}</td></tr>`).join('')}</table></div></section>
+  </div><div class="row"><button class="btn ghost" id="toSched">Back to schedule</button></div>`;
+  $('#toSched').onclick=showSchedule;
+}
+
+function confirmLeave(fn){
+  if(run && !(panel.querySelector('#go'))){
+    panel.insertAdjacentHTML('afterbegin',`<div class="say bad" id="leaveBox" style="display:flex;gap:10px;align-items:center;flex-wrap:wrap"><p style="flex:1 1 200px">Leave this shift? Bookmarks you've earned so far are saved, but the shift won't count as finished.</p><button class="btn" id="leaveYes">Leave shift</button><button class="btn ghost" id="leaveNo">Keep shelving</button></div>`);
+    $('#leaveYes').onclick=fn; $('#leaveNo').onclick=()=>$('#leaveBox').remove();
+    return;
+  }
+  fn();
+}
+$('#bSched').onclick=()=>confirmLeave(showSchedule);
+$('#bShop').onclick=()=>confirmLeave(showShop);
+$('#bCheat').onclick=()=>confirmLeave(showCheat);
+$('#bSound').onclick=()=>{ S.sound=!S.sound; save(); updateBM(); if(S.sound) sfx('ding'); };
+$('#bMusic').onclick=()=>setMusic(!S.music);
+
+/* ---------------- boot ---------------- */
+drawScene(); updateBM(); showSchedule();
+if(S.music&&S.owned.record){ S.music=false; $('#bMusic').setAttribute('aria-pressed','false'); } // audio needs a tap to start
+setTimeout(()=>say(S.shelved?'Welcome back, shelf friend!':'Hi! I\'m Ms. Pagecastle. Pick a shift below!',300,58),600);
+</script>
+
+</html>
